@@ -1,5 +1,8 @@
 :root {
-  --primary-color: #2cbff2;
+  --primary-color: #1D7E99;
+  --secondary-color: #C3C7CA;
+  --metallic-gradient: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%);
+  --metallic-gradient-reverse: linear-gradient(135deg, #C3C7CA 0%, #1D7E99 100%);
   --background-color: #000000;
   --text-color: #ffffff;
   --secondary-text-color: #a0a0a0;
@@ -17,21 +20,34 @@ body {
 a {
   color: var(--primary-color);
   text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--secondary-color);
 }
 
 button {
-  background-color: var(--primary-color);
+  background: var(--metallic-gradient);
   color: #fff;
   border: none;
   border-radius: 8px;
   padding: 10px 20px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 button:hover {
-  background-color: #1aaed6;
+  background: var(--metallic-gradient-reverse);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 .navbar {
@@ -43,7 +59,10 @@ button:hover {
 }
 
 .navbar .logo {
-  color: var(--primary-color);
+  background: var(--metallic-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: bold;
   font-size: 1.5rem;
 }
@@ -56,6 +75,49 @@ button:hover {
   border: none;
   font-size: 1rem;
   cursor: pointer;
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.nav-links a:hover,
+.nav-links button:hover {
+  color: var(--primary-color);
+  transform: translateY(-2px);
+  background-color: rgba(29, 126, 153, 0.1);
+  box-shadow: 0 4px 12px rgba(29, 126, 153, 0.2);
+}
+
+.nav-links a.active,
+.nav-links button.active {
+  color: var(--primary-color);
+}
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: var(--metallic-gradient);
+  border-radius: 2px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    width: 0%;
+    opacity: 0;
+  }
+
+  to {
+    width: 80%;
+    opacity: 1;
+  }
 }
 
 /* Hamburger Menu Styles */
@@ -166,6 +228,28 @@ body.menu-open {
   text-align: center;
 }
 
+/* Special metallic text classes for accent elements */
+.metallic-text {
+  background: var(--metallic-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: bold;
+}
+
+.metallic-border {
+  border: 2px solid transparent;
+  background: linear-gradient(var(--background-color), var(--background-color)) padding-box,
+    var(--metallic-gradient) border-box;
+  border-radius: 8px;
+}
+
+.metallic-glow:hover {
+  box-shadow: 0 0 20px rgba(29, 126, 153, 0.3),
+    0 0 40px rgba(195, 199, 202, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
 /* Tablet View (768px - 1024px) */
 @media screen and (max-width: 1024px) and (min-width: 769px) {
   .navbar {
@@ -180,6 +264,11 @@ body.menu-open {
   .nav-links button {
     margin-left: 15px;
     font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+
+  .nav-links a.active::after {
+    height: 2px;
   }
 
   button {
@@ -238,7 +327,7 @@ body.menu-open {
     padding: 80px 20px 20px;
     transition: right 0.3s ease;
     z-index: 1001;
-    border-left: 1px solid rgba(44, 191, 242, 0.2);
+    border-left: 1px solid rgba(29, 126, 153, 0.3);
     box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
     flex-wrap: nowrap !important;
     gap: 0 !important;
@@ -261,7 +350,7 @@ body.menu-open {
     padding: 12px 20px;
     font-size: 1rem;
     border-radius: 8px;
-    background-color: rgba(44, 191, 242, 0.1);
+    background-color: rgba(29, 126, 153, 0.1);
     width: 100%;
     max-width: 220px;
     text-align: center;
@@ -270,14 +359,27 @@ body.menu-open {
     text-decoration: none;
     color: var(--text-color);
     box-sizing: border-box;
+    position: relative;
   }
 
   .nav-links a:hover,
   .nav-links button:hover {
-    background-color: rgba(44, 191, 242, 0.2);
+    background-color: rgba(29, 126, 153, 0.2);
     transform: translateY(-2px);
     border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(44, 191, 242, 0.3);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.3);
+    color: var(--primary-color);
+  }
+
+  .nav-links a.active {
+    background: var(--metallic-gradient);
+    color: #ffffff;
+    border-color: var(--primary-color);
+  }
+
+  .nav-links a.active::after {
+    display: none;
+    /* Hide underline in mobile menu */
   }
 
   .nav-links a:active,
