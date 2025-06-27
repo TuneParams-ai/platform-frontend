@@ -54,7 +54,10 @@ const Navbar = ({ user }) => {
   return (
     <nav className="navbar">
       <div className="logo">
-        <Link to="/" onClick={closeMenu}>TUNEPARAMS</Link>
+        <Link to="/" onClick={closeMenu}>
+          <img src="/logo192.png" alt="TuneParams Logo" className="logo-image" />
+          TunePARAMS
+        </Link>
       </div>
 
       {/* Hamburger Menu Button */}

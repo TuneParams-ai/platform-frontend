@@ -65,6 +65,32 @@ button:active {
   background-clip: text;
   font-weight: bold;
   font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar .logo a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  background: var(--metallic-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: bold;
+}
+
+.logo-image {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.navbar .logo:hover .logo-image {
+  transform: scale(1.1);
 }
 
 .nav-links a,
@@ -260,6 +286,11 @@ body.menu-open {
     font-size: 1.3rem;
   }
 
+  .logo-image {
+    width: 28px;
+    height: 28px;
+  }
+
   .nav-links a,
   .nav-links button {
     margin-left: 15px;
@@ -305,6 +336,11 @@ body.menu-open {
   .navbar .logo {
     font-size: 1.2rem;
     margin-bottom: 0;
+  }
+
+  .logo-image {
+    width: 26px;
+    height: 26px;
   }
 
   /* Show hamburger menu on mobile */
@@ -416,6 +452,11 @@ body.menu-open {
 
   .navbar .logo {
     font-size: 1.1rem;
+  }
+
+  .logo-image {
+    width: 24px;
+    height: 24px;
   }
 
   .hamburger {
