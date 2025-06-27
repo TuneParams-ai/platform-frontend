@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 
 import Landing from "./pages/Landing";
 import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
 import Dashboard from "./pages/Dashboard";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -25,6 +26,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/courses" element={<Courses />} />
+            <Route path="/courses/:courseId" element={<CourseDetail />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
