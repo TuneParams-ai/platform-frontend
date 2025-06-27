@@ -50,7 +50,6 @@ export const coursesData = [
         nextBatchDate: "2025-08-20",
         rating: 4.9,
         price: 179,
-        originalPrice: 249,
         icon: "🚀",
         category: "Machine Learning",
         instructor: "Dr. Sarah Rodriguez",
