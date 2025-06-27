@@ -1,69 +1,67 @@
 :root {
-    --primary-color: #2cbff2;
-    --background-color: #0d0d1a;
-    --text-color: #ffffff;
-    --secondary-text-color: #a0a0a0;
-    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --primary-color: #2cbff2;
+  --background-color: #000000;
+  --text-color: #ffffff;
+  --secondary-text-color: #a0a0a0;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: var(--font-family);
-    background-color: var(--background-color);
-    color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 a {
-    color: var(--primary-color);
-    text-decoration: none;
+  color: var(--primary-color);
+  text-decoration: none;
 }
 
 button {
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #1aaed6;
+  background-color: #1aaed6;
 }
 
-/* NAV BAR */
-
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #121224;
-    padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0b07355b;
+  padding: 20px 40px;
 }
 
 .navbar .logo {
-    color: var(--primary-color);
-    font-weight: bold;
-    font-size: 1.5rem;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.5rem;
 }
 
 .nav-links a,
 .nav-links button {
-    margin-left: 20px;
-    color: var(--text-color);
-    background: none;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
+  margin-left: 20px;
+  color: var(--text-color);
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 .footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #0b0b1a;
-    color: var(--secondary-text-color);
-    margin-top: 40px;
+  text-align: center;
+  padding: 20px;
+  background-color: #0b0b1a;
+  color: var(--secondary-text-color);
+  margin-top: 40px;
 }
