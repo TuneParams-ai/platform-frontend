@@ -11,6 +11,7 @@ import Courses from "./pages/Courses";
 import Dashboard from "./pages/Dashboard";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 import "./styles/root.css"; // global styles
 import "./App.css"; // optional App-specific styles
@@ -27,6 +28,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </main>
         <Footer />
