@@ -30,6 +30,21 @@
   font-size: 1.1rem;
   padding: 12px 32px;
   margin-top: 20px;
+  background: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%);
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaButton:hover {
+  background: linear-gradient(135deg, #C3C7CA 0%, #1D7E99 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(29, 126, 153, 0.4);
 }
 
 .features {
@@ -42,6 +57,7 @@
 
 .featureItem {
   background: #1c1c2e;
+  border: 1px solid rgba(29, 126, 153, 0.2);
   border-radius: 10px;
   padding: 15px 20px;
   color: var(--secondary-text-color);
@@ -49,6 +65,13 @@
   align-items: center;
   gap: 10px;
   font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.featureItem:hover {
+  border-color: rgba(29, 126, 153, 0.4);
+  box-shadow: 0 4px 12px rgba(29, 126, 153, 0.1);
+  transform: translateY(-2px);
 }
 
 /* Tablet View (768px - 1024px) */
@@ -69,6 +92,11 @@
   .ctaButton {
     font-size: 1rem;
     padding: 10px 28px;
+    background: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%);
+  }
+
+  .ctaButton:hover {
+    background: linear-gradient(135deg, #C3C7CA 0%, #1D7E99 100%);
   }
 
   .features {
@@ -109,6 +137,11 @@
     font-size: 0.95rem;
     padding: 12px 24px;
     margin-top: 15px;
+    background: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%);
+  }
+
+  .ctaButton:hover {
+    background: linear-gradient(135deg, #C3C7CA 0%, #1D7E99 100%);
   }
 
   .features {
@@ -149,6 +182,11 @@
   .ctaButton {
     font-size: 0.9rem;
     padding: 10px 20px;
+    background: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%);
+  }
+
+  .ctaButton:hover {
+    background: linear-gradient(135deg, #C3C7CA 0%, #1D7E99 100%);
   }
 
   .featureItem {
