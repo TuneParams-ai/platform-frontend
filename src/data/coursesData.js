@@ -35,7 +35,8 @@ export const coursesData = [
             "Implement common ML algorithms",
             "Evaluate model performance",
             "Work with real datasets"
-        ]
+        ],
+        downloadUrl: "/data/sample-course-info.pdf"
     },
     {
         id: "ml-advanced",
@@ -79,7 +80,8 @@ export const coursesData = [
             "Design and optimize neural architectures",
             "Apply meta-learning and transfer learning",
             "Conduct ML research and publish findings"
-        ]
+        ],
+        downloadUrl: "/data/sample-course-info.pdf"
     },
     {
         id: "dl-neural-networks",
@@ -95,7 +97,8 @@ export const coursesData = [
         price: 149,
         originalPrice: 199,
         icon: "🧠",
-        category: "Deep Learning"
+        category: "Deep Learning",
+        downloadUrl: "/data/sample-course-info.pdf"
         // Note: Missing instructor, curriculum, prerequisites, outcomes - will show N/A
     },
     {
@@ -119,7 +122,8 @@ export const coursesData = [
             "Master Python fundamentals",
             "Work with data using pandas and numpy",
             "Create visualizations with matplotlib"
-        ]
+        ],
+        downloadUrl: "/data/sample-course-info.pdf"
         // Note: Missing instructorBio, curriculum - will show N/A
     },
     {
@@ -136,7 +140,8 @@ export const coursesData = [
         price: 129,
         originalPrice: 179,
         icon: "💬",
-        category: "NLP"
+        category: "NLP",
+        downloadUrl: "/data/sample-course-info.pdf"
         // Note: Missing most details - will show N/A
     },
     {
@@ -153,7 +158,8 @@ export const coursesData = [
         price: 119,
         originalPrice: 159,
         icon: "👁️",
-        category: "Computer Vision"
+        category: "Computer Vision",
+        downloadUrl: "/data/sample-course-info.pdf"
         // Note: Missing most details - will show N/A
     },
     {
@@ -170,7 +176,8 @@ export const coursesData = [
         price: 69,
         originalPrice: 99,
         icon: "📊",
-        category: "Data Science"
+        category: "Data Science",
+        downloadUrl: "/data/sample-course-info.pdf"
         // Note: Missing most details - will show N/A
     },
     {
@@ -187,7 +194,8 @@ export const coursesData = [
         price: 139,
         originalPrice: 189,
         icon: "🚀",
-        category: "MLOps"
+        category: "MLOps",
+        downloadUrl: "/data/sample-course-info.pdf"
         // Note: Missing most details - will show N/A
     },
     {
@@ -204,7 +212,8 @@ export const coursesData = [
         price: 89,
         originalPrice: 129,
         icon: "📈",
-        category: "Statistics"
+        category: "Statistics",
+        downloadUrl: "/data/sample-course-info.pdf"
         // Note: Missing most details - will show N/A
     }
 ];
