@@ -1,5 +1,23 @@
 # platform-frontend
 
+# TuneParams.ai Educational Platform Frontend
+
+This is the frontend application for TuneParams.ai educational platform, built with React and designed with a modern dark theme.
+
+## Deployment
+
+This app is configured for GitHub Pages deployment with support for client-side routing.
+
+### `npm run deploy`
+
+Builds and deploys the app to GitHub Pages.\
+The app is configured to work with custom domain: www.tuneparams.ai
+
+**Note:** The app includes special configuration for GitHub Pages SPA routing:
+- `public/404.html` - Handles page reloads on non-root routes
+- `public/index.html` - Includes SPA routing script
+- Custom domain configuration via `CNAME` file
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
