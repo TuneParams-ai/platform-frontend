@@ -7,6 +7,7 @@ function Contact() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        phone: "",
         message: ""
     });
 
@@ -67,6 +68,21 @@ function Contact() {
                             onChange={handleChange}
                             placeholder="Your email address"
                             required
+                            className="form-input"
+                        />
+                    </div>
+
+                    {/* Phone Field */}
+                    <div className="form-field">
+                        <label className="form-label">
+                            Phone Number <span className="optional-text">(optional)</span>
+                        </label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            placeholder="Your phone number"
                             className="form-input"
                         />
                     </div>

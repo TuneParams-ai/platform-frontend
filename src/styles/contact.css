@@ -59,6 +59,13 @@
     font-size: 0.9rem;
 }
 
+.optional-text {
+    color: var(--secondary-text-color);
+    font-weight: 400;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
 .form-input,
 .form-textarea {
     padding: 12px 16px;
