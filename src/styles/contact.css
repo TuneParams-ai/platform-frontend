@@ -160,3 +160,37 @@
         gap: 10px;
     }
 }
+
+@media (max-width: 480px) {
+    .contact-page-container {
+        padding: 5px;
+    }
+
+    .contact-card {
+        padding: 25px 15px;
+        border-radius: 12px;
+    }
+
+    .contact-title {
+        font-size: 1.3rem;
+    }
+
+    .contact-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .form-input,
+    .form-textarea {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .submit-button {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+    .contact-details {
+        font-size: 0.85rem;
+    }
+}
