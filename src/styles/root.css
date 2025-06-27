@@ -96,7 +96,7 @@ button:active {
 .nav-links a,
 .nav-links button {
   margin-left: 20px;
-  color: var(--text-color);
+  color: var(--secondary-text-color);
   background: none;
   border: none;
   font-size: 1rem;
@@ -110,10 +110,11 @@ button:active {
 
 .nav-links a:hover,
 .nav-links button:hover {
-  color: var(--primary-color);
+  color: var(--text-color);
   transform: translateY(-2px);
-  background-color: rgba(29, 126, 153, 0.1);
-  box-shadow: 0 4px 12px rgba(29, 126, 153, 0.2);
+  background-color: #0b073534;
+  box-shadow: 0 4px 12px rgba(29, 126, 153, 0.212);
+  border-radius: 5rem;
 }
 
 .nav-links a.active,
@@ -129,7 +130,10 @@ button:active {
   transform: translateX(-50%);
   width: 80%;
   height: 3px;
-  background: var(--metallic-gradient);
+  background: linear-gradient(90deg,
+      #0b07355b 0%,
+      #1D7E99 50%,
+      #0b07355b 100%);
   border-radius: 2px;
   animation: slideIn 0.3s ease-out;
 }
