@@ -387,6 +387,41 @@
 }
 
 /* Responsive Design */
+/* Tablet View (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .course-detail-header {
+        padding: 35px 25px;
+    }
+
+    .course-hero {
+        gap: 30px;
+    }
+
+    .course-hero-content {
+        gap: 25px;
+    }
+
+    .course-icon-large {
+        font-size: 3.5rem;
+        width: 90px;
+        height: 90px;
+    }
+
+    .course-detail-title {
+        font-size: 2.2rem;
+    }
+
+    .course-content {
+        grid-template-columns: 1.8fr 1fr;
+        gap: 30px;
+        padding: 35px 25px;
+    }
+
+    .course-enrollment {
+        min-width: 180px;
+    }
+}
+
 @media (max-width: 768px) {
     .course-detail-header {
         padding: 30px 15px;
@@ -434,6 +469,12 @@
     .course-section {
         padding: 20px;
     }
+
+    .back-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -452,7 +493,14 @@
     .course-meta-detail {
         flex-direction: column;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+    }
+
+    .course-enrollment-detail,
+    .course-level-detail,
+    .course-duration-detail,
+    .course-rating-detail {
+        font-size: 0.85rem;
     }
 
     .course-content {
