@@ -83,14 +83,14 @@ button:active {
 }
 
 .logo-image {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
 
 .navbar .logo:hover .logo-image {
-  transform: scale(1.1);
+  transform: scale(1.3);
 }
 
 .nav-links a,
@@ -291,8 +291,8 @@ body.menu-open {
   }
 
   .logo-image {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
   }
 
   .nav-links a,
@@ -304,6 +304,10 @@ body.menu-open {
 
   .nav-links a.active::after {
     height: 2px;
+  }
+
+  .navbar .logo:hover .logo-image {
+    transform: scale(1.25);
   }
 
   button {
@@ -343,8 +347,12 @@ body.menu-open {
   }
 
   .logo-image {
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .navbar .logo:hover .logo-image {
+    transform: scale(1.2);
   }
 
   /* Show hamburger menu on mobile */
@@ -446,6 +454,25 @@ body.menu-open {
     font-size: 1.8rem;
     margin-bottom: 15px;
   }
+
+  /* Improve touch targets for mobile */
+  button,
+  .filter-btn,
+  .enroll-btn,
+  .preview-btn,
+  .back-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Better mobile form inputs */
+  input,
+  textarea,
+  select {
+    min-height: 44px;
+    font-size: 16px;
+    /* Prevents zoom on iOS */
+  }
 }
 
 /* Small Mobile View (up to 480px) */
@@ -459,8 +486,12 @@ body.menu-open {
   }
 
   .logo-image {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .navbar .logo:hover .logo-image {
+    transform: scale(1.15);
   }
 
   .hamburger {
@@ -498,9 +529,79 @@ body.menu-open {
   .page-container {
     padding: 10px 8px;
   }
+}
 
-  .page-container h1 {
-    font-size: 1.5rem;
-    margin-bottom: 12px;
+/* Landscape orientation improvements */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .navbar {
+    padding: 8px 15px;
+  }
+
+  .course-detail-header {
+    padding: 15px 10px;
+  }
+
+  .course-hero {
+    gap: 15px;
+  }
+
+  .course-icon-large {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+
+  .navbar .logo:hover .logo-image {
+    transform: scale(1.1);
+  }
+
+  .nav-links {
+    width: 200px;
+    padding: 60px 10px 10px;
+  }
+
+  .nav-links a,
+  .nav-links button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    margin: 0 0 10px 0;
+  }
+}
+
+/* Ultra-wide and 4K screen improvements */
+@media screen and (min-width: 1400px) {
+  .courses-grid {
+    max-width: 1400px;
+  }
+
+  .course-content {
+    max-width: 1400px;
+  }
+
+  .navbar {
+    padding: 20px 60px;
+  }
+
+  .navbar .logo:hover .logo-image {
+    transform: scale(1.35);
+  }
+
+  .courses-page-container {
+    padding: 50px 40px;
+  }
+
+  .course-detail-header {
+    padding: 50px 40px;
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  .courses-grid {
+    max-width: 1600px;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  }
+
+  .course-content {
+    max-width: 1600px;
   }
 }
