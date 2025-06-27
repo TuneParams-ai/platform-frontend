@@ -1,0 +1,322 @@
+/* Register Page Styles */
+
+.register-page-container {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(29, 126, 153, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.register-card {
+    background: rgba(11, 11, 26, 0.95);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(29, 126, 153, 0.1);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.register-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin: 0 0 8px 0;
+    background: var(--metallic-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.register-subtitle {
+    color: var(--secondary-text-color);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.name-fields-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field-half {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.form-label {
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-input {
+    padding: 12px 16px;
+    border: 2px solid rgba(29, 126, 153, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.1);
+}
+
+.password-field-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input {
+    padding: 12px 16px;
+    border: 2px solid rgba(29, 126, 153, 0.2);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    font-size: 1rem;
+    outline: none;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.password-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.1);
+}
+
+.password-toggle-button {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--secondary-text-color);
+    cursor: pointer;
+    padding: 4px;
+    font-size: 1.2rem;
+}
+
+.password-toggle-button:hover {
+    color: var(--primary-color);
+}
+
+.submit-button {
+    background: var(--metallic-gradient);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+    background: var(--metallic-gradient-reverse);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+.register-footer {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(29, 126, 153, 0.1);
+}
+
+.footer-text {
+    color: var(--secondary-text-color);
+    margin: 0;
+}
+
+.footer-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer-link:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+/* Tablet View (768px - 1024px) */
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+    .register-page-container {
+        padding: 15px;
+    }
+
+    .register-card {
+        max-width: 450px;
+        padding: 35px;
+    }
+
+    .register-title {
+        font-size: 1.8rem;
+    }
+
+    .form-input,
+    .password-input {
+        padding: 11px 14px;
+        font-size: 0.95rem;
+    }
+
+    .submit-button {
+        padding: 13px 22px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Mobile View (481px - 768px) */
+@media screen and (max-width: 768px) and (min-width: 481px) {
+    .register-page-container {
+        padding: 15px;
+    }
+
+    .register-card {
+        max-width: 400px;
+        padding: 30px 25px;
+    }
+
+    .register-title {
+        font-size: 1.6rem;
+    }
+
+    .register-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .name-fields-row {
+        gap: 10px;
+    }
+
+    .form-input,
+    .password-input {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+    }
+
+    .submit-button {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+
+    .password-toggle-button {
+        font-size: 1.1rem;
+    }
+}
+
+/* Small Mobile View (up to 480px) */
+@media screen and (max-width: 480px) {
+    .register-page-container {
+        padding: 10px;
+    }
+
+    .register-card {
+        max-width: 100%;
+        padding: 25px 20px;
+        border-radius: 12px;
+    }
+
+    .register-title {
+        font-size: 1.4rem;
+    }
+
+    .register-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .register-form {
+        gap: 16px;
+    }
+
+    .name-fields-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .form-field-half {
+        flex: none;
+    }
+
+    .form-input,
+    .password-input {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .form-label {
+        font-size: 0.8rem;
+    }
+
+    .submit-button {
+        padding: 12px 18px;
+        font-size: 0.9rem;
+    }
+
+    .password-toggle-button {
+        font-size: 1rem;
+        right: 10px;
+    }
+
+    .footer-text {
+        font-size: 0.85rem;
+    }
+}
+
+/* Extra Small Mobile View (up to 360px) */
+@media screen and (max-width: 360px) {
+    .register-card {
+        padding: 20px 15px;
+    }
+
+    .register-title {
+        font-size: 1.3rem;
+    }
+
+    .form-input,
+    .password-input {
+        padding: 9px 10px;
+        font-size: 0.85rem;
+    }
+
+    .submit-button {
+        padding: 11px 16px;
+        font-size: 0.85rem;
+    }
+}

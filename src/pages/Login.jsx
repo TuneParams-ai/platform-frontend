@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import "../styles/login.css";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -23,59 +24,23 @@ const Login = () => {
     };
 
     return (
-        <div style={{
-            minHeight: 'calc(100vh - 140px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '20px',
-            background: 'linear-gradient(135deg, rgba(29, 126, 153, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%)'
-        }}>
-            <div style={{
-                background: 'rgba(11, 11, 26, 0.95)',
-                border: '1px solid rgba(29, 126, 153, 0.2)',
-                borderRadius: '16px',
-                padding: '40px',
-                width: '100%',
-                maxWidth: '480px',
-                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(29, 126, 153, 0.1)'
-            }}>
+        <div className="login-page-container">
+            <div className="login-card">
                 {/* Header */}
-                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <h1 style={{
-                        fontSize: '2rem',
-                        fontWeight: 'bold',
-                        color: 'var(--text-color)',
-                        margin: '0 0 8px 0',
-                        background: 'var(--metallic-gradient)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text'
-                    }}>
+                <div className="login-header">
+                    <h1 className="login-title">
                         Welcome Back
                     </h1>
-                    <p style={{
-                        color: 'var(--secondary-text-color)',
-                        fontSize: '1rem',
-                        margin: '0'
-                    }}>
+                    <p className="login-subtitle">
                         Sign in to your account
                     </p>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '20px'
-                }}>
+                <form onSubmit={handleSubmit} className="login-form">
                     {/* Email Field */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{
-                            color: 'var(--text-color)',
-                            fontWeight: '500',
-                            fontSize: '0.9rem'
-                        }}>
+                    <div className="form-field">
+                        <label className="form-label">
                             Email Address
                         </label>
                         <input
@@ -85,29 +50,16 @@ const Login = () => {
                             onChange={handleChange}
                             placeholder="Enter your email"
                             required
-                            style={{
-                                padding: '12px 16px',
-                                border: '2px solid rgba(29, 126, 153, 0.2)',
-                                borderRadius: '8px',
-                                background: 'rgba(255, 255, 255, 0.05)',
-                                color: 'var(--text-color)',
-                                fontSize: '1rem',
-                                outline: 'none',
-                                transition: 'all 0.3s ease'
-                            }}
+                            className="form-input"
                         />
                     </div>
 
                     {/* Password Field */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{
-                            color: 'var(--text-color)',
-                            fontWeight: '500',
-                            fontSize: '0.9rem'
-                        }}>
+                    <div className="form-field">
+                        <label className="form-label">
                             Password
                         </label>
-                        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <div className="password-field-container">
                             <input
                                 type={showPassword ? "text" : "password"}
                                 name="password"
@@ -115,31 +67,12 @@ const Login = () => {
                                 onChange={handleChange}
                                 placeholder="Enter your password"
                                 required
-                                style={{
-                                    padding: '12px 16px',
-                                    border: '2px solid rgba(29, 126, 153, 0.2)',
-                                    borderRadius: '8px',
-                                    background: 'rgba(255, 255, 255, 0.05)',
-                                    color: 'var(--text-color)',
-                                    fontSize: '1rem',
-                                    outline: 'none',
-                                    width: '100%',
-                                    transition: 'all 0.3s ease'
-                                }}
+                                className="password-input"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                style={{
-                                    position: 'absolute',
-                                    right: '12px',
-                                    background: 'none',
-                                    border: 'none',
-                                    color: 'var(--secondary-text-color)',
-                                    cursor: 'pointer',
-                                    padding: '4px',
-                                    fontSize: '1.2rem'
-                                }}
+                                className="password-toggle-button"
                             >
                                 {showPassword ? "👁️" : "👁️‍🗨️"}
                             </button>
@@ -147,57 +80,24 @@ const Login = () => {
                     </div>
 
                     {/* Forgot Password Link */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-8px' }}>
-                        <Link
-                            to="/forgot-password"
-                            style={{
-                                color: 'var(--primary-color)',
-                                textDecoration: 'none',
-                                fontSize: '0.9rem'
-                            }}
-                        >
+                    <div className="forgot-password-container">
+                        <Link to="/forgot-password" className="forgot-password-link">
                             Forgot your password?
                         </Link>
                     </div>
 
                     {/* Submit Button */}
-                    <button
-                        type="submit"
-                        style={{
-                            background: 'var(--metallic-gradient)',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '14px 24px',
-                            fontSize: '1rem',
-                            fontWeight: '600',
-                            cursor: 'pointer',
-                            marginTop: '8px',
-                            transition: 'all 0.3s ease'
-                        }}
-                    >
+                    <button type="submit" className="submit-button">
                         Sign In
                     </button>
                 </form>
 
                 {/* Footer */}
-                <div style={{
-                    textAlign: 'center',
-                    marginTop: '24px',
-                    paddingTop: '24px',
-                    borderTop: '1px solid rgba(29, 126, 153, 0.1)'
-                }}>
-                    <p style={{ color: 'var(--secondary-text-color)', margin: '0' }}>
+                <div className="login-footer">
+                    <p className="footer-text">
                         Don't have an account?{" "}
-                        <Link
-                            to="/register"
-                            style={{
-                                color: 'var(--primary-color)',
-                                textDecoration: 'none',
-                                fontWeight: '500'
-                            }}
-                        >
-                            Sign up here
+                        <Link to="/register" className="footer-link">
+                            Sign up
                         </Link>
                     </p>
                 </div>
