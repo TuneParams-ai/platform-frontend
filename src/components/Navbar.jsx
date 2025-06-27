@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./../styles/root.css";
 
 const Navbar = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -11,6 +12,17 @@ const Navbar = ({ user }) => {
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  // Function to check if a path is active
+  const isActivePath = (path) => {
+    if (path === "/" && location.pathname === "/") {
+      return true;
+    }
+    if (path !== "/" && location.pathname.startsWith(path)) {
+      return true;
+    }
+    return false;
   };
 
   // Prevent body scroll when menu is open
@@ -58,15 +70,55 @@ const Navbar = ({ user }) => {
 
       {/* Navigation Links */}
       <div className={`nav-links ${isOpen ? 'nav-links-open' : ''}`}>
-        <Link to="/" onClick={closeMenu}>Home</Link>
-        <Link to="/courses" onClick={closeMenu}>Courses</Link>
-        {user?.role === "student" && <Link to="/my-courses" onClick={closeMenu}>My Courses</Link>}
-        {user?.role === "admin" && <Link to="/dashboard" onClick={closeMenu}>Admin Panel</Link>}
-        <Link to="/contact" onClick={closeMenu}>Contact</Link>
+        <Link
+          to="/"
+          onClick={closeMenu}
+          className={isActivePath("/") ? "active" : ""}
+        >
+          Home
+        </Link>
+        <Link
+          to="/courses"
+          onClick={closeMenu}
+          className={isActivePath("/courses") ? "active" : ""}
+        >
+          Courses
+        </Link>
+        {user?.role === "student" && (
+          <Link
+            to="/my-courses"
+            onClick={closeMenu}
+            className={isActivePath("/my-courses") ? "active" : ""}
+          >
+            My Courses
+          </Link>
+        )}
+        {user?.role === "admin" && (
+          <Link
+            to="/dashboard"
+            onClick={closeMenu}
+            className={isActivePath("/dashboard") ? "active" : ""}
+          >
+            Admin Panel
+          </Link>
+        )}
+        <Link
+          to="/contact"
+          onClick={closeMenu}
+          className={isActivePath("/contact") ? "active" : ""}
+        >
+          Contact
+        </Link>
         {user ? (
           <button onClick={() => { user.logout(); closeMenu(); }}>Logout</button>
         ) : (
-          <Link to="/login" onClick={closeMenu}>Login</Link>
+          <Link
+            to="/login"
+            onClick={closeMenu}
+            className={isActivePath("/login") ? "active" : ""}
+          >
+            Login
+          </Link>
         )}
       </div>
 
