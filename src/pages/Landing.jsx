@@ -9,7 +9,7 @@ const Landing = () => {
       <p className={styles.subheading}>
         A complete machine learning course covering everything you need to build intelligent systems.
       </p>
-      <button className="cta-button">Enroll Now</button>
+      <button className={styles.ctaButton}>Enroll Now</button>
       <div className={styles.features}>
         <div className={styles.featureItem}>🚀 Beginner to Pro</div>
         <div className={styles.featureItem}>📚 Multiple Lessons</div>

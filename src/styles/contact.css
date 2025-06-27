@@ -25,3 +25,81 @@
     border-radius: 5px;
     cursor: pointer;
 }
+
+/* Tablet View (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+    .contact-container {
+        max-width: 500px;
+        padding: 1.5rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        padding: 0.7rem;
+        font-size: 0.95rem;
+    }
+
+    .contact-form button {
+        padding: 0.7rem;
+        font-size: 0.95rem;
+    }
+}
+
+/* Mobile View (up to 768px) */
+@media screen and (max-width: 768px) {
+    .contact-container {
+        max-width: 100%;
+        padding: 1rem;
+        margin: 0 10px;
+    }
+
+    .contact-form {
+        gap: 0.8rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        padding: 0.8rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #444;
+        background-color: #1a1a1a;
+        color: #fff;
+    }
+
+    .contact-form textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .contact-form button {
+        padding: 0.8rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        background-color: var(--primary-color);
+        transition: background-color 0.3s ease;
+    }
+
+    .contact-form button:hover {
+        background-color: #1aaed6;
+    }
+}
+
+/* Small Mobile View (up to 480px) */
+@media screen and (max-width: 480px) {
+    .contact-container {
+        padding: 0.8rem;
+        margin: 0 5px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .contact-form button {
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+}

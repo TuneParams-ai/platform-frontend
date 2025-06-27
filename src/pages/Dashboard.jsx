@@ -2,7 +2,7 @@ import React from "react";
 
 const Dashboard = () => {
   return (
-    <div>
+    <div className="page-container">
       <h1>Admin Dashboard</h1>
       {/* Admin features like course management */}
     </div>

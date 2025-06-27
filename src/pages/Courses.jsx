@@ -2,7 +2,7 @@ import React from "react";
 
 const Courses = () => {
   return (
-    <div>
+    <div className="page-container">
       <h1>Available Courses</h1>
       {/* Course list will go here */}
     </div>

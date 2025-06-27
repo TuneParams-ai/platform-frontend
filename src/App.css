@@ -37,3 +37,49 @@
     transform: rotate(360deg);
   }
 }
+
+/* Tablet View (768px - 1024px) */
+@media screen and (max-width: 1024px) {
+  .App-logo {
+    height: 35vmin;
+  }
+
+  .App-header {
+    font-size: calc(8px + 2vmin);
+    padding: 20px;
+  }
+}
+
+/* Mobile View (up to 768px) */
+@media screen and (max-width: 768px) {
+  .App {
+    padding: 0 10px;
+  }
+
+  .App-logo {
+    height: 30vmin;
+  }
+
+  .App-header {
+    min-height: calc(100vh - 80px);
+    /* Account for fixed footer */
+    font-size: calc(6px + 2vmin);
+    padding: 15px;
+  }
+}
+
+/* Small Mobile View (up to 480px) */
+@media screen and (max-width: 480px) {
+  .App {
+    padding: 0 5px;
+  }
+
+  .App-logo {
+    height: 25vmin;
+  }
+
+  .App-header {
+    font-size: calc(5px + 2vmin);
+    padding: 10px;
+  }
+}
