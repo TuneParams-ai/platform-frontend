@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { isCourseNearlyFull, isCourseFull } from "../data/coursesData";
 
 const CourseCard = ({ course }) => {
   const navigate = useNavigate();
@@ -20,8 +21,16 @@ const CourseCard = ({ course }) => {
     navigate(`/courses/${course.id}`);
   };
 
+  const nearlyFull = isCourseNearlyFull(course);
+  const full = isCourseFull(course);
+
   return (
     <div className="course-card" onClick={handleCardClick}>
+      {nearlyFull && (
+        <div className={`enrollment-status ${full ? 'full' : 'nearly-full'}`}>
+          {full ? "Course Full" : "Few Seats Left"}
+        </div>
+      )}
       <div className="course-image">{course.icon}</div>
       <h3 className="course-title">{course.title}</h3>
       <p className="course-description">{course.description}</p>
@@ -31,7 +40,7 @@ const CourseCard = ({ course }) => {
       </div>
       <div className="course-stats">
         <span className="course-stat">📚 {course.lessons} lessons</span>
-        <span className="course-stat">👥 {course.students} students</span>
+        <span className="course-stat">👥 {course.students}/{course.maxCapacity} seats</span>
         <span className="course-stat">⭐ {course.rating}/5</span>
       </div>
       <div className="course-price">
