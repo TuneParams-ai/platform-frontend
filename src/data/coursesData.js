@@ -38,6 +38,50 @@ export const coursesData = [
         ]
     },
     {
+        id: "ml-advanced",
+        title: "Advanced Machine Learning",
+        description: "Deep dive into advanced ML concepts including ensemble methods, deep reinforcement learning, and cutting-edge research topics. Perfect for experienced practitioners.",
+        level: "Advanced",
+        duration: "10 weeks",
+        lessons: 30,
+        students: 15,
+        maxCapacity: 25,
+        nextBatchDate: "2025-08-20",
+        rating: 4.9,
+        price: 179,
+        originalPrice: 249,
+        icon: "🚀",
+        category: "Machine Learning",
+        instructor: "Dr. Sarah Rodriguez",
+        instructorBio: "Former Google AI researcher with 15+ years in advanced ML and published papers in top-tier conferences.",
+        curriculum: [
+            { week: 1, title: "Advanced Feature Engineering", lessons: 3 },
+            { week: 2, title: "Ensemble Methods & Boosting", lessons: 3 },
+            { week: 3, title: "Advanced Optimization", lessons: 3 },
+            { week: 4, title: "Reinforcement Learning", lessons: 3 },
+            { week: 5, title: "AutoML & Neural Architecture Search", lessons: 3 },
+            { week: 6, title: "Explainable AI", lessons: 3 },
+            { week: 7, title: "Advanced Time Series", lessons: 3 },
+            { week: 8, title: "Graph Neural Networks", lessons: 3 },
+            { week: 9, title: "Meta-Learning", lessons: 3 },
+            { week: 10, title: "Research & Capstone Project", lessons: 3 }
+        ],
+        prerequisites: [
+            "Solid understanding of basic ML algorithms",
+            "Experience with Python and scikit-learn",
+            "Linear algebra and calculus background",
+            "Previous ML project experience"
+        ],
+        outcomes: [
+            "Master advanced ensemble techniques and boosting algorithms",
+            "Implement reinforcement learning solutions",
+            "Build explainable AI systems",
+            "Design and optimize neural architectures",
+            "Apply meta-learning and transfer learning",
+            "Conduct ML research and publish findings"
+        ]
+    },
+    {
         id: "dl-neural-networks",
         title: "Deep Learning with Neural Networks",
         description: "Master deep learning concepts and build neural networks from scratch. Covers CNNs, RNNs, and modern architectures like Transformers.",
