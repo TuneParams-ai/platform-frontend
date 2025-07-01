@@ -113,6 +113,19 @@
     transform: translateY(0);
 }
 
+.submit-button:disabled {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+}
+
+.submit-button:disabled:hover {
+    background: linear-gradient(135deg, #64748b, #475569);
+    transform: none;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+}
+
 .contact-info {
     text-align: center;
     margin-top: 32px;

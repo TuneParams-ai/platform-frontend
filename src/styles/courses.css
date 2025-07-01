@@ -95,6 +95,11 @@
     color: white;
 }
 
+.enrollment-status.coming-soon {
+    background: rgba(155, 89, 182, 0.9);
+    color: white;
+}
+
 .course-image {
     width: 100%;
     height: 200px;
@@ -228,6 +233,21 @@
     background: var(--metallic-gradient-reverse);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
+}
+
+.enroll-btn.coming-soon,
+.preview-btn.coming-soon {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+}
+
+.enroll-btn.coming-soon:hover,
+.preview-btn.coming-soon:hover {
+    background: linear-gradient(135deg, #64748b, #475569);
+    transform: none;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
 }
 
 .preview-btn {

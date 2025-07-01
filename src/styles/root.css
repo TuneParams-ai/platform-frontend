@@ -50,6 +50,19 @@ button:active {
   transform: translateY(0);
 }
 
+button:disabled {
+  background: linear-gradient(135deg, #64748b, #475569) !important;
+  color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+  box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
+}
+
+button:disabled:hover {
+  background: linear-gradient(135deg, #64748b, #475569) !important;
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;

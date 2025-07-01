@@ -128,6 +128,19 @@
     box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
 }
 
+.enroll-btn-detail.coming-soon {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+}
+
+.enroll-btn-detail.coming-soon:hover {
+    background: linear-gradient(135deg, #64748b, #475569);
+    transform: none;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+}
+
 .next-batch-info {
     margin-top: 15px;
     padding-top: 15px;
@@ -151,13 +164,15 @@
 
 .enroll-btn-detail.full {
     background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+    color: #e2e8f0;
     cursor: not-allowed;
+    box-shadow: 0 2px 4px rgba(127, 140, 141, 0.3);
 }
 
 .enroll-btn-detail.full:hover {
     background: linear-gradient(135deg, #7f8c8d, #95a5a6);
     transform: none;
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(127, 140, 141, 0.3);
 }
 
 .seats-warning {
