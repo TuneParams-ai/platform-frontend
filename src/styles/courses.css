@@ -31,8 +31,9 @@
 }
 
 .courses-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 30px;
     max-width: 1200px;
     margin: 0 auto;
@@ -48,6 +49,9 @@
     position: relative;
     overflow: hidden;
     min-height: 480px;
+    width: 350px;
+    max-width: 350px;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
 }
@@ -102,7 +106,7 @@
 
 .course-image {
     width: 100%;
-    height: 200px;
+    aspect-ratio: 16/9;
     background: var(--metallic-gradient);
     border-radius: 8px;
     margin-bottom: 20px;
@@ -313,7 +317,7 @@
     }
 
     .course-image {
-        height: 170px;
+        aspect-ratio: 16/9;
         font-size: 2.8rem;
     }
 
@@ -339,13 +343,16 @@
     }
 
     .courses-grid {
-        grid-template-columns: 1fr;
         gap: 20px;
+        padding: 0 15px;
     }
 
     .course-card {
         padding: 20px;
         min-height: 420px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
     }
 
     .course-description {
@@ -354,7 +361,7 @@
     }
 
     .course-image {
-        height: 160px;
+        aspect-ratio: 16/9;
         font-size: 2.5rem;
     }
 
@@ -397,13 +404,16 @@
     }
 
     .courses-grid {
-        grid-template-columns: 1fr;
         gap: 15px;
+        padding: 0 10px;
     }
 
     .course-card {
         padding: 15px;
         min-height: 380px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
     }
 
     .course-description {
@@ -414,7 +424,7 @@
     }
 
     .course-image {
-        height: 140px;
+        aspect-ratio: 16/9;
         font-size: 2rem;
     }
 
