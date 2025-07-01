@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { findCourseById, isCourseFull, getAvailableSeats } from "../data/coursesData";
+import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
 import "../styles/course-detail.css";
 
 const CourseDetail = () => {
@@ -12,6 +12,9 @@ const CourseDetail = () => {
 
     // Helper function to display value or N/A
     const displayValue = (value, defaultValue = "N/A") => {
+        if (isComingSoon(courseData) && (value === "TBD" || value === "N/A" || value === null || value === 0)) {
+            return "Coming Soon";
+        }
         return value ? value : defaultValue;
     };
 
@@ -37,6 +40,10 @@ const CourseDetail = () => {
     }
 
     const handleEnroll = () => {
+        if (isComingSoon(courseData)) {
+            alert("This course is still in planning phase. Please check back for updates!");
+            return;
+        }
         if (isCourseFull(courseData)) {
             alert("This course is currently full. Please check back for the next batch or contact us to join the waitlist.");
             return;
@@ -51,6 +58,7 @@ const CourseDetail = () => {
 
     const courseFull = isCourseFull(courseData);
     const availableSeats = getAvailableSeats(courseData);
+    const comingSoon = isComingSoon(courseData);
 
     return (
         <div className="course-detail-container">
@@ -78,26 +86,26 @@ const CourseDetail = () => {
                     </div>
                     <div className="course-enrollment">
                         <div className="course-price-detail">
-                            {courseData.originalPrice && (
+                            {courseData.originalPrice && !comingSoon && (
                                 <span className="original-price-detail">${courseData.originalPrice}</span>
                             )}
                             <span className="current-price-detail">
-                                {courseData.price ? `$${courseData.price}` : "Price N/A"}
+                                {comingSoon ? "Price TBD" : (courseData.price ? `$${courseData.price}` : "Price N/A")}
                             </span>
                         </div>
                         <button
-                            className={`enroll-btn-detail ${courseFull ? 'full' : ''}`}
+                            className={`enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
                             onClick={handleEnroll}
-                            disabled={courseFull}
+                            disabled={courseFull || comingSoon}
                         >
-                            {courseFull ? "Course Full - Join Waitlist" : "Enroll Now"}
+                            {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : "Enroll Now")}
                         </button>
-                        {!courseFull && availableSeats !== "N/A" && availableSeats <= 5 && (
+                        {!courseFull && !comingSoon && availableSeats !== "N/A" && availableSeats <= 5 && (
                             <div className="seats-warning">
                                 ⚠️ Only {availableSeats} seats remaining!
                             </div>
                         )}
-                        {courseData.nextBatchDate && (
+                        {courseData.nextBatchDate && !comingSoon && (
                             <div className="next-batch-info">
                                 <span className="next-batch-label">Next Batch Starts:</span>
                                 <span className="next-batch-date">
