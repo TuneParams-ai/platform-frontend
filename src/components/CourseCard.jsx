@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isCourseNearlyFull, isCourseFull, isComingSoon } from "../data/coursesData";
+import "../styles/course-image.css";
 
 const CourseCard = ({ course }) => {
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleEnroll = (e) => {
     e.stopPropagation(); // Prevent card click when clicking enroll
@@ -19,6 +22,14 @@ const CourseCard = ({ course }) => {
 
   const handleCardClick = () => {
     navigate(`/courses/${course.id}`);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
 
   const nearlyFull = isCourseNearlyFull(course);
@@ -44,7 +55,25 @@ const CourseCard = ({ course }) => {
           {full ? "Course Full" : "Few Seats Left"}
         </div>
       )}
-      <div className="course-image">{course.icon}</div>
+      <div className="course-image">
+        {!course.image || imageError ? (
+          <div className="course-image-fallback">{course.icon}</div>
+        ) : (
+          <div className="course-image-container">
+            {!imageLoaded && (
+              <div className="course-image-loading">{course.icon}</div>
+            )}
+            <img
+              src={course.image}
+              alt={course.title}
+              className={`course-image-img ${imageLoaded ? 'loaded' : 'loading'}`}
+              onError={handleImageError}
+              onLoad={handleImageLoad}
+              style={{ display: imageLoaded ? 'block' : 'none' }}
+            />
+          </div>
+        )}
+      </div>
       <h3 className="course-title">{course.title}</h3>
       <p className="course-description">{course.description}</p>
       <div className="course-meta">

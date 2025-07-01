@@ -2,6 +2,7 @@ import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
 import "../styles/course-detail.css";
+import "../styles/course-image.css";
 
 const CourseDetail = () => {
     const { courseId } = useParams();
@@ -62,61 +63,71 @@ const CourseDetail = () => {
 
     return (
         <div className="course-detail-container">
-            <div className="course-detail-header">
-                <button className="back-btn" onClick={handleGoBack}>
-                    ← Back to Courses
-                </button>
-                <div className="course-hero">
-                    <div className="course-hero-content">
-                        <div className="course-icon-large">{displayValue(courseData.icon, "📚")}</div>
-                        <div className="course-info">
-                            <h1 className="course-detail-title">{displayValue(courseData.title)}</h1>
-                            <p className="course-detail-description">{displayValue(courseData.description)}</p>
-                            <div className="course-meta-detail">
-                                <span className="course-level-detail">{displayValue(courseData.level)}</span>
-                                <span className="course-duration-detail">⏱️ {displayValue(courseData.duration)}</span>
-                                <span className="course-rating-detail">
-                                    ⭐ {displayValue(courseData.rating)}/5
-                                </span>
-                                <span className="course-enrollment-detail">
-                                    👥 {displayValue(courseData.students)}/{displayValue(courseData.maxCapacity)} seats
-                                </span>
+            <div
+                className="course-detail-header"
+                style={{
+                    backgroundImage: courseData.image ? `url(${courseData.image})` : 'none'
+                }}
+            >
+                <div className="course-detail-header-overlay"></div>
+                <div className="course-detail-header-content">
+                    <button className="back-btn" onClick={handleGoBack}>
+                        ← Back to Courses
+                    </button>
+                    <div className="course-hero">
+                        <div className="course-hero-content">
+                            <div className="course-icon-large">
+                                {displayValue(courseData.icon, "📚")}
+                            </div>
+                            <div className="course-info">
+                                <h1 className="course-detail-title">{displayValue(courseData.title)}</h1>
+                                <p className="course-detail-description">{displayValue(courseData.description)}</p>
+                                <div className="course-meta-detail">
+                                    <span className="course-level-detail">{displayValue(courseData.level)}</span>
+                                    <span className="course-duration-detail">⏱️ {displayValue(courseData.duration)}</span>
+                                    <span className="course-rating-detail">
+                                        ⭐ {displayValue(courseData.rating)}/5
+                                    </span>
+                                    <span className="course-enrollment-detail">
+                                        👥 {displayValue(courseData.students)}/{displayValue(courseData.maxCapacity)} seats
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="course-enrollment">
-                        <div className="course-price-detail">
-                            {courseData.originalPrice && !comingSoon && (
-                                <span className="original-price-detail">${courseData.originalPrice}</span>
+                        <div className="course-enrollment">
+                            <div className="course-price-detail">
+                                {courseData.originalPrice && !comingSoon && (
+                                    <span className="original-price-detail">${courseData.originalPrice}</span>
+                                )}
+                                <span className="current-price-detail">
+                                    {comingSoon ? "Price TBD" : (courseData.price ? `$${courseData.price}` : "Price N/A")}
+                                </span>
+                            </div>
+                            <button
+                                className={`enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
+                                onClick={handleEnroll}
+                                disabled={courseFull || comingSoon}
+                            >
+                                {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : "Enroll Now")}
+                            </button>
+                            {!courseFull && !comingSoon && availableSeats !== "N/A" && availableSeats <= 5 && (
+                                <div className="seats-warning">
+                                    ⚠️ Only {availableSeats} seats remaining!
+                                </div>
                             )}
-                            <span className="current-price-detail">
-                                {comingSoon ? "Price TBD" : (courseData.price ? `$${courseData.price}` : "Price N/A")}
-                            </span>
+                            {courseData.nextBatchDate && !comingSoon && (
+                                <div className="next-batch-info">
+                                    <span className="next-batch-label">Next Batch Starts:</span>
+                                    <span className="next-batch-date">
+                                        {new Date(courseData.nextBatchDate).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}
+                                    </span>
+                                </div>
+                            )}
                         </div>
-                        <button
-                            className={`enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
-                            onClick={handleEnroll}
-                            disabled={courseFull || comingSoon}
-                        >
-                            {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : "Enroll Now")}
-                        </button>
-                        {!courseFull && !comingSoon && availableSeats !== "N/A" && availableSeats <= 5 && (
-                            <div className="seats-warning">
-                                ⚠️ Only {availableSeats} seats remaining!
-                            </div>
-                        )}
-                        {courseData.nextBatchDate && !comingSoon && (
-                            <div className="next-batch-info">
-                                <span className="next-batch-label">Next Batch Starts:</span>
-                                <span className="next-batch-date">
-                                    {new Date(courseData.nextBatchDate).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                    })}
-                                </span>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>

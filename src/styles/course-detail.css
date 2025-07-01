@@ -9,6 +9,39 @@
     background: rgba(29, 126, 153, 0.1);
     border-bottom: 1px solid rgba(29, 126, 153, 0.2);
     padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Fallback background when no image is available */
+.course-detail-header:not([style*="background-image"]) {
+    background: linear-gradient(135deg, rgba(29, 126, 153, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.course-detail-header:not([style*="background-image"]) .course-detail-header-overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.course-detail-header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1;
+}
+
+.course-detail-header-content {
+    position: relative;
+    z-index: 2;
 }
 
 .course-hero {
@@ -38,6 +71,7 @@
     justify-content: center;
     color: white;
     flex-shrink: 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .course-info {
