@@ -10,14 +10,7 @@ const CourseCard = ({ course }) => {
 
   const handleEnroll = (e) => {
     e.stopPropagation(); // Prevent card click when clicking enroll
-    // TODO: Implement enrollment logic
-    console.log(`Enrolling in course: ${course.title}`);
-  };
-
-  const handlePreview = (e) => {
-    e.stopPropagation(); // Prevent card click when clicking preview
-    // TODO: Implement course preview logic
-    console.log(`Previewing course: ${course.title}`);
+    navigate(`/courses/${course.id}`);
   };
 
   const handleCardClick = () => {
@@ -100,13 +93,6 @@ const CourseCard = ({ course }) => {
           disabled={comingSoon}
         >
           {comingSoon ? "Coming Soon" : "Enroll Now"}
-        </button>
-        <button
-          className={`btn btn-secondary preview-btn ${comingSoon ? 'coming-soon' : ''}`}
-          onClick={handlePreview}
-          disabled={comingSoon}
-        >
-          {comingSoon ? "Details TBD" : "Preview"}
         </button>
       </div>
     </div>

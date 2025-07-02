@@ -27,10 +27,10 @@ const Landing = () => {
               Start your journey in AI with a hands-on, practical course designed for high-school students, experienced professionals, and curious minds.
             </p>
             <div className="hero-buttons">
-              <button className="btn cta-primary" onClick={handleEnrollClick}>
+              <button className="cta-primary" onClick={handleEnrollClick}>
                 Browse Courses
               </button>
-              <button className="btn btn-secondary cta-secondary" onClick={handleRegisterClick}>
+              <button className="cta-secondary" onClick={handleRegisterClick}>
                 Register Now
               </button>
             </div>
@@ -117,6 +117,16 @@ const Landing = () => {
             <h3>Curious Minds</h3>
             <p>Anyone curious about how AI and ML work behind the scenes</p>
           </div>
+          <div className="audience-item">
+            <div className="audience-icon">👨‍💻</div>
+            <h3>Developers</h3>
+            <p>Software developers looking to integrate AI into their applications</p>
+          </div>
+          <div className="audience-item">
+            <div className="audience-icon">📊</div>
+            <h3>Data Analysts</h3>
+            <p>Data professionals wanting to advance to machine learning roles</p>
+          </div>
         </div>
       </section>
 
@@ -151,7 +161,7 @@ const Landing = () => {
       {/* CTA Section */}
       <section className="cta-section">
         <h2>Ready to Level Up Your Skills?</h2>
-        <button className="btn cta-final" onClick={handleRegisterClick}>
+        <button className="cta-final" onClick={handleRegisterClick}>
           Register Here
         </button>
       </section>

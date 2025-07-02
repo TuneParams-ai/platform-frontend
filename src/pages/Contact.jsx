@@ -323,7 +323,7 @@ function Contact() {
                             <div className="contact-item-icon">📧</div>
                             <div className="contact-item-title">Email</div>
                             <div className="contact-item-text">
-                                {process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.ai'}
+                                {process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}
                             </div>
                         </div>
 
