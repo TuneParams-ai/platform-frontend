@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
 import PayPalTest from "./pages/PayPalTest";
 import FirebaseTest from "./components/FirebaseTest";
 
@@ -41,6 +42,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/firebase-test" element={<FirebaseTest />} />
             <Route path="/paypal-test" element={<PayPalTest />} />
             {/* Catch-all route for unmatched paths */}

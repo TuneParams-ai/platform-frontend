@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   sendEmailVerification,
+  sendPasswordResetEmail,
   applyActionCode
 } from "firebase/auth";
 
@@ -19,6 +20,7 @@ export const AuthContext = createContext({
   registerWithEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   sendVerificationEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   resendVerificationEmail: async () => ({ success: false, error: 'Firebase not configured' }),
+  sendPasswordReset: async () => ({ success: false, error: 'Firebase not configured' }),
   verifyEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   logout: async () => ({ success: false, error: 'Firebase not configured' })
 });
@@ -247,6 +249,42 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Send password reset email
+  const sendPasswordReset = async (email) => {
+    try {
+      console.log('Sending password reset email to:', email);
+
+      await sendPasswordResetEmail(auth, email, {
+        url: `${window.location.origin}/login?passwordReset=true`,
+        handleCodeInApp: false
+      });
+
+      return {
+        success: true,
+        message: 'If an account with this email exists, password reset instructions will be sent. Please check your inbox and spam folder.'
+      };
+    } catch (error) {
+      console.error('Password reset error:', error);
+
+      let errorMessage = 'Failed to send password reset email';
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email address. Please check your email or sign up first.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many password reset attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = error.message || 'Failed to send password reset email. Please try again.';
+      }
+
+      return { success: false, error: errorMessage };
+    }
+  };
+
   // Verify email with action code (for handling email verification links)
   const verifyEmail = async (actionCode) => {
     try {
@@ -340,6 +378,7 @@ const AuthProvider = ({ children }) => {
     logout,
     sendVerificationEmail,
     resendVerificationEmail,
+    sendPasswordReset,
     verifyEmail
   };
 
