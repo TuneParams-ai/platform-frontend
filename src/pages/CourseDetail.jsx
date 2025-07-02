@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
 import PayPalCheckout from "../components/PayPalCheckout";
@@ -16,6 +16,62 @@ const CourseDetail = () => {
 
     // Find the course data based on courseId (now supports alphanumeric IDs)
     const courseData = findCourseById(courseId);
+
+    // All useCallback hooks must be at the top level, before any conditional returns
+    const handlePaymentSuccess = useCallback((paymentDetails) => {
+        console.log('Payment successful:', paymentDetails);
+        setPaymentData(paymentDetails);
+        setShowSuccessModal(true);
+        setShowPayPal(false);
+
+        // Here you would typically:
+        // 1. Send payment data to your backend
+        // 2. Enroll the user in the course
+        // 3. Send confirmation email
+        // For now, we'll just log the data
+
+        // Example API call (commented out):
+        // fetch('/api/enroll', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(paymentDetails)
+        // });
+    }, []);
+
+    const handlePaymentError = useCallback((error) => {
+        console.error('Payment error:', error);
+        alert('Payment failed. Please try again or contact support.');
+        setShowPayPal(false);
+    }, []);
+
+    const handlePaymentCancel = useCallback((data) => {
+        console.log('Payment cancelled:', data);
+        setShowPayPal(false);
+        // Optionally show a message to the user
+    }, []);
+
+    const handleGoToDashboard = useCallback(() => {
+        setShowSuccessModal(false);
+        navigate('/dashboard'); // You might need to create this route
+    }, [navigate]);
+
+    const handleDownloadReceipt = useCallback(() => {
+        // Generate and download receipt
+        const receiptData = {
+            ...paymentData,
+            companyName: 'TuneParams.ai',
+            companyAddress: 'Your Company Address',
+            receiptNumber: `RCP-${Date.now()}`
+        };
+
+        console.log('Download receipt:', receiptData);
+        // Here you would generate and download a PDF receipt
+        alert('Receipt download functionality will be implemented soon!');
+    }, [paymentData]);
+
+    const handleGoBack = useCallback(() => {
+        navigate('/courses');
+    }, [navigate]);
 
     // Helper function to display value or N/A
     const displayValue = (value, defaultValue = "N/A") => {
@@ -58,61 +114,6 @@ const CourseDetail = () => {
 
         // Show PayPal checkout
         setShowPayPal(true);
-    };
-
-    const handlePaymentSuccess = (paymentDetails) => {
-        console.log('Payment successful:', paymentDetails);
-        setPaymentData(paymentDetails);
-        setShowSuccessModal(true);
-        setShowPayPal(false);
-
-        // Here you would typically:
-        // 1. Send payment data to your backend
-        // 2. Enroll the user in the course
-        // 3. Send confirmation email
-        // For now, we'll just log the data
-
-        // Example API call (commented out):
-        // fetch('/api/enroll', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(paymentDetails)
-        // });
-    };
-
-    const handlePaymentError = (error) => {
-        console.error('Payment error:', error);
-        alert('Payment failed. Please try again or contact support.');
-        setShowPayPal(false);
-    };
-
-    const handlePaymentCancel = (data) => {
-        console.log('Payment cancelled:', data);
-        setShowPayPal(false);
-        // Optionally show a message to the user
-    };
-
-    const handleGoToDashboard = () => {
-        setShowSuccessModal(false);
-        navigate('/dashboard'); // You might need to create this route
-    };
-
-    const handleDownloadReceipt = () => {
-        // Generate and download receipt
-        const receiptData = {
-            ...paymentData,
-            companyName: 'TuneParams.ai',
-            companyAddress: 'Your Company Address',
-            receiptNumber: `RCP-${Date.now()}`
-        };
-
-        console.log('Download receipt:', receiptData);
-        // Here you would generate and download a PDF receipt
-        alert('Receipt download functionality will be implemented soon!');
-    };
-
-    const handleGoBack = () => {
-        navigate('/courses');
     };
 
     const courseFull = isCourseFull(courseData);
@@ -215,130 +216,130 @@ const CourseDetail = () => {
 
                 <div className="course-content">
                     <div className="course-main">
-                    <section className="course-section">
-                        <h2>What You'll Learn</h2>
-                        {courseData.outcomes && courseData.outcomes.length > 0 ? (
-                            <ul className="outcomes-list">
-                                {courseData.outcomes.map((outcome, index) => (
-                                    <li key={index}>{outcome}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <div className="na-message">
-                                <p>Learning outcomes information is not available at this time.</p>
-                            </div>
-                        )}
-                    </section>
-
-                    <section className="course-section">
-                        <h2>Course Curriculum</h2>
-                        {courseData.curriculum && courseData.curriculum.length > 0 ? (
-                            <div className="curriculum-list">
-                                {courseData.curriculum.map((week, index) => (
-                                    <div key={index} className="curriculum-item">
-                                        <div className="week-header">
-                                            <h3>Week {week.week}: {week.title}</h3>
-                                            <span className="lesson-count">{week.lessons} lessons</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="na-message">
-                                <p>Detailed curriculum information is not available at this time.</p>
-                                <p>Course includes {displayValue(courseData.lessons)} lessons over {displayValue(courseData.duration)}.</p>
-                            </div>
-                        )}
-                    </section>
-                </div>
-
-                <div className="course-sidebar">
-                    <section className="course-section">
-                        <h3>Prerequisites</h3>
-                        {courseData.prerequisites && courseData.prerequisites.length > 0 ? (
-                            <ul className="prerequisites-list">
-                                {courseData.prerequisites.map((prereq, index) => (
-                                    <li key={index}>{prereq}</li>
-                                ))}
-                            </ul>
-                        ) : (
-                            <div className="na-message">
-                                <p>No specific prerequisites listed.</p>
-                            </div>
-                        )}
-                    </section>
-
-                    <section className="course-section">
-                        <h3>Instructor</h3>
-                        <div className="instructor-info">
-                            <h4>{displayValue(courseData.instructor)}</h4>
-                            <p>{displayValue(courseData.instructorBio, "Instructor bio not available.")}</p>
-                        </div>
-                    </section>
-
-                    <section className="course-section">
-                        <h3>Course Information</h3>
-                        <div className="course-additional-info">
-                            <div className="info-item">
-                                <strong>Category:</strong> {displayValue(courseData.category)}
-                            </div>
-                            <div className="info-item">
-                                <strong>Level:</strong> {displayValue(courseData.level)}
-                            </div>
-                            <div className="info-item">
-                                <strong>Duration:</strong> {displayValue(courseData.duration)}
-                            </div>
-                            <div className="info-item">
-                                <strong>Total Lessons:</strong> {displayValue(courseData.lessons)}
-                            </div>
-                            <div className="info-item">
-                                <strong>Available Seats:</strong> {displayValue(courseData.students)}/{displayValue(courseData.maxCapacity)}
-                            </div>
-                            <div className="info-item">
-                                <strong>Next Batch:</strong> {courseData.nextBatchDate ?
-                                    new Date(courseData.nextBatchDate).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric'
-                                    }) : "N/A"}
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className="course-section">
-                        <h3>Course Materials</h3>
-                        <div className="course-materials">
-                            {courseData.downloadUrl ? (
-                                <a
-                                    href={courseData.downloadUrl}
-                                    download={`${courseData.title || 'Course'}_Info.pdf`}
-                                    className="download-btn"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    📄 Download Course Info PDF
-                                </a>
+                        <section className="course-section">
+                            <h2>What You'll Learn</h2>
+                            {courseData.outcomes && courseData.outcomes.length > 0 ? (
+                                <ul className="outcomes-list">
+                                    {courseData.outcomes.map((outcome, index) => (
+                                        <li key={index}>{outcome}</li>
+                                    ))}
+                                </ul>
                             ) : (
-                                <div className="download-btn disabled">
-                                    📄 Course Info PDF (Coming Soon)
+                                <div className="na-message">
+                                    <p>Learning outcomes information is not available at this time.</p>
                                 </div>
                             )}
-                            <p className="download-description">
-                                Detailed course information, curriculum, and requirements
-                            </p>
-                        </div>
-                    </section>
+                        </section>
+
+                        <section className="course-section">
+                            <h2>Course Curriculum</h2>
+                            {courseData.curriculum && courseData.curriculum.length > 0 ? (
+                                <div className="curriculum-list">
+                                    {courseData.curriculum.map((week, index) => (
+                                        <div key={index} className="curriculum-item">
+                                            <div className="week-header">
+                                                <h3>Week {week.week}: {week.title}</h3>
+                                                <span className="lesson-count">{week.lessons} lessons</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="na-message">
+                                    <p>Detailed curriculum information is not available at this time.</p>
+                                    <p>Course includes {displayValue(courseData.lessons)} lessons over {displayValue(courseData.duration)}.</p>
+                                </div>
+                            )}
+                        </section>
+                    </div>
+
+                    <div className="course-sidebar">
+                        <section className="course-section">
+                            <h3>Prerequisites</h3>
+                            {courseData.prerequisites && courseData.prerequisites.length > 0 ? (
+                                <ul className="prerequisites-list">
+                                    {courseData.prerequisites.map((prereq, index) => (
+                                        <li key={index}>{prereq}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <div className="na-message">
+                                    <p>No specific prerequisites listed.</p>
+                                </div>
+                            )}
+                        </section>
+
+                        <section className="course-section">
+                            <h3>Instructor</h3>
+                            <div className="instructor-info">
+                                <h4>{displayValue(courseData.instructor)}</h4>
+                                <p>{displayValue(courseData.instructorBio, "Instructor bio not available.")}</p>
+                            </div>
+                        </section>
+
+                        <section className="course-section">
+                            <h3>Course Information</h3>
+                            <div className="course-additional-info">
+                                <div className="info-item">
+                                    <strong>Category:</strong> {displayValue(courseData.category)}
+                                </div>
+                                <div className="info-item">
+                                    <strong>Level:</strong> {displayValue(courseData.level)}
+                                </div>
+                                <div className="info-item">
+                                    <strong>Duration:</strong> {displayValue(courseData.duration)}
+                                </div>
+                                <div className="info-item">
+                                    <strong>Total Lessons:</strong> {displayValue(courseData.lessons)}
+                                </div>
+                                <div className="info-item">
+                                    <strong>Available Seats:</strong> {displayValue(courseData.students)}/{displayValue(courseData.maxCapacity)}
+                                </div>
+                                <div className="info-item">
+                                    <strong>Next Batch:</strong> {courseData.nextBatchDate ?
+                                        new Date(courseData.nextBatchDate).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric'
+                                        }) : "N/A"}
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="course-section">
+                            <h3>Course Materials</h3>
+                            <div className="course-materials">
+                                {courseData.downloadUrl ? (
+                                    <a
+                                        href={courseData.downloadUrl}
+                                        download={`${courseData.title || 'Course'}_Info.pdf`}
+                                        className="download-btn"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        📄 Download Course Info PDF
+                                    </a>
+                                ) : (
+                                    <div className="download-btn disabled">
+                                        📄 Course Info PDF (Coming Soon)
+                                    </div>
+                                )}
+                                <p className="download-description">
+                                    Detailed course information, curriculum, and requirements
+                                </p>
+                            </div>
+                        </section>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <PaymentSuccessModal
-            isOpen={showSuccessModal}
-            onClose={() => setShowSuccessModal(false)}
-            paymentData={paymentData}
-            onGoToDashboard={handleGoToDashboard}
-            onDownloadReceipt={handleDownloadReceipt}
-        />
+            <PaymentSuccessModal
+                isOpen={showSuccessModal}
+                onClose={() => setShowSuccessModal(false)}
+                paymentData={paymentData}
+                onGoToDashboard={handleGoToDashboard}
+                onDownloadReceipt={handleDownloadReceipt}
+            />
         </>
     );
 };

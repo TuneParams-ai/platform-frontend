@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 const PayPalCheckout = ({
     courseId,
@@ -13,8 +13,8 @@ const PayPalCheckout = ({
     const [isLoading, setIsLoading] = useState(true);
     const [paypalLoaded, setPaypalLoaded] = useState(false);
 
-    // PayPal Sandbox Client ID - Replace with your actual sandbox client ID
-    const PAYPAL_CLIENT_ID = "AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R";
+    // PayPal Client ID - Use environment variable for security
+    const PAYPAL_CLIENT_ID = process.env.REACT_APP_PAYPAL_CLIENT_ID || "AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R";
 
     useEffect(() => {
         // Load PayPal SDK
@@ -43,15 +43,9 @@ const PayPalCheckout = ({
         };
 
         loadPayPalScript();
-    }, []);
+    }, [PAYPAL_CLIENT_ID, onError]);
 
-    useEffect(() => {
-        if (paypalLoaded && !disabled && coursePrice > 0) {
-            renderPayPalButton();
-        }
-    }, [paypalLoaded, disabled, coursePrice, courseTitle, courseId]);
-
-    const renderPayPalButton = () => {
+    const renderPayPalButton = useCallback(() => {
         if (paypalRef.current && window.paypal) {
             // Clear any existing PayPal button
             paypalRef.current.innerHTML = '';
@@ -123,7 +117,13 @@ const PayPalCheckout = ({
                 }
             }).render(paypalRef.current);
         }
-    };
+    }, [coursePrice, courseTitle, courseId, onSuccess, onError, onCancel]);
+
+    useEffect(() => {
+        if (paypalLoaded && !disabled && coursePrice > 0) {
+            renderPayPalButton();
+        }
+    }, [paypalLoaded, disabled, coursePrice, renderPayPalButton]);
 
     if (isLoading) {
         return (
