@@ -263,6 +263,112 @@
     gap: 5px;
 }
 
+/* Alternative Contact Method */
+.alternative-contact {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(29, 126, 153, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    text-align: center;
+}
+
+.alternative-contact p {
+    color: var(--secondary-text-color);
+    font-size: 14px;
+    margin: 0 0 12px 0;
+}
+
+.alternative-contact .submit-button {
+    display: inline-block;
+    text-decoration: none;
+    padding: 12px 24px;
+    font-size: 14px;
+    border-radius: 8px;
+    margin-top: 0;
+}
+
+/* Contact Info */
+.contact-info {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.contact-item {
+    text-align: center;
+}
+
+.contact-item-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.contact-item-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.contact-item-text {
+    font-size: 13px;
+    color: var(--secondary-text-color);
+}
+
+.social-section {
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 16px;
+}
+
+.social-section p {
+    font-size: 14px;
+    margin: 0 0 12px 0;
+    color: var(--secondary-text-color);
+}
+
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.social-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.social-btn.linkedin {
+    background: rgba(0, 119, 181, 0.1);
+    border: 1px solid rgba(0, 119, 181, 0.3);
+    color: #0077b5;
+}
+
+.social-btn.twitter {
+    background: rgba(29, 161, 242, 0.1);
+    border: 1px solid rgba(29, 161, 242, 0.3);
+    color: #1da1f2;
+}
+
+.social-btn.github {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-color);
+}
+
 /* Form Validation Styles */
 .form-input.error,
 .form-textarea.error {
@@ -371,6 +477,21 @@
     .character-count {
         font-size: 0.75rem;
     }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .alternative-contact {
+        margin-top: 20px;
+        padding: 16px;
+    }
+
+    .contact-info {
+        margin-top: 20px;
+        padding: 16px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -406,5 +527,24 @@
 
     .contact-details {
         font-size: 0.85rem;
+    }
+
+    .contact-grid {
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .social-buttons {
+        gap: 8px;
+    }
+
+    .social-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .alternative-contact .submit-button {
+        padding: 10px 20px;
+        font-size: 13px;
     }
 }

@@ -306,71 +306,57 @@ function Contact() {
                 </form>
 
                 {/* Alternative Contact Method */}
-                <div className="alternative-contact" style={{
-                    marginTop: '20px',
-                    padding: '16px',
-                    background: 'rgba(29, 126, 153, 0.1)',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(29, 126, 153, 0.2)'
-                }}>
-                    <p style={{ color: 'var(--secondary-text-color)', fontSize: '14px', margin: '0 0 8px 0' }}>
+                <div className="alternative-contact">
+                    <p>
                         Having trouble with the form? You can also reach us directly:
                     </p>
                     <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}?subject=Contact Form Inquiry&body=Hello TuneParams.ai team,%0D%0A%0D%0AI would like to inquire about...`}
-                        className="submit-button"
-                        style={{
-                            display: 'inline-block',
-                            textDecoration: 'none',
-                            padding: '10px 20px',
-                            fontSize: '14px',
-                            marginTop: '8px'
-                        }}>
+                        className="submit-button">
                         📧 Send Email Directly
                     </a>
                 </div>
 
-                {/* Additional Info */}
+                {/* Contact Info */}
                 <div className="contact-info">
-                    <p className="response-notice">
-                        We typically respond within 24 hours
-                    </p>
-
-                    <div className="contact-methods">
-                        <div className="contact-method">
-                            <div className="contact-icon">📧</div>
-                            <div className="contact-details-text">
-                                <strong>Email</strong>
-                                <span>{process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}</span>
+                    <div className="contact-grid">
+                        <div className="contact-item">
+                            <div className="contact-item-icon">📧</div>
+                            <div className="contact-item-title">Email</div>
+                            <div className="contact-item-text">
+                                {process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.ai'}
                             </div>
                         </div>
 
-                        <div className="contact-method">
-                            <div className="contact-icon">🕒</div>
-                            <div className="contact-details-text">
-                                <strong>Response Time</strong>
-                                <span>Within 24 hours</span>
-                            </div>
-                        </div>
-
-                        <div className="contact-method">
-                            <div className="contact-icon">🌍</div>
-                            <div className="contact-details-text">
-                                <strong>Timezone</strong>
-                                <span>UTC-8 (PST)</span>
+                        <div className="contact-item">
+                            <div className="contact-item-icon">🕒</div>
+                            <div className="contact-item-title">Response Time</div>
+                            <div className="contact-item-text">
+                                Within 24 hours
                             </div>
                         </div>
                     </div>
 
-                    <div className="social-links">
-                        <p className="social-title">Follow us on social media</p>
+                    <div className="social-section">
+                        <p>
+                            Follow us on social media
+                        </p>
                         <div className="social-buttons">
-                            <a href={process.env.REACT_APP_LINKEDIN_URL || "#"} target="_blank" rel="noopener noreferrer" className="social-btn linkedin">
+                            <a href={process.env.REACT_APP_LINKEDIN_URL || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="social-btn linkedin">
                                 LinkedIn
                             </a>
-                            <a href={process.env.REACT_APP_TWITTER_URL || "#"} target="_blank" rel="noopener noreferrer" className="social-btn twitter">
+                            <a href={process.env.REACT_APP_TWITTER_URL || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="social-btn twitter">
                                 Twitter
                             </a>
-                            <a href={process.env.REACT_APP_GITHUB_URL || "#"} target="_blank" rel="noopener noreferrer" className="social-btn github">
+                            <a href={process.env.REACT_APP_GITHUB_URL || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="social-btn github">
                                 GitHub
                             </a>
                         </div>
