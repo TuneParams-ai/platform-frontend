@@ -67,7 +67,7 @@ const Login = () => {
                                 onChange={handleChange}
                                 placeholder="Enter your password"
                                 required
-                                className="password-input"
+                                className="form-input"
                             />
                             <button
                                 type="button"
@@ -87,7 +87,7 @@ const Login = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <button type="submit" className="submit-button">
+                    <button type="submit" className="btn">
                         Sign In
                     </button>
                 </form>

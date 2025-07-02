@@ -110,7 +110,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 placeholder="Create a password"
                                 required
-                                className="password-input"
+                                className="form-input"
                             />
                             <button
                                 type="button"
@@ -135,7 +135,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 placeholder="Confirm your password"
                                 required
-                                className="password-input"
+                                className="form-input"
                             />
                             <button
                                 type="button"
@@ -148,7 +148,7 @@ const Register = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <button type="submit" className="submit-button">
+                    <button type="submit" className="btn">
                         Create Account
                     </button>
                 </form>

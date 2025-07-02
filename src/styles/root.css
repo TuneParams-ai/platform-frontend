@@ -40,41 +40,7 @@ a:hover {
   color: var(--secondary-color);
 }
 
-button {
-  background: var(--metallic-gradient);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-button:hover {
-  background: var(--metallic-gradient-reverse);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-button:disabled {
-  background: linear-gradient(135deg, #64748b, #475569) !important;
-  color: #cbd5e1 !important;
-  cursor: not-allowed !important;
-  box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
-}
-
-button:disabled:hover {
-  background: linear-gradient(135deg, #64748b, #475569) !important;
-  transform: none !important;
-  box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
-}
+/* Global button styles removed - now unified in components.css */
 
 .navbar {
   display: flex;

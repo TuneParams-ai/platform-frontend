@@ -143,36 +143,37 @@
     color: var(--primary-color);
 }
 
+/* Enroll button customizations for course detail */
 .enroll-btn-detail {
     width: 100%;
-    background: var(--metallic-gradient);
-    color: white;
-    border: none;
-    padding: 15px 25px;
-    border-radius: 8px;
-    font-weight: 600;
     font-size: 1.1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.enroll-btn-detail:hover {
-    background: var(--metallic-gradient-reverse);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
+    padding: 15px 25px;
 }
 
 .enroll-btn-detail.coming-soon {
-    background: linear-gradient(135deg, #64748b, #475569);
-    color: #cbd5e1;
-    cursor: not-allowed;
-    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    color: #cbd5e1 !important;
+    cursor: not-allowed !important;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
 }
 
 .enroll-btn-detail.coming-soon:hover {
-    background: linear-gradient(135deg, #64748b, #475569);
-    transform: none;
-    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
+}
+
+.enroll-btn-detail.full {
+    background: linear-gradient(135deg, #7f8c8d, #95a5a6) !important;
+    color: #e2e8f0 !important;
+    cursor: not-allowed !important;
+    box-shadow: 0 2px 4px rgba(127, 140, 141, 0.3) !important;
+}
+
+.enroll-btn-detail.full:hover {
+    background: linear-gradient(135deg, #7f8c8d, #95a5a6) !important;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(127, 140, 141, 0.3) !important;
 }
 
 .next-batch-info {
@@ -196,18 +197,7 @@
     font-weight: 600;
 }
 
-.enroll-btn-detail.full {
-    background: linear-gradient(135deg, #7f8c8d, #95a5a6);
-    color: #e2e8f0;
-    cursor: not-allowed;
-    box-shadow: 0 2px 4px rgba(127, 140, 141, 0.3);
-}
 
-.enroll-btn-detail.full:hover {
-    background: linear-gradient(135deg, #7f8c8d, #95a5a6);
-    transform: none;
-    box-shadow: 0 2px 4px rgba(127, 140, 141, 0.3);
-}
 
 .seats-warning {
     margin-top: 10px;
@@ -415,26 +405,12 @@
     font-weight: 600;
 }
 
-/* Back Button */
 .back-btn {
-    background: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
     font-size: 0.9rem;
     margin-bottom: 20px;
-    transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-}
-
-.back-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: translateY(-2px);
 }
 
 /* Course materials and downloads */
@@ -444,6 +420,7 @@
     gap: 12px;
 }
 
+/* Download button - custom blue style */
 .download-btn {
     display: inline-flex;
     align-items: center;

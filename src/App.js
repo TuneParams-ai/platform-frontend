@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import PayPalTest from "./pages/PayPalTest";
 
 import "./styles/root.css"; // global styles
+import "./styles/components.css"; // unified component styles
 import "./App.css"; // optional App-specific styles
 
 function App() {

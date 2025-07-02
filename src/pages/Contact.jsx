@@ -298,7 +298,7 @@ function Contact() {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="submit-button"
+                        className="btn"
                         disabled={isSubmitting}
                     >
                         {isSubmitting ? 'Sending...' : 'Send Message'}
@@ -311,7 +311,7 @@ function Contact() {
                         Having trouble with the form? You can also reach us directly:
                     </p>
                     <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}?subject=Contact Form Inquiry&body=Hello TuneParams.ai team,%0D%0A%0D%0AI would like to inquire about...`}
-                        className="submit-button">
+                        className="btn">
                         📧 Send Email Directly
                     </a>
                 </div>

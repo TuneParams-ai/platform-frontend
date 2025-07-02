@@ -169,40 +169,15 @@
     justify-content: center;
 }
 
-.btn-primary,
-.btn-secondary {
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+/* Modal-specific button customizations */
+.payment-success-modal .btn {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.btn-primary {
-    background: #3b82f6;
-    color: white;
+.payment-success-modal .btn-primary {
     flex: 1;
-}
-
-.btn-primary:hover {
-    background: #2563eb;
-    transform: translateY(-1px);
-}
-
-.btn-secondary {
-    background: rgba(29, 126, 153, 0.1);
-    color: var(--text-color);
-    border: 1px solid rgba(29, 126, 153, 0.2);
-}
-
-.btn-secondary:hover {
-    background: rgba(29, 126, 153, 0.2);
-    transform: translateY(-1px);
 }
 
 .close-modal {

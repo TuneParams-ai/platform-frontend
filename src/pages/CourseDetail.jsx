@@ -131,7 +131,7 @@ const CourseDetail = () => {
                 >
                     <div className="course-detail-header-overlay"></div>
                     <div className="course-detail-header-content">
-                        <button className="back-btn" onClick={handleGoBack}>
+                        <button className="btn btn-secondary back-btn" onClick={handleGoBack}>
                             ← Back to Courses
                         </button>
                         <div className="course-hero">
@@ -166,7 +166,7 @@ const CourseDetail = () => {
 
                                 {!showPayPal ? (
                                     <button
-                                        className={`enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
+                                        className={`btn enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
                                         onClick={handleEnroll}
                                         disabled={courseFull || comingSoon}
                                     >

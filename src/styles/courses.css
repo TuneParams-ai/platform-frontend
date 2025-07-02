@@ -224,53 +224,24 @@
     margin-top: auto;
 }
 
+/* Enroll button customizations */
 .enroll-btn {
     flex: 1;
-    background: var(--metallic-gradient);
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.enroll-btn:hover {
-    background: var(--metallic-gradient-reverse);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
 }
 
 .enroll-btn.coming-soon,
 .preview-btn.coming-soon {
-    background: linear-gradient(135deg, #64748b, #475569);
-    color: #cbd5e1;
-    cursor: not-allowed;
-    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    color: #cbd5e1 !important;
+    cursor: not-allowed !important;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
 }
 
 .enroll-btn.coming-soon:hover,
 .preview-btn.coming-soon:hover {
-    background: linear-gradient(135deg, #64748b, #475569);
-    transform: none;
-    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
-}
-
-.preview-btn {
-    background: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.preview-btn:hover {
-    background: var(--primary-color);
-    color: white;
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3) !important;
 }
 
 /* Filter and Search Section */
@@ -282,6 +253,7 @@
     flex-wrap: wrap;
 }
 
+/* Filter button styles - using btn-secondary as base */
 .filter-btn {
     background: transparent;
     color: var(--secondary-text-color);

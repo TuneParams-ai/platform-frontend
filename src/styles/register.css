@@ -88,25 +88,7 @@
     font-size: 0.9rem;
 }
 
-.form-input {
-    padding: 12px 16px;
-    border: 2px solid rgba(29, 126, 153, 0.3);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--text-color);
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.form-input:focus {
-    border-color: var(--primary-color);
-    background: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.2);
-}
+/* Form styles now inherited from components.css */
 
 .password-field-container {
     position: relative;
@@ -116,25 +98,7 @@
     box-sizing: border-box;
 }
 
-.password-input {
-    padding: 12px 16px;
-    border: 2px solid rgba(29, 126, 153, 0.3);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--text-color);
-    font-size: 1rem;
-    outline: none;
-    width: 100%;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    box-sizing: border-box;
-}
-
-.password-input:focus {
-    border-color: var(--primary-color);
-    background: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.2);
-}
+/* Password input styles now inherited from components.css */
 
 .password-toggle-button {
     position: absolute;
@@ -160,41 +124,7 @@
     background: rgba(29, 126, 153, 0.1);
 }
 
-.submit-button {
-    background: var(--metallic-gradient);
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 14px 24px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: all 0.3s ease;
-}
-
-.submit-button:hover {
-    background: var(--metallic-gradient-reverse);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(29, 126, 153, 0.3);
-}
-
-.submit-button:active {
-    transform: translateY(0);
-}
-
-.submit-button:disabled {
-    background: linear-gradient(135deg, #64748b, #475569);
-    color: #cbd5e1;
-    cursor: not-allowed;
-    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
-}
-
-.submit-button:disabled:hover {
-    background: linear-gradient(135deg, #64748b, #475569);
-    transform: none;
-    box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
-}
+/* Submit button styles now inherited from components.css as .btn */
 
 .register-footer {
     text-align: center;
@@ -369,55 +299,4 @@
     }
 }
 
-.form-input::placeholder,
-.password-input::placeholder {
-    color: rgba(160, 160, 160, 0.8);
-    opacity: 1;
-}
-
-.form-input::-webkit-input-placeholder,
-.password-input::-webkit-input-placeholder {
-    color: rgba(160, 160, 160, 0.8);
-}
-
-.form-input::-moz-placeholder,
-.password-input::-moz-placeholder {
-    color: rgba(160, 160, 160, 0.8);
-    opacity: 1;
-}
-
-.form-input:-ms-input-placeholder,
-.password-input:-ms-input-placeholder {
-    color: rgba(160, 160, 160, 0.8);
-}
-
-/* Form validation styles */
-.form-input.error,
-.password-input.error {
-    border-color: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-.form-input.success,
-.password-input.success {
-    border-color: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-.error-message {
-    color: #ef4444;
-    font-size: 0.75rem;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.success-message {
-    color: #10b981;
-    font-size: 0.75rem;
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
+/* Placeholder and form validation styles now inherited from components.css */

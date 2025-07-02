@@ -124,20 +124,10 @@
     margin-bottom: 16px;
 }
 
-.course-actions .btn-primary {
+/* Course action button customizations */
+.course-actions .btn {
     width: 100%;
     padding: 12px;
-    background: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.course-actions .btn-primary:hover {
-    background: #2563eb;
 }
 
 .enrollment-info {
@@ -216,40 +206,7 @@
     line-height: 1.5;
 }
 
-.btn-primary,
-.btn-secondary {
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 14px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-primary {
-    background: #3b82f6;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #2563eb;
-}
-
-.btn-secondary {
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
-}
-
-.btn-secondary:hover:not(:disabled) {
-    background: #e5e7eb;
-}
-
-.btn-secondary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
+/* Button styles - removed, using unified components.css */
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {

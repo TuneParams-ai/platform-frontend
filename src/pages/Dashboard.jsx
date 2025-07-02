@@ -45,7 +45,7 @@ const Dashboard = () => {
                   </div>
                   <div className="course-actions">
                     <button
-                      className="btn-primary"
+                      className="btn"
                       onClick={() => navigate(`/course/${course.id}`)}
                     >
                       {course.progress === 0 ? 'Start Learning' : 'Continue Learning'}
@@ -69,7 +69,7 @@ const Dashboard = () => {
               <h3>No courses enrolled yet</h3>
               <p>Start your learning journey by enrolling in one of our courses!</p>
               <button
-                className="btn-primary"
+                className="btn"
                 onClick={() => navigate('/courses')}
               >
                 Browse Courses
@@ -86,7 +86,7 @@ const Dashboard = () => {
               <h4>Browse Courses</h4>
               <p>Discover new courses to expand your skills</p>
               <button
-                className="btn-secondary"
+                className="btn btn-secondary"
                 onClick={() => navigate('/courses')}
               >
                 View All Courses
@@ -97,7 +97,7 @@ const Dashboard = () => {
               <h4>Get Support</h4>
               <p>Need help? Contact our support team</p>
               <button
-                className="btn-secondary"
+                className="btn btn-secondary"
                 onClick={() => navigate('/contact')}
               >
                 Contact Support
@@ -107,7 +107,7 @@ const Dashboard = () => {
               <div className="action-icon">📄</div>
               <h4>Certificates</h4>
               <p>View and download your course certificates</p>
-              <button className="btn-secondary" disabled>
+              <button className="btn btn-secondary" disabled>
                 Coming Soon
               </button>
             </div>

@@ -95,14 +95,14 @@ const CourseCard = ({ course }) => {
       </div>
       <div className="course-action">
         <button
-          className={`enroll-btn ${comingSoon ? 'coming-soon' : ''}`}
+          className={`btn enroll-btn ${comingSoon ? 'coming-soon' : ''}`}
           onClick={handleEnroll}
           disabled={comingSoon}
         >
           {comingSoon ? "Coming Soon" : "Enroll Now"}
         </button>
         <button
-          className={`preview-btn ${comingSoon ? 'coming-soon' : ''}`}
+          className={`btn btn-secondary preview-btn ${comingSoon ? 'coming-soon' : ''}`}
           onClick={handlePreview}
           disabled={comingSoon}
         >
