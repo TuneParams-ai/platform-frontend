@@ -1,6 +1,6 @@
 {
   "homepage": "https://www.tuneparams.ai",
-  "name": "TunePARAMS.ai",
+  "name": "tuneparams",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
