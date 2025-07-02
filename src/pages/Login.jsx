@@ -13,7 +13,7 @@ const Login = () => {
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
 
-    const { signInWithEmail, signInWithGoogle, sendVerificationEmail } = useAuth();
+    const { signInWithEmail, signInWithGoogle } = useAuth();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
@@ -21,10 +21,11 @@ const Login = () => {
     useEffect(() => {
         const urlMessage = searchParams.get('message');
         const verified = searchParams.get('verified');
+        const emailVerified = searchParams.get('emailVerified');
 
         if (urlMessage === 'verify-email') {
             setMessage("Registration successful! Please check your email and click the verification link before signing in.");
-        } else if (verified === 'true') {
+        } else if (verified === 'true' || emailVerified === 'true') {
             setMessage("Email verified successfully! You can now sign in.");
         }
     }, [searchParams]);
@@ -71,32 +72,6 @@ const Login = () => {
             navigate('/dashboard');
         } else {
             setError(result.error);
-        }
-
-        setLoading(false);
-    };
-
-    const handleResendVerification = async () => {
-        if (!formData.email) {
-            setError("Please enter your email address first.");
-            return;
-        }
-
-        setLoading(true);
-        setError("");
-        setMessage("");
-
-        // First try to sign in to get the user context, then send verification
-        const signInResult = await signInWithEmail(formData.email, formData.password);
-        if (signInResult.requiresVerification) {
-            const verificationResult = await sendVerificationEmail();
-            if (verificationResult.success) {
-                setMessage(verificationResult.message);
-            } else {
-                setError(verificationResult.error);
-            }
-        } else {
-            setError("Please sign in first or check if your email is already verified.");
         }
 
         setLoading(false);

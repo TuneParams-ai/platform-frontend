@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 const FirebaseTest = () => {
     const [testEmail, setTestEmail] = useState('test@example.com');
@@ -16,6 +18,12 @@ const FirebaseTest = () => {
         addResult('Starting Firebase email verification test...', 'info');
 
         try {
+            // First, try to sign out any existing user
+            if (auth.currentUser) {
+                await signOut(auth);
+                addResult('🔄 Signed out existing user', 'info');
+            }
+
             const result = await registerWithEmail(testEmail, testPassword, 'Test', 'User');
 
             if (result.success) {
@@ -23,6 +31,7 @@ const FirebaseTest = () => {
                 if (result.requiresVerification) {
                     addResult('✅ Email verification sent!', 'success');
                     addResult(`📧 Check ${testEmail} for verification email`, 'info');
+                    addResult('⚠️ User should NOT be logged in until verified', 'info');
                 }
             } else {
                 addResult(`❌ Registration failed: ${result.error}`, 'error');

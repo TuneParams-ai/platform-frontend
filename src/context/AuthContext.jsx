@@ -8,8 +8,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile,
   sendEmailVerification,
-  applyActionCode,
-  checkActionCode
+  applyActionCode
 } from "firebase/auth";
 
 export const AuthContext = createContext({
@@ -124,10 +123,14 @@ const AuthProvider = ({ children }) => {
       // Send email verification
       console.log('Sending email verification...');
       await sendEmailVerification(user, {
-        url: `${window.location.origin}/verify-email`, // Redirect URL after verification
+        url: `${window.location.origin}/login?emailVerified=true`,
         handleCodeInApp: false
       });
       console.log('Email verification sent successfully to:', user.email);
+
+      // Sign out the user after registration so they can't access the app until verified
+      await signOut(auth);
+      console.log('User signed out after registration');
 
       // Don't store user in localStorage until email is verified
       // Just return success with verification message
@@ -177,7 +180,7 @@ const AuthProvider = ({ children }) => {
       }
 
       await sendEmailVerification(auth.currentUser, {
-        url: `${window.location.origin}/verify-email`,
+        url: `${window.location.origin}/login?emailVerified=true`,
         handleCodeInApp: false
       });
 
@@ -194,25 +197,12 @@ const AuthProvider = ({ children }) => {
   // Verify email with action code (for handling email verification links)
   const verifyEmail = async (actionCode) => {
     try {
+      console.log('Verifying email with action code...');
       await applyActionCode(auth, actionCode);
+      console.log('Action code applied successfully');
 
-      // Reload the user to get updated emailVerified status
-      if (auth.currentUser) {
-        await auth.currentUser.reload();
-
-        const userData = {
-          uid: auth.currentUser.uid,
-          name: auth.currentUser.displayName || auth.currentUser.email?.split('@')[0],
-          email: auth.currentUser.email,
-          photoURL: auth.currentUser.photoURL,
-          emailVerified: auth.currentUser.emailVerified,
-          role: 'student'
-        };
-
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-      }
-
+      // Note: We don't need to reload or set user here since the user 
+      // should sign in after verification. Just return success.
       return {
         success: true,
         message: 'Email verified successfully! You can now sign in.'
@@ -256,15 +246,23 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        const userData = {
-          uid: firebaseUser.uid,
-          name: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
-          email: firebaseUser.email,
-          photoURL: firebaseUser.photoURL,
-          role: 'student'
-        };
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+        // Only set user if email is verified, except for Google sign-in
+        if (firebaseUser.emailVerified || firebaseUser.providerData[0]?.providerId === 'google.com') {
+          const userData = {
+            uid: firebaseUser.uid,
+            name: firebaseUser.displayName || firebaseUser.email?.split('@')[0],
+            email: firebaseUser.email,
+            photoURL: firebaseUser.photoURL,
+            emailVerified: firebaseUser.emailVerified,
+            role: 'student'
+          };
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+        } else {
+          // If email is not verified, don't set user data
+          setUser(null);
+          localStorage.removeItem('user');
+        }
       } else {
         // Check if user data exists in localStorage (for page refreshes)
         const storedUser = localStorage.getItem('user');
