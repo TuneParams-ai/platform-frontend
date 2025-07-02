@@ -235,6 +235,8 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 40px;
+    background: transparent;
+    margin-top: 0;
 }
 
 .course-main {
@@ -488,6 +490,31 @@
     color: #94a3b8;
     margin: 0;
     line-height: 1.4;
+}
+
+/* Enrollment Options for PayPal Integration */
+.enrollment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.back-to-enroll-btn {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-self: flex-start;
+}
+
+.back-to-enroll-btn:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
 }
 
 /* Responsive Design */
