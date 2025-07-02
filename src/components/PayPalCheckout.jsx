@@ -13,10 +13,16 @@ const PayPalCheckout = ({
     const [isLoading, setIsLoading] = useState(true);
     const [paypalLoaded, setPaypalLoaded] = useState(false);
 
-    // PayPal Client ID - Use environment variable for security
-    const PAYPAL_CLIENT_ID = process.env.REACT_APP_PAYPAL_CLIENT_ID || "AZDxjDScFpQtjWTOUtWKbyN_bDt4OgqaF4eYXlewfBP4-8aqX3PiV8e1GWU6liB2CUXlkA59kJXE7M6R";
+    // PayPal Client ID - Must be configured in environment variables
+    const PAYPAL_CLIENT_ID = process.env.REACT_APP_PAYPAL_CLIENT_ID;
 
     useEffect(() => {
+        // Only load PayPal SDK if Client ID is configured
+        if (!PAYPAL_CLIENT_ID) {
+            setIsLoading(false);
+            return;
+        }
+
         // Load PayPal SDK
         const loadPayPalScript = () => {
             if (window.paypal) {
@@ -124,6 +130,26 @@ const PayPalCheckout = ({
             renderPayPalButton();
         }
     }, [paypalLoaded, disabled, coursePrice, renderPayPalButton]);
+
+    // Validate PayPal Client ID is configured (after all hooks)
+    if (!PAYPAL_CLIENT_ID) {
+        console.error('PayPal Client ID not configured. Please set REACT_APP_PAYPAL_CLIENT_ID in your .env file');
+        return (
+            <div style={{
+                padding: '20px',
+                background: '#fff3cd',
+                border: '1px solid #ffeaa7',
+                borderRadius: '8px',
+                color: '#856404',
+                textAlign: 'center'
+            }}>
+                <p>⚠️ PayPal payment is not configured.</p>
+                <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
+                    Please contact support to enable payments.
+                </p>
+            </div>
+        );
+    }
 
     if (isLoading) {
         return (
