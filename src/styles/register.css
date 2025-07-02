@@ -10,13 +10,16 @@
 }
 
 .register-card {
-    background: rgba(11, 11, 26, 0.95);
-    border: 1px solid rgba(29, 126, 153, 0.2);
+    background: rgba(15, 15, 35, 0.95);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 16px;
     padding: 40px;
     width: 100%;
     max-width: 480px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(29, 126, 153, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(29, 126, 153, 0.15);
+    backdrop-filter: blur(20px);
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .register-header {
@@ -45,17 +48,29 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Prevent any form element from overflowing */
+.register-form * {
+    box-sizing: border-box;
+    max-width: 100%;
 }
 
 .name-fields-row {
     display: flex;
     gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-field {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-field-half {
@@ -63,6 +78,8 @@
     flex-direction: column;
     gap: 8px;
     flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .form-label {
@@ -73,41 +90,50 @@
 
 .form-input {
     padding: 12px 16px;
-    border: 2px solid rgba(29, 126, 153, 0.2);
+    border: 2px solid rgba(29, 126, 153, 0.3);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-color);
     font-size: 1rem;
     outline: none;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-input:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.2);
 }
 
 .password-field-container {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .password-input {
     padding: 12px 16px;
-    border: 2px solid rgba(29, 126, 153, 0.2);
+    border: 2px solid rgba(29, 126, 153, 0.3);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-color);
     font-size: 1rem;
     outline: none;
     width: 100%;
     transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
 }
 
 .password-input:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.2);
 }
 
 .password-toggle-button {
@@ -119,10 +145,19 @@
     cursor: pointer;
     padding: 4px;
     font-size: 1.2rem;
+    z-index: 2;
+    min-width: 32px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
 .password-toggle-button:hover {
     color: var(--primary-color);
+    background: rgba(29, 126, 153, 0.1);
 }
 
 .submit-button {
@@ -332,4 +367,57 @@
         padding: 11px 16px;
         font-size: 0.85rem;
     }
+}
+
+.form-input::placeholder,
+.password-input::placeholder {
+    color: rgba(160, 160, 160, 0.8);
+    opacity: 1;
+}
+
+.form-input::-webkit-input-placeholder,
+.password-input::-webkit-input-placeholder {
+    color: rgba(160, 160, 160, 0.8);
+}
+
+.form-input::-moz-placeholder,
+.password-input::-moz-placeholder {
+    color: rgba(160, 160, 160, 0.8);
+    opacity: 1;
+}
+
+.form-input:-ms-input-placeholder,
+.password-input:-ms-input-placeholder {
+    color: rgba(160, 160, 160, 0.8);
+}
+
+/* Form validation styles */
+.form-input.error,
+.password-input.error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input.success,
+.password-input.success {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.success-message {
+    color: #10b981;
+    font-size: 0.75rem;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
