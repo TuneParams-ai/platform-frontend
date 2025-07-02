@@ -100,22 +100,13 @@ const Navbar = () => {
         >
           Courses
         </Link>
-        {user?.role === "student" && (
-          <Link
-            to="/my-courses"
-            onClick={closeMenu}
-            className={isActivePath("/my-courses") ? "active" : ""}
-          >
-            My Courses
-          </Link>
-        )}
-        {user?.role === "admin" && (
+        {user && (
           <Link
             to="/dashboard"
             onClick={closeMenu}
             className={isActivePath("/dashboard") ? "active" : ""}
           >
-            Admin Panel
+            Dashboard
           </Link>
         )}
         <Link
@@ -127,7 +118,7 @@ const Navbar = () => {
         </Link>
 
         {user ? (
-          <div className="user-menu-container">
+          <div className="user-menu-container" style={{ position: 'relative' }}>
             <button
               className="user-profile-button"
               onClick={() => setShowUserMenu(!showUserMenu)}
@@ -139,9 +130,11 @@ const Navbar = () => {
                 border: 'none',
                 color: 'var(--text-color)',
                 cursor: 'pointer',
-                padding: '8px',
+                padding: '8px 12px',
                 borderRadius: '8px',
-                transition: 'background 0.3s ease'
+                transition: 'background 0.3s ease',
+                fontSize: '14px',
+                whiteSpace: 'nowrap'
               }}
             >
               {user.photoURL ? (
@@ -203,22 +196,6 @@ const Navbar = () => {
                     Role: {user.role}
                   </div>
                 </div>
-
-                <Link
-                  to="/dashboard"
-                  onClick={closeMenu}
-                  style={{
-                    display: 'block',
-                    padding: '8px 12px',
-                    color: 'var(--text-color)',
-                    textDecoration: 'none',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    transition: 'background 0.3s ease'
-                  }}
-                >
-                  Dashboard
-                </Link>
 
                 <button
                   onClick={handleLogout}
