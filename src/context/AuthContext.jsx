@@ -6,7 +6,10 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  sendEmailVerification,
+  applyActionCode,
+  checkActionCode
 } from "firebase/auth";
 
 export const AuthContext = createContext({
@@ -15,6 +18,8 @@ export const AuthContext = createContext({
   signInWithGoogle: async () => ({ success: false, error: 'Firebase not configured' }),
   signInWithEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   registerWithEmail: async () => ({ success: false, error: 'Firebase not configured' }),
+  sendVerificationEmail: async () => ({ success: false, error: 'Firebase not configured' }),
+  verifyEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   logout: async () => ({ success: false, error: 'Firebase not configured' })
 });
 
@@ -49,17 +54,28 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  // Email/Password Sign-In function
+  // Email/Password Sign-In function with email verification check
   const signInWithEmail = async (email, password) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const user = result.user;
+
+      // Check if email is verified
+      if (!user.emailVerified) {
+        await signOut(auth); // Sign out the user
+        return {
+          success: false,
+          error: 'Please verify your email before signing in. Check your inbox for the verification link.',
+          requiresVerification: true
+        };
+      }
 
       const userData = {
         uid: user.uid,
         name: user.displayName || email.split('@')[0],
         email: user.email,
         photoURL: user.photoURL,
+        emailVerified: user.emailVerified,
         role: 'student'
       };
 
@@ -67,34 +83,159 @@ const AuthProvider = ({ children }) => {
       return { success: true, user: userData };
     } catch (error) {
       console.error('Email sign-in error:', error);
-      return { success: false, error: error.message };
+
+      let errorMessage = 'Sign-in failed';
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email address.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password. Please try again.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = error.message || 'Sign-in failed. Please try again.';
+      }
+
+      return { success: false, error: errorMessage };
     }
   };
 
-  // Email/Password Registration function
+  // Email/Password Registration function with email verification
   const registerWithEmail = async (email, password, firstName, lastName) => {
+    console.log('Starting registration process for:', email);
+
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       const user = result.user;
+      console.log('User created successfully:', user.uid);
 
       // Update profile with name
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`
       });
+      console.log('Profile updated with name:', `${firstName} ${lastName}`);
 
-      const userData = {
-        uid: user.uid,
-        name: `${firstName} ${lastName}`,
-        email: user.email,
-        photoURL: user.photoURL,
-        role: 'student'
+      // Send email verification
+      console.log('Sending email verification...');
+      await sendEmailVerification(user, {
+        url: `${window.location.origin}/verify-email`, // Redirect URL after verification
+        handleCodeInApp: false
+      });
+      console.log('Email verification sent successfully to:', user.email);
+
+      // Don't store user in localStorage until email is verified
+      // Just return success with verification message
+      return {
+        success: true,
+        requiresVerification: true,
+        message: 'Registration successful! Please check your email and click the verification link before signing in.',
+        user: {
+          uid: user.uid,
+          name: `${firstName} ${lastName}`,
+          email: user.email,
+          emailVerified: user.emailVerified
+        }
       };
-
-      localStorage.setItem('user', JSON.stringify(userData));
-      return { success: true, user: userData };
     } catch (error) {
       console.error('Registration error:', error);
-      return { success: false, error: error.message };
+
+      // Handle specific registration errors
+      let errorMessage = 'Registration failed';
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'An account with this email already exists. Please try signing in instead.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password is too weak. Please choose a stronger password.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        default:
+          errorMessage = error.message || 'Registration failed. Please try again.';
+      }
+
+      return { success: false, error: errorMessage };
+    }
+  };
+
+  // Send verification email to current user
+  const sendVerificationEmail = async () => {
+    try {
+      if (!auth.currentUser) {
+        return { success: false, error: 'No user is currently signed in.' };
+      }
+
+      if (auth.currentUser.emailVerified) {
+        return { success: false, error: 'Email is already verified.' };
+      }
+
+      await sendEmailVerification(auth.currentUser, {
+        url: `${window.location.origin}/verify-email`,
+        handleCodeInApp: false
+      });
+
+      return {
+        success: true,
+        message: 'Verification email sent! Please check your inbox.'
+      };
+    } catch (error) {
+      console.error('Send verification email error:', error);
+      return { success: false, error: error.message || 'Failed to send verification email.' };
+    }
+  };
+
+  // Verify email with action code (for handling email verification links)
+  const verifyEmail = async (actionCode) => {
+    try {
+      await applyActionCode(auth, actionCode);
+
+      // Reload the user to get updated emailVerified status
+      if (auth.currentUser) {
+        await auth.currentUser.reload();
+
+        const userData = {
+          uid: auth.currentUser.uid,
+          name: auth.currentUser.displayName || auth.currentUser.email?.split('@')[0],
+          email: auth.currentUser.email,
+          photoURL: auth.currentUser.photoURL,
+          emailVerified: auth.currentUser.emailVerified,
+          role: 'student'
+        };
+
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+      }
+
+      return {
+        success: true,
+        message: 'Email verified successfully! You can now sign in.'
+      };
+    } catch (error) {
+      console.error('Email verification error:', error);
+
+      let errorMessage = 'Email verification failed';
+      switch (error.code) {
+        case 'auth/expired-action-code':
+          errorMessage = 'The verification link has expired. Please request a new one.';
+          break;
+        case 'auth/invalid-action-code':
+          errorMessage = 'The verification link is invalid. Please request a new one.';
+          break;
+        case 'auth/user-disabled':
+          errorMessage = 'This account has been disabled.';
+          break;
+        default:
+          errorMessage = error.message || 'Email verification failed.';
+      }
+
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -145,7 +286,9 @@ const AuthProvider = ({ children }) => {
     signInWithGoogle,
     signInWithEmail,
     registerWithEmail,
-    logout
+    logout,
+    sendVerificationEmail,
+    verifyEmail
   };
 
   return (

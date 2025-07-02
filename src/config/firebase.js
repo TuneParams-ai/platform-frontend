@@ -1,19 +1,38 @@
 // src/config/firebase.js
+// Firebase configuration using ONLY environment variables
+// No sensitive data is exposed in this file - all keys come from .env.local
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
-// Your Firebase configuration
+// Your Firebase configuration - using only environment variables
 const firebaseConfig = {
-    apiKey: "AIzaSyCn55V2y3cXp4Ln0NWjlauU8rgZgMgwDyc",
-    authDomain: "tuneparams.firebaseapp.com",
-    projectId: "tuneparams",
-    storageBucket: "tuneparams.firebasestorage.app",
-    messagingSenderId: "995918337622",
-    appId: "1:995918337622:web:505babbabe198e3f0d0df7"
+    apiKey: process.env.REACT_APP_FIREBASE_API_KEY?.trim(),
+    authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN?.trim(),
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID?.trim(),
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET?.trim(),
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID?.trim(),
+    appId: process.env.REACT_APP_FIREBASE_APP_ID?.trim()
 };
 
-// Debug: Log the config to see what values are being used
-console.log('Firebase Config:', firebaseConfig);
+// Debug: Simple logging to confirm environment variables are loaded
+console.log('Firebase Environment Variables Loaded:', {
+    allFirebaseVars: Object.keys(process.env).filter(key => key.startsWith('REACT_APP_FIREBASE')).length,
+    usingSource: process.env.REACT_APP_FIREBASE_API_KEY ? 'Environment Variables (.env.local)' : 'NOT LOADED - Check .env.local file'
+});
+
+// Check if all required environment variables are present
+const requiredEnvVars = [
+    'REACT_APP_FIREBASE_API_KEY',
+    'REACT_APP_FIREBASE_AUTH_DOMAIN',
+    'REACT_APP_FIREBASE_PROJECT_ID',
+    'REACT_APP_FIREBASE_APP_ID'
+];
+
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingVars.length > 0) {
+    console.error('Missing required Firebase environment variables:', missingVars);
+    console.error('Please check your .env.local file contains all required Firebase variables');
+}
 
 // Initialize Firebase
 let app;
@@ -22,7 +41,15 @@ let googleProvider;
 let isFirebaseConfigured = false;
 
 try {
-    // Initialize Firebase with the hard-coded config
+    // Check if all required config values are present
+    const requiredKeys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+    const missingKeys = requiredKeys.filter(key => !firebaseConfig[key]);
+
+    if (missingKeys.length > 0) {
+        throw new Error(`Missing Firebase configuration: ${missingKeys.join(', ')}`);
+    }
+
+    // Initialize Firebase with environment variables
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     googleProvider = new GoogleAuthProvider();
@@ -33,7 +60,8 @@ try {
     });
 
     isFirebaseConfigured = true;
-    console.log('Firebase initialized successfully');
+    console.log('✅ Firebase initialized successfully using environment variables');
+    console.log('Auth domain configured:', firebaseConfig.authDomain);
 
 } catch (error) {
     console.error('Firebase initialization error:', error);

@@ -14,7 +14,9 @@ import Dashboard from "./pages/Dashboard";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import VerifyEmail from "./pages/VerifyEmail";
 import PayPalTest from "./pages/PayPalTest";
+import FirebaseTest from "./components/FirebaseTest";
 
 import "./styles/root.css"; // global styles
 import "./styles/components.css"; // unified component styles
@@ -38,6 +40,8 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/firebase-test" element={<FirebaseTest />} />
             <Route path="/paypal-test" element={<PayPalTest />} />
             {/* Catch-all route for unmatched paths */}
             <Route path="*" element={<Navigate to="/" replace />} />

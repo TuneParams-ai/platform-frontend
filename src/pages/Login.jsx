@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "../styles/login.css";
 
@@ -11,9 +11,23 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
 
-    const { signInWithEmail, signInWithGoogle } = useAuth();
+    const { signInWithEmail, signInWithGoogle, sendVerificationEmail } = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    // Check for URL parameters on component mount
+    useEffect(() => {
+        const urlMessage = searchParams.get('message');
+        const verified = searchParams.get('verified');
+
+        if (urlMessage === 'verify-email') {
+            setMessage("Registration successful! Please check your email and click the verification link before signing in.");
+        } else if (verified === 'true') {
+            setMessage("Email verified successfully! You can now sign in.");
+        }
+    }, [searchParams]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,8 +43,29 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
         setError("");
+        setMessage("");
 
         const result = await signInWithEmail(formData.email, formData.password);
+
+        if (result.success) {
+            navigate('/dashboard');
+        } else {
+            setError(result.error);
+            // If email verification is required, show resend option
+            if (result.requiresVerification) {
+                setMessage("Need to resend verification email? Check your email or use the 'Resend Verification' button below.");
+            }
+        }
+
+        setLoading(false);
+    };
+
+    const handleGoogleSignIn = async () => {
+        setLoading(true);
+        setError("");
+        setMessage("");
+
+        const result = await signInWithGoogle();
 
         if (result.success) {
             navigate('/dashboard');
@@ -41,16 +76,27 @@ const Login = () => {
         setLoading(false);
     };
 
-    const handleGoogleSignIn = async () => {
+    const handleResendVerification = async () => {
+        if (!formData.email) {
+            setError("Please enter your email address first.");
+            return;
+        }
+
         setLoading(true);
         setError("");
+        setMessage("");
 
-        const result = await signInWithGoogle();
-
-        if (result.success) {
-            navigate('/dashboard');
+        // First try to sign in to get the user context, then send verification
+        const signInResult = await signInWithEmail(formData.email, formData.password);
+        if (signInResult.requiresVerification) {
+            const verificationResult = await sendVerificationEmail();
+            if (verificationResult.success) {
+                setMessage(verificationResult.message);
+            } else {
+                setError(verificationResult.error);
+            }
         } else {
-            setError(result.error);
+            setError("Please sign in first or check if your email is already verified.");
         }
 
         setLoading(false);
@@ -81,6 +127,21 @@ const Login = () => {
                         fontSize: '0.9rem'
                     }}>
                         {error}
+                    </div>
+                )}
+
+                {/* Success/Info Message */}
+                {message && (
+                    <div className="success-message" style={{
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                        borderRadius: '8px',
+                        padding: '12px',
+                        color: '#22c55e',
+                        marginBottom: '20px',
+                        fontSize: '0.9rem'
+                    }}>
+                        {message}
                     </div>
                 )}
 

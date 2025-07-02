@@ -53,7 +53,15 @@ const Register = () => {
         );
 
         if (result.success) {
-            navigate('/dashboard');
+            if (result.requiresVerification) {
+                // Show success message for email verification
+                setError(""); // Clear any previous errors
+                alert(result.message || "Registration successful! Please check your email and verify your account before signing in.");
+                // Redirect to login page with a message
+                navigate('/login?message=verify-email');
+            } else {
+                navigate('/dashboard');
+            }
         } else {
             setError(result.error);
         }
