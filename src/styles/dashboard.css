@@ -1,6 +1,6 @@
 /* Dashboard Styles */
 .dashboard-container {
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - 80px);
     background: var(--background-color);
     padding: 20px;
 }

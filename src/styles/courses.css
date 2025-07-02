@@ -1,7 +1,7 @@
 /* Courses Page Styles */
 
 .courses-page-container {
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - 80px);
     padding: 40px 20px;
     background: linear-gradient(135deg, rgba(29, 126, 153, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
 }

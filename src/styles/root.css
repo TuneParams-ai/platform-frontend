@@ -22,7 +22,7 @@ html {
 
 body {
   margin: 0;
-  padding: 0 0 60px 0;
+  padding: 0;
   font-family: var(--font-family);
   background-color: var(--background-color);
   color: var(--text-color);
@@ -221,16 +221,13 @@ body.menu-open {
 }
 
 .footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: static;
   text-align: center;
-  padding: 1px 20px;
+  padding: 20px;
   background-color: #0b0b1a;
   color: var(--secondary-text-color);
-  margin-top: 0px;
-  z-index: 1000;
+  margin-top: 40px;
+  border-top: 1px solid rgba(29, 126, 153, 0.2);
 }
 
 /* General page styles for responsive design */
@@ -238,8 +235,8 @@ body.menu-open {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  min-height: calc(100vh - 140px);
-  /* Account for navbar and footer */
+  min-height: calc(100vh - 80px);
+  /* Account for navbar only */
 }
 
 /* Dashboard and Courses page styles */
@@ -433,13 +430,14 @@ body.menu-open {
   }
 
   .footer {
-    padding: 10px 15px;
+    padding: 15px;
     font-size: 0.85rem;
+    margin-top: 30px;
   }
 
   .page-container {
     padding: 15px 10px;
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - 80px);
   }
 
   .page-container h1 {
@@ -514,8 +512,9 @@ body.menu-open {
   }
 
   .footer {
-    padding: 8px 10px;
+    padding: 10px;
     font-size: 0.8rem;
+    margin-top: 20px;
   }
 
   .page-container {

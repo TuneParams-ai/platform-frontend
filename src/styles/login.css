@@ -1,7 +1,7 @@
 /* Login Page Styles */
 
 .login-page-container {
-    min-height: calc(100vh - 140px);
+    min-height: calc(100vh - 80px);
     display: flex;
     align-items: center;
     justify-content: center;
