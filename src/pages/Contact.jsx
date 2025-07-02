@@ -127,11 +127,21 @@ function Contact() {
         setSubmitStatus(null);
 
         try {
-            // Replace 'YOUR_FORM_ID' with your actual Formspree form ID
-            const response = await fetch('https://formspree.io/f/xkgbylng', {
+            // Use environment variable for Formspree form ID
+            const FORMSPREE_FORM_ID = process.env.REACT_APP_FORMSPREE_FORM_ID;
+            console.log('Form ID:', FORMSPREE_FORM_ID); // Debug log
+
+            if (!FORMSPREE_FORM_ID) {
+                throw new Error('Contact form not configured');
+            }
+
+            console.log('Submitting form to Formspree...'); // Debug log
+
+            const response = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     name: formData.name,
@@ -141,6 +151,8 @@ function Contact() {
                     _subject: `New contact form submission from ${formData.name}`,
                 }),
             });
+
+            console.log('Response status:', response.status); // Debug log
 
             if (response.ok) {
                 setSubmitStatus('success');
@@ -153,6 +165,9 @@ function Contact() {
                 setErrors({});
                 setTouched({});
             } else {
+                // Get error details from response
+                const errorData = await response.text();
+                console.error('Formspree error:', errorData);
                 setSubmitStatus('error');
             }
         } catch (error) {
@@ -195,7 +210,14 @@ function Contact() {
                     {/* Error Message */}
                     {submitStatus === 'error' && (
                         <div className="form-message error">
-                            <p>❌ Sorry, there was an error sending your message. Please try again or contact us directly.</p>
+                            <p>❌ Sorry, there was an error sending your message.</p>
+                            <p style={{ fontSize: '14px', marginTop: '8px' }}>
+                                Please try again or email us directly at{' '}
+                                <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}`}
+                                    style={{ color: '#1d7e99', textDecoration: 'underline' }}>
+                                    {process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}
+                                </a>
+                            </p>
                         </div>
                     )}
 
@@ -283,48 +305,58 @@ function Contact() {
                     </button>
                 </form>
 
-                {/* Additional Info */}
-                <div className="contact-info">
-                    <p className="response-notice">
-                        We typically respond within 24 hours
+                {/* Alternative Contact Method */}
+                <div className="alternative-contact">
+                    <p>
+                        Having trouble with the form? You can also reach us directly:
                     </p>
+                    <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}?subject=Contact Form Inquiry&body=Hello TuneParams.ai team,%0D%0A%0D%0AI would like to inquire about...`}
+                        className="submit-button">
+                        📧 Send Email Directly
+                    </a>
+                </div>
 
-                    <div className="contact-methods">
-                        <div className="contact-method">
-                            <div className="contact-icon">📧</div>
-                            <div className="contact-details-text">
-                                <strong>Email</strong>
-                                <span>admin@tuneparams.ai</span>
+                {/* Contact Info */}
+                <div className="contact-info">
+                    <div className="contact-grid">
+                        <div className="contact-item">
+                            <div className="contact-item-icon">📧</div>
+                            <div className="contact-item-title">Email</div>
+                            <div className="contact-item-text">
+                                {process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.ai'}
                             </div>
                         </div>
 
-                        <div className="contact-method">
-                            <div className="contact-icon">🕒</div>
-                            <div className="contact-details-text">
-                                <strong>Response Time</strong>
-                                <span>Within 24 hours</span>
-                            </div>
-                        </div>
-
-                        <div className="contact-method">
-                            <div className="contact-icon">🌍</div>
-                            <div className="contact-details-text">
-                                <strong>Timezone</strong>
-                                <span>UTC-8 (PST)</span>
+                        <div className="contact-item">
+                            <div className="contact-item-icon">🕒</div>
+                            <div className="contact-item-title">Response Time</div>
+                            <div className="contact-item-text">
+                                Within 24 hours
                             </div>
                         </div>
                     </div>
 
-                    <div className="social-links">
-                        <p className="social-title">Follow us on social media</p>
+                    <div className="social-section">
+                        <p>
+                            Follow us on social media
+                        </p>
                         <div className="social-buttons">
-                            <a href="https://linkedin.com/company/tuneparams" target="_blank" rel="noopener noreferrer" className="social-btn linkedin">
+                            <a href={process.env.REACT_APP_LINKEDIN_URL || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="social-btn linkedin">
                                 LinkedIn
                             </a>
-                            <a href="https://twitter.com/tuneparams" target="_blank" rel="noopener noreferrer" className="social-btn twitter">
+                            <a href={process.env.REACT_APP_TWITTER_URL || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="social-btn twitter">
                                 Twitter
                             </a>
-                            <a href="https://github.com/tuneparams" target="_blank" rel="noopener noreferrer" className="social-btn github">
+                            <a href={process.env.REACT_APP_GITHUB_URL || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="social-btn github">
                                 GitHub
                             </a>
                         </div>

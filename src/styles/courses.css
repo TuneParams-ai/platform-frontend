@@ -37,6 +37,8 @@
     gap: 30px;
     max-width: 1200px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .course-card {
@@ -54,6 +56,7 @@
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
 .course-card::before {
@@ -335,7 +338,7 @@
 
 @media (max-width: 768px) {
     .courses-page-container {
-        padding: 30px 15px;
+        padding: 30px 10px;
     }
 
     .courses-title {
@@ -344,13 +347,14 @@
 
     .courses-grid {
         gap: 20px;
-        padding: 0 15px;
+        padding: 0 5px;
+        justify-content: center;
     }
 
     .course-card {
         padding: 20px;
         min-height: 420px;
-        width: 100%;
+        width: calc(100% - 10px);
         max-width: 100%;
         margin: 0 auto;
     }
@@ -369,7 +373,7 @@
         gap: 10px;
         flex-wrap: wrap;
         justify-content: center;
-        padding: 0 10px;
+        padding: 0 5px;
     }
 
     .filter-btn {
@@ -392,7 +396,7 @@
 
 @media (max-width: 480px) {
     .courses-page-container {
-        padding: 20px 10px;
+        padding: 20px 5px;
     }
 
     .courses-title {
@@ -401,11 +405,12 @@
 
     .courses-subtitle {
         font-size: 1rem;
+        padding: 0 10px;
     }
 
     .courses-grid {
         gap: 15px;
-        padding: 0 10px;
+        padding: 0;
     }
 
     .course-card {
@@ -413,7 +418,8 @@
         min-height: 380px;
         width: 100%;
         max-width: 100%;
-        margin: 0 auto;
+        margin: 0;
+        box-sizing: border-box;
     }
 
     .course-description {
