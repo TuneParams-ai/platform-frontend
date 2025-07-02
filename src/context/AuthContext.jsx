@@ -18,6 +18,7 @@ export const AuthContext = createContext({
   signInWithEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   registerWithEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   sendVerificationEmail: async () => ({ success: false, error: 'Firebase not configured' }),
+  resendVerificationEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   verifyEmail: async () => ({ success: false, error: 'Firebase not configured' }),
   logout: async () => ({ success: false, error: 'Firebase not configured' })
 });
@@ -194,6 +195,58 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Resend verification email by temporarily signing in
+  const resendVerificationEmail = async (email, password) => {
+    try {
+      console.log('Attempting to resend verification email for:', email);
+
+      // Try to sign in to get user context
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+
+      if (user.emailVerified) {
+        await signOut(auth);
+        return { success: false, error: 'Email is already verified. You can sign in normally.' };
+      }
+
+      // Send verification email
+      await sendEmailVerification(user, {
+        url: `${window.location.origin}/login?emailVerified=true`,
+        handleCodeInApp: false
+      });
+
+      // Sign out the user again
+      await signOut(auth);
+
+      return {
+        success: true,
+        message: 'Verification email sent! Please check your inbox and spam folder.'
+      };
+    } catch (error) {
+      console.error('Resend verification email error:', error);
+
+      let errorMessage = 'Failed to resend verification email';
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email address.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password. Please enter the correct password.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = error.message || 'Failed to resend verification email. Please try again.';
+      }
+
+      return { success: false, error: errorMessage };
+    }
+  };
+
   // Verify email with action code (for handling email verification links)
   const verifyEmail = async (actionCode) => {
     try {
@@ -286,6 +339,7 @@ const AuthProvider = ({ children }) => {
     registerWithEmail,
     logout,
     sendVerificationEmail,
+    resendVerificationEmail,
     verifyEmail
   };
 

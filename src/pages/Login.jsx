@@ -12,8 +12,9 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
+    const [showResendButton, setShowResendButton] = useState(false);
 
-    const { signInWithEmail, signInWithGoogle } = useAuth();
+    const { signInWithEmail, signInWithGoogle, resendVerificationEmail } = useAuth();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
@@ -36,8 +37,9 @@ const Login = () => {
             ...prev,
             [name]: value,
         }));
-        // Clear error when user starts typing
+        // Clear error and hide resend button when user starts typing
         if (error) setError("");
+        if (showResendButton) setShowResendButton(false);
     };
 
     const handleSubmit = async (e) => {
@@ -54,7 +56,10 @@ const Login = () => {
             setError(result.error);
             // If email verification is required, show resend option
             if (result.requiresVerification) {
-                setMessage("Need to resend verification email? Check your email or use the 'Resend Verification' button below.");
+                setShowResendButton(true);
+                setMessage("Need to resend verification email? Use the 'Resend Verification' button below.");
+            } else {
+                setShowResendButton(false);
             }
         }
 
@@ -72,6 +77,29 @@ const Login = () => {
             navigate('/dashboard');
         } else {
             setError(result.error);
+        }
+
+        setLoading(false);
+    };
+
+    const handleResendVerification = async () => {
+        if (!formData.email || !formData.password) {
+            setError("Please enter both email and password to resend verification.");
+            return;
+        }
+
+        setLoading(true);
+        setError("");
+        setMessage("Sending verification email...");
+
+        const result = await resendVerificationEmail(formData.email, formData.password);
+
+        if (result.success) {
+            setMessage(result.message);
+            setShowResendButton(false);
+        } else {
+            setError(result.error);
+            setMessage("");
         }
 
         setLoading(false);
@@ -211,6 +239,23 @@ const Login = () => {
                     <button type="submit" className="btn" disabled={loading}>
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
+
+                    {/* Resend Verification Button */}
+                    {showResendButton && (
+                        <button
+                            type="button"
+                            onClick={handleResendVerification}
+                            disabled={loading}
+                            className="btn btn-secondary"
+                            style={{
+                                marginTop: '15px',
+                                backgroundColor: '#6c757d',
+                                border: 'none'
+                            }}
+                        >
+                            {loading ? 'Sending...' : 'Resend Verification Email'}
+                        </button>
+                    )}
                 </form>
 
                 {/* Footer */}
