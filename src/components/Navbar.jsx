@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import "./../styles/root.css";
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -12,6 +16,15 @@ const Navbar = ({ user }) => {
 
   const closeMenu = () => {
     setIsOpen(false);
+    setShowUserMenu(false);
+  };
+
+  const handleLogout = async () => {
+    const result = await logout();
+    if (result.success) {
+      navigate('/');
+      closeMenu();
+    }
   };
 
   // Function to check if a path is active
@@ -87,22 +100,13 @@ const Navbar = ({ user }) => {
         >
           Courses
         </Link>
-        {user?.role === "student" && (
-          <Link
-            to="/my-courses"
-            onClick={closeMenu}
-            className={isActivePath("/my-courses") ? "active" : ""}
-          >
-            My Courses
-          </Link>
-        )}
-        {user?.role === "admin" && (
+        {user && (
           <Link
             to="/dashboard"
             onClick={closeMenu}
             className={isActivePath("/dashboard") ? "active" : ""}
           >
-            Admin Panel
+            Dashboard
           </Link>
         )}
         <Link
@@ -112,8 +116,107 @@ const Navbar = ({ user }) => {
         >
           Contact
         </Link>
+
         {user ? (
-          <button onClick={() => { user.logout(); closeMenu(); }}>Logout</button>
+          <div className="user-menu-container" style={{ position: 'relative' }}>
+            <button
+              className="user-profile-button"
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-color)',
+                cursor: 'pointer',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                transition: 'background 0.3s ease',
+                fontSize: '14px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.name}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    objectFit: 'cover'
+                  }}
+                />
+              ) : (
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  background: 'var(--primary-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}>
+                  {user.name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+              )}
+              <span style={{ fontSize: '14px' }}>{user.name}</span>
+              <span style={{ fontSize: '12px' }}>▼</span>
+            </button>
+
+            {showUserMenu && (
+              <div className="user-dropdown" style={{
+                position: 'absolute',
+                top: '100%',
+                right: '0',
+                background: 'var(--background-color)',
+                border: '1px solid rgba(29, 126, 153, 0.2)',
+                borderRadius: '8px',
+                padding: '8px',
+                minWidth: '200px',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+                zIndex: 1000
+              }}>
+                <div style={{
+                  padding: '12px',
+                  borderBottom: '1px solid rgba(29, 126, 153, 0.2)',
+                  marginBottom: '8px'
+                }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-color)' }}>
+                    {user.name}
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'var(--secondary-text-color)' }}>
+                    {user.email}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--secondary-text-color)', marginTop: '4px' }}>
+                    Role: {user.role}
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#ef4444',
+                    textAlign: 'left',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'background 0.3s ease'
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           <Link
             to="/login"

@@ -85,6 +85,17 @@ a:hover {
   transform: scale(1.3);
 }
 
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.user-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .nav-links a,
 .nav-links button {
   margin-left: 20px;
@@ -267,6 +278,23 @@ body.menu-open {
   box-shadow: 0 0 20px rgba(29, 126, 153, 0.3),
     0 0 40px rgba(195, 199, 202, 0.2);
   transition: box-shadow 0.3s ease;
+}
+
+/* User menu styles */
+.user-menu-container {
+  position: relative;
+}
+
+.user-profile-button:hover {
+  background: rgba(29, 126, 153, 0.1) !important;
+}
+
+.user-dropdown a:hover {
+  background: rgba(29, 126, 153, 0.1) !important;
+}
+
+.user-dropdown button:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
 }
 
 /* Tablet View (768px - 1024px) */
