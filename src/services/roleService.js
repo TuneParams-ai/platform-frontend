@@ -73,7 +73,14 @@ export const assignUserRole = async (userId, role, assignedBy) => {
         const roleRef = doc(db, 'user_roles', userId);
         await setDoc(roleRef, userRoleData);
 
-        console.log(`Role ${role} assigned to user ${userId}`);
+        // Also update the role in the users collection to keep them in sync
+        const userRef = doc(db, 'users', userId);
+        await setDoc(userRef, {
+            role: role,
+            updatedAt: serverTimestamp()
+        }, { merge: true });
+
+        console.log(`Role ${role} assigned to user ${userId} in both collections`);
         return { success: true, role: userRoleData };
 
     } catch (error) {
