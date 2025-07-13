@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { auth, googleProvider, isFirebaseConfigured } from "../config/firebase";
+import { createOrUpdateUserProfile } from "../services/userService";
 import {
   signInWithPopup,
   signOut,
@@ -39,6 +40,9 @@ const AuthProvider = ({ children }) => {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
+      // Create or update user profile in Firestore
+      await createOrUpdateUserProfile(user);
+
       // Store user info in localStorage
       const userData = {
         uid: user.uid,
@@ -71,6 +75,9 @@ const AuthProvider = ({ children }) => {
           requiresVerification: true
         };
       }
+
+      // Create or update user profile in Firestore
+      await createOrUpdateUserProfile(user);
 
       const userData = {
         uid: user.uid,
@@ -122,6 +129,12 @@ const AuthProvider = ({ children }) => {
         displayName: `${firstName} ${lastName}`
       });
       console.log('Profile updated with name:', `${firstName} ${lastName}`);
+
+      // Create user profile in Firestore (but they'll need to verify email first)
+      await createOrUpdateUserProfile({
+        ...user,
+        displayName: `${firstName} ${lastName}`
+      });
 
       // Send email verification
       console.log('Sending email verification...');
