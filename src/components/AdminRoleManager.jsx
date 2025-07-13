@@ -1,9 +1,10 @@
 // src/components/AdminRoleManager.jsx
 // Component for managing user roles (admin only)
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs, query, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { assignUserRole, USER_ROLES, logRoleAction, getUserRole } from '../services/roleService';
+import { getAllUsers } from '../services/userService';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/admin-role-manager.css';
 
@@ -19,11 +20,46 @@ const AdminRoleManager = () => {
 
     useEffect(() => {
         loadUsers();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const loadUsers = async () => {
         setLoading(true);
         setError(null);
+        try {
+            // Get all users from the users collection
+            const result = await getAllUsers();
+
+            if (result.success) {
+                setUsers(result.users);
+
+                // Load current roles for all users
+                const rolePromises = result.users.map(async (user) => {
+                    const roleData = await getUserRole(user.id);
+                    return [user.id, roleData.role]; // Extract just the role string
+                });
+
+                const roles = await Promise.all(rolePromises);
+                const rolesMap = new Map(roles);
+                setUserRoles(rolesMap);
+            } else {
+                setError(result.error);
+                // Fallback to old method if users collection is empty
+                await loadUsersFromTransactions();
+            }
+
+        } catch (err) {
+            setError(err.message);
+            console.error('Error loading users:', err);
+            // Fallback to old method
+            await loadUsersFromTransactions();
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fallback method to load users from transactions if users collection is empty
+    const loadUsersFromTransactions = async () => {
         try {
             // Get all unique users from enrollments and payments
             const [enrollmentsSnapshot, paymentsSnapshot] = await Promise.all([
@@ -38,8 +74,10 @@ const AdminRoleManager = () => {
                 const data = doc.data();
                 if (data.userId) {
                     uniqueUsers.set(data.userId, {
-                        userId: data.userId,
+                        id: data.userId,
+                        uid: data.userId,
                         displayName: data.userId.substring(0, 8) + '...',
+                        email: null,
                         source: 'enrollment'
                     });
                 }
@@ -51,7 +89,8 @@ const AdminRoleManager = () => {
                 if (data.userId) {
                     const existing = uniqueUsers.get(data.userId);
                     uniqueUsers.set(data.userId, {
-                        userId: data.userId,
+                        id: data.userId,
+                        uid: data.userId,
                         displayName: data.payerEmail || existing?.displayName || data.userId.substring(0, 8) + '...',
                         email: data.payerEmail,
                         source: existing ? 'both' : 'payment'
@@ -64,8 +103,8 @@ const AdminRoleManager = () => {
 
             // Load current roles for all users
             const rolePromises = usersArray.map(async (user) => {
-                const role = await getUserRole(user.userId);
-                return [user.userId, role];
+                const roleData = await getUserRole(user.id);
+                return [user.id, roleData.role]; // Extract just the role string
             });
 
             const roles = await Promise.all(rolePromises);
@@ -74,9 +113,7 @@ const AdminRoleManager = () => {
 
         } catch (err) {
             setError(err.message);
-            console.error('Error loading users:', err);
-        } finally {
-            setLoading(false);
+            console.error('Error loading users from transactions:', err);
         }
     };
 
@@ -95,8 +132,8 @@ const AdminRoleManager = () => {
 
             if (result.success) {
                 // Update local state with new role
-                const newRole = await getUserRole(selectedUser);
-                setUserRoles(prev => new Map(prev).set(selectedUser, newRole));
+                const newRoleData = await getUserRole(selectedUser);
+                setUserRoles(prev => new Map(prev).set(selectedUser, newRoleData.role)); // Extract just the role string
 
                 // Log the action
                 await logRoleAction('assign_role', selectedUser, user.uid, {
@@ -118,6 +155,46 @@ const AdminRoleManager = () => {
         }
     };
 
+    const syncAllUserRoles = async () => {
+        setLoading(true);
+        setError(null);
+        setMessage(null);
+
+        try {
+            // Get all user roles from user_roles collection
+            const userRolesSnapshot = await getDocs(collection(db, 'user_roles'));
+
+            let syncCount = 0;
+            const syncPromises = userRolesSnapshot.docs.map(async (roleDoc) => {
+                const roleData = roleDoc.data();
+                const userId = roleDoc.id;
+
+                // Update the users collection with the role from user_roles
+                const userRef = doc(db, 'users', userId);
+                await setDoc(userRef, {
+                    role: roleData.role,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+
+                syncCount++;
+                return { userId, role: roleData.role };
+            });
+
+            await Promise.all(syncPromises);
+
+            setMessage(`Successfully synced ${syncCount} user roles between collections`);
+
+            // Reload users to show updated data
+            await loadUsers();
+
+        } catch (err) {
+            setError(`Error syncing user roles: ${err.message}`);
+            console.error('Error syncing user roles:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="admin-role-manager">
             <h3>👑 Role Management</h3>
@@ -134,9 +211,9 @@ const AdminRoleManager = () => {
                 >
                     <option value="">Select User</option>
                     {users.map(user => (
-                        <option key={user.userId} value={user.userId}>
-                            {user.displayName} {user.email ? `(${user.email})` : ''}
-                            {userRoles.get(user.userId) ? ` - Current: ${userRoles.get(user.userId)}` : ''}
+                        <option key={user.id || user.uid} value={user.id || user.uid}>
+                            {user.displayName || user.email} {user.email ? `(${user.email})` : ''}
+                            {userRoles.get(user.id || user.uid) ? ` - Current: ${userRoles.get(user.id || user.uid)}` : ''}
                         </option>
                     ))}
                 </select>
@@ -158,22 +235,31 @@ const AdminRoleManager = () => {
                 >
                     {loading ? 'Assigning...' : 'Assign Role'}
                 </button>
+
+                <button
+                    onClick={syncAllUserRoles}
+                    disabled={loading}
+                    className={`admin-role-button sync-button ${loading ? 'loading' : ''}`}
+                    title="Sync roles from user_roles collection to users collection"
+                >
+                    {loading ? 'Syncing...' : '🔄 Sync All Roles'}
+                </button>
             </div>            {/* Current User Roles Display */}
             {users.length > 0 && (
                 <div className="admin-current-roles">
                     <h4>Current User Roles:</h4>
                     <div className="admin-roles-list">
                         {users.map(user => (
-                            <div key={user.userId} className="admin-role-user-item">
+                            <div key={user.id || user.uid} className="admin-role-user-item">
                                 <div className="admin-role-user-info">
-                                    <div className="admin-role-user-name">{user.displayName}</div>
+                                    <div className="admin-role-user-name">{user.displayName || user.email}</div>
                                     {user.email && <div className="admin-role-user-email">({user.email})</div>}
                                     <div className="admin-role-user-id">
-                                        ID: {user.userId.substring(0, 12)}...
+                                        ID: {(user.id || user.uid).substring(0, 12)}...
                                     </div>
                                 </div>
-                                <div className={`admin-role-badge ${userRoles.get(user.userId)?.toLowerCase() || 'student'}`}>
-                                    {userRoles.get(user.userId) || 'Loading...'}
+                                <div className={`admin-role-badge ${(userRoles.get(user.id || user.uid) || 'student').toLowerCase()}`}>
+                                    {userRoles.get(user.id || user.uid) || 'student'}
                                 </div>
                             </div>
                         ))}
