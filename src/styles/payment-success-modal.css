@@ -171,13 +171,12 @@
 
 /* Modal-specific button customizations */
 .payment-success-modal .btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    flex: 1;
+    min-width: 140px;
 }
 
-.payment-success-modal .btn-primary {
-    flex: 1;
+.payment-success-modal .btn-secondary {
+    flex: 0.8;
 }
 
 .close-modal {

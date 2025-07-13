@@ -51,6 +51,19 @@
     background-color: #ccc;
 }
 
+.admin-role-button.sync-button {
+    background-color: #10b981;
+    margin-left: 10px;
+}
+
+.admin-role-button.sync-button:hover {
+    background-color: #059669;
+}
+
+.admin-role-button.sync-button:disabled {
+    background-color: #ccc;
+}
+
 .admin-current-roles {
     margin-bottom: 20px;
 }
