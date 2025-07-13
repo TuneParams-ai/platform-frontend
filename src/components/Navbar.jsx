@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "./../styles/root.css";
+import "./../styles/navbar.css";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -128,81 +129,36 @@ const Navbar = () => {
         </Link>
 
         {user ? (
-          <div className="user-menu-container" style={{ position: 'relative' }}>
+          <div className="user-menu-container">
             <button
               className="user-profile-button"
               onClick={() => setShowUserMenu(!showUserMenu)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-color)',
-                cursor: 'pointer',
-                padding: '8px 12px',
-                borderRadius: '8px',
-                transition: 'background 0.3s ease',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}
             >
               {user.photoURL ? (
                 <img
                   src={user.photoURL}
                   alt={user.name}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    objectFit: 'cover'
-                  }}
+                  className="user-avatar"
                 />
               ) : (
-                <div style={{
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  background: 'var(--primary-color)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: '14px',
-                  fontWeight: 'bold'
-                }}>
+                <div className="user-avatar-fallback">
                   {user.name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
               )}
-              <span style={{ fontSize: '14px' }}>{user.name}</span>
-              <span style={{ fontSize: '12px' }}>▼</span>
+              <span className="user-name">{user.name}</span>
+              <span className="dropdown-arrow">▼</span>
             </button>
 
             {showUserMenu && (
-              <div className="user-dropdown" style={{
-                position: 'absolute',
-                top: '100%',
-                right: '0',
-                background: 'var(--background-color)',
-                border: '1px solid rgba(29, 126, 153, 0.2)',
-                borderRadius: '8px',
-                padding: '8px',
-                minWidth: '200px',
-                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-                zIndex: 1000
-              }}>
-                <div style={{
-                  padding: '12px',
-                  borderBottom: '1px solid rgba(29, 126, 153, 0.2)',
-                  marginBottom: '8px'
-                }}>
-                  <div style={{ fontSize: '14px', fontWeight: 'bold', color: 'var(--text-color)' }}>
+              <div className="user-dropdown">
+                <div className="user-info-section">
+                  <div className="user-info-name">
                     {user.name}
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--secondary-text-color)' }}>
+                  <div className="user-info-email">
                     {user.email}
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--secondary-text-color)', marginTop: '4px' }}>
+                  <div className="user-info-role">
                     Role: {user.role} {isAdmin && '(Admin)'}
                   </div>
                 </div>
@@ -212,101 +168,38 @@ const Navbar = () => {
                     <Link
                       to="/admin/payments"
                       onClick={closeMenu}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        padding: '8px 12px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--text-color)',
-                        textAlign: 'left',
-                        borderRadius: '4px',
-                        fontSize: '14px',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        transition: 'background 0.3s ease'
-                      }}
+                      className="admin-menu-link"
                     >
                       🏛️ Admin Panel
                     </Link>
                     <Link
                       to="/firebase-test"
                       onClick={closeMenu}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        padding: '8px 12px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--text-color)',
-                        textAlign: 'left',
-                        borderRadius: '4px',
-                        fontSize: '14px',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        transition: 'background 0.3s ease'
-                      }}
+                      className="admin-menu-link"
                     >
                       🔥 Firebase Test
                     </Link>
                     <Link
                       to="/firestore-test"
                       onClick={closeMenu}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        padding: '8px 12px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--text-color)',
-                        textAlign: 'left',
-                        borderRadius: '4px',
-                        fontSize: '14px',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        transition: 'background 0.3s ease'
-                      }}
+                      className="admin-menu-link"
                     >
                       🗃️ Firestore Test
                     </Link>
                     <Link
                       to="/paypal-test"
                       onClick={closeMenu}
-                      style={{
-                        display: 'block',
-                        width: '100%',
-                        padding: '8px 12px',
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--text-color)',
-                        textAlign: 'left',
-                        borderRadius: '4px',
-                        fontSize: '14px',
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        transition: 'background 0.3s ease'
-                      }}
+                      className="admin-menu-link"
                     >
                       💳 PayPal Test
                     </Link>
-                    <div style={{ height: '1px', background: 'rgba(29, 126, 153, 0.2)', margin: '8px 0' }}></div>
+                    <div className="admin-menu-separator"></div>
                   </>
                 )}
 
                 <button
                   onClick={handleLogout}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: '#ef4444',
-                    textAlign: 'left',
-                    borderRadius: '4px',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    transition: 'background 0.3s ease'
-                  }}
+                  className="logout-button"
                 >
                   Logout
                 </button>

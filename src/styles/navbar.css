@@ -1,0 +1,137 @@
+/* Navbar Component Styles */
+
+/* User Menu Container */
+.user-menu-container {
+    position: relative;
+}
+
+/* User Profile Button */
+.user-profile-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* User Avatar */
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* User Avatar Fallback */
+.user-avatar-fallback {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* User Name */
+.user-name {
+    font-size: 14px;
+}
+
+/* Dropdown Arrow */
+.dropdown-arrow {
+    font-size: 12px;
+}
+
+/* User Dropdown */
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--background-color);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 8px;
+    padding: 8px;
+    min-width: 200px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+/* User Info Section */
+.user-info-section {
+    padding: 12px;
+    border-bottom: 1px solid rgba(29, 126, 153, 0.2);
+    margin-bottom: 8px;
+}
+
+.user-info-name {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.user-info-email {
+    font-size: 12px;
+    color: var(--secondary-text-color);
+}
+
+.user-info-role {
+    font-size: 11px;
+    color: var(--secondary-text-color);
+    margin-top: 4px;
+}
+
+/* Admin Menu Links */
+.admin-menu-link {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    text-align: left;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.admin-menu-link:hover {
+    background: rgba(29, 126, 153, 0.2);
+}
+
+/* Admin Menu Separator */
+.admin-menu-separator {
+    height: 1px;
+    background: rgba(29, 126, 153, 0.2);
+    margin: 8px 0;
+}
+
+/* Logout Button */
+.logout-button {
+    width: 100%;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    text-align: left;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
