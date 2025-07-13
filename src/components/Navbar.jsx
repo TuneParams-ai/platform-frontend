@@ -119,15 +119,6 @@ const Navbar = () => {
             Dashboard
           </Link>
         )}
-        {isAdmin && (
-          <Link
-            to="/admin/payments"
-            onClick={closeMenu}
-            className={isActivePath("/admin/payments") ? "active" : ""}
-          >
-            Admin Panel
-          </Link>
-        )}
         <Link
           to="/contact"
           onClick={closeMenu}
@@ -237,6 +228,46 @@ const Navbar = () => {
                       }}
                     >
                       🏛️ Admin Panel
+                    </Link>
+                    <Link
+                      to="/firebase-test"
+                      onClick={closeMenu}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '8px 12px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-color)',
+                        textAlign: 'left',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.3s ease'
+                      }}
+                    >
+                      🔥 Firebase Test
+                    </Link>
+                    <Link
+                      to="/firestore-test"
+                      onClick={closeMenu}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '8px 12px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-color)',
+                        textAlign: 'left',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.3s ease'
+                      }}
+                    >
+                      🗃️ Firestore Test
                     </Link>
                     <Link
                       to="/paypal-test"
