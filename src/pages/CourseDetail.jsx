@@ -198,13 +198,12 @@ const CourseDetail = () => {
                                 {/* Show error if any */}
                                 {accessError && (
                                     <div className="enrollment-error">
-                                        <p style={{ color: '#f56565', fontSize: '0.9rem' }}>
+                                        <p className="course-detail-error-text">
                                             {accessError}
                                         </p>
                                         <button
-                                            className="btn btn-secondary"
+                                            className="btn btn-secondary course-detail-access-button"
                                             onClick={clearError}
-                                            style={{ marginTop: '8px', padding: '6px 12px', fontSize: '0.8rem' }}
                                         >
                                             Retry
                                         </button>
@@ -217,19 +216,12 @@ const CourseDetail = () => {
                                         {hasAccess ? (
                                             // User already has access
                                             <div className="enrollment-success">
-                                                <div style={{
-                                                    background: 'rgba(16, 185, 129, 0.1)',
-                                                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                                                    borderRadius: '8px',
-                                                    padding: '16px',
-                                                    marginBottom: '16px',
-                                                    textAlign: 'center'
-                                                }}>
-                                                    <p style={{ color: '#10b981', fontWeight: '600', margin: '0 0 8px 0' }}>
+                                                <div className="course-detail-enrollment-success">
+                                                    <p className="course-detail-success-title">
                                                         ✅ You're enrolled!
                                                     </p>
                                                     {enrollment && (
-                                                        <p style={{ color: 'var(--secondary-text-color)', fontSize: '0.9rem', margin: 0 }}>
+                                                        <p className="course-detail-success-text">
                                                             Progress: {enrollment.progress || 0}%
                                                         </p>
                                                     )}

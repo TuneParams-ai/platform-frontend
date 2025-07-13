@@ -211,10 +211,10 @@ function Contact() {
                     {submitStatus === 'error' && (
                         <div className="form-message error">
                             <p>❌ Sorry, there was an error sending your message.</p>
-                            <p style={{ fontSize: '14px', marginTop: '8px' }}>
+                            <p className="contact-form-note">
                                 Please try again or email us directly at{' '}
                                 <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}`}
-                                    style={{ color: '#1d7e99', textDecoration: 'underline' }}>
+                                    className="contact-form-link">
                                     {process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}
                                 </a>
                             </p>

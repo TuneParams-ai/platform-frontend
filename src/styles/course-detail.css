@@ -500,6 +500,49 @@
     border-color: #9ca3af;
 }
 
+/* Additional Course Detail Inline Styles */
+
+.course-detail-banner {
+    background: linear-gradient(135deg, rgba(29, 126, 153, 0.1) 0%, rgba(58, 180, 149, 0.1) 100%);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.course-detail-error-text {
+    color: #f56565;
+    font-size: 0.9rem;
+}
+
+.course-detail-access-button {
+    margin-top: 8px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+.course-detail-enrollment-success {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.course-detail-success-title {
+    color: #10b981;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.course-detail-success-text {
+    color: var(--secondary-text-color);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
 /* Responsive Design */
 /* Tablet View (768px - 1024px) */
 @media (max-width: 1024px) and (min-width: 769px) {

@@ -126,6 +126,63 @@
     text-decoration: underline;
 }
 
+/* Additional Login Page Inline Styles */
+
+.login-error-message {
+    color: #f56565;
+    background-color: rgba(245, 101, 101, 0.1);
+    border: 1px solid rgba(245, 101, 101, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.login-success-message {
+    color: #48bb78;
+    background-color: rgba(72, 187, 120, 0.1);
+    border: 1px solid rgba(72, 187, 120, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.google-sign-in-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 20px;
+}
+
+.google-sign-in-button:hover {
+    background-color: #3367d6;
+}
+
+.divider-container {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.divider-line {
+    flex: 1;
+    border: none;
+    border-top: 1px solid rgba(160, 160, 160, 0.3);
+}
+
+.divider-text {
+    padding: 0 15px;
+    color: var(--text-color);
+}
+
 /* Tablet View (768px - 1024px) */
 @media screen and (max-width: 1024px) and (min-width: 769px) {
     .login-page-container {

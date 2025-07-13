@@ -149,6 +149,59 @@
     text-decoration: underline;
 }
 
+/* Additional Register Page Inline Styles */
+
+.register-error-message {
+    color: #f56565;
+    background-color: rgba(245, 101, 101, 0.1);
+    border: 1px solid rgba(245, 101, 101, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.register-google-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.register-google-button:hover {
+    background-color: #3367d6;
+}
+
+.register-divider-container {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: var(--secondary-text-color);
+    font-size: 0.9rem;
+}
+
+.register-divider-line {
+    flex: 1;
+    border: none;
+    border-top: 1px solid rgba(160, 160, 160, 0.3);
+}
+
+.register-divider-text {
+    padding: 0 15px;
+}
+
 /* Tablet View (768px - 1024px) */
 @media screen and (max-width: 1024px) and (min-width: 769px) {
     .register-page-container {

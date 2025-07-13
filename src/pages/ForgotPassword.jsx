@@ -69,30 +69,14 @@ const ForgotPassword = () => {
 
                 {/* Error Message */}
                 {error && (
-                    <div className="error-message" style={{
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid rgba(239, 68, 68, 0.3)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                        color: '#ef4444',
-                        marginBottom: '20px',
-                        fontSize: '0.9rem'
-                    }}>
+                    <div className="forgot-password-error-message">
                         {error}
                     </div>
                 )}
 
                 {/* Success/Info Message */}
                 {message && (
-                    <div className="success-message" style={{
-                        background: 'rgba(34, 197, 94, 0.1)',
-                        border: '1px solid rgba(34, 197, 94, 0.3)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                        color: '#22c55e',
-                        marginBottom: '20px',
-                        fontSize: '0.9rem'
-                    }}>
+                    <div className="forgot-password-success-message">
                         {message}
                     </div>
                 )}
@@ -138,26 +122,15 @@ const ForgotPassword = () => {
                     </>
                 ) : (
                     <div className="email-sent-container">
-                        <div style={{
-                            textAlign: 'center',
-                            padding: '20px'
-                        }}>
-                            <div style={{ fontSize: '48px', marginBottom: '20px' }}>📧</div>
-                            <h3 style={{ color: 'var(--text-color)', marginBottom: '15px' }}>
+                        <div className="forgot-password-success-container">
+                            <div className="forgot-password-success-icon">📧</div>
+                            <h3 className="forgot-password-success-title">
                                 Email Sent!
                             </h3>
-                            <p style={{
-                                color: 'var(--secondary-text-color)',
-                                marginBottom: '20px',
-                                lineHeight: '1.5'
-                            }}>
+                            <p className="forgot-password-success-text">
                                 We've sent password reset instructions to <strong>{email}</strong>
                             </p>
-                            <p style={{
-                                color: 'var(--secondary-text-color)',
-                                fontSize: '0.9rem',
-                                marginBottom: '30px'
-                            }}>
+                            <p className="forgot-password-success-note">
                                 Don't see the email? Check your spam folder or try again.
                             </p>
                         </div>
@@ -169,8 +142,7 @@ const ForgotPassword = () => {
                                 setMessage("");
                                 setError("");
                             }}
-                            className="btn btn-secondary"
-                            style={{ width: '100%', marginBottom: '15px' }}
+                            className="btn btn-secondary forgot-password-back-button"
                         >
                             Send Another Email
                         </button>

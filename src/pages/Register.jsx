@@ -99,15 +99,7 @@ const Register = () => {
 
                 {/* Error Message */}
                 {error && (
-                    <div className="error-message" style={{
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid rgba(239, 68, 68, 0.3)',
-                        borderRadius: '8px',
-                        padding: '12px',
-                        color: '#ef4444',
-                        marginBottom: '20px',
-                        fontSize: '0.9rem'
-                    }}>
+                    <div className="register-error-message">
                         {error}
                     </div>
                 )}
@@ -117,15 +109,7 @@ const Register = () => {
                     type="button"
                     onClick={handleGoogleSignIn}
                     disabled={loading}
-                    className="btn btn-secondary"
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '12px',
-                        marginBottom: '20px',
-                        width: '100%'
-                    }}
+                    className="register-google-button"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -137,16 +121,10 @@ const Register = () => {
                 </button>
 
                 {/* Divider */}
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    margin: '20px 0',
-                    color: 'var(--secondary-text-color)',
-                    fontSize: '0.9rem'
-                }}>
-                    <hr style={{ flex: 1, border: 'none', borderTop: '1px solid rgba(160, 160, 160, 0.3)' }} />
-                    <span style={{ padding: '0 15px' }}>or</span>
-                    <hr style={{ flex: 1, border: 'none', borderTop: '1px solid rgba(160, 160, 160, 0.3)' }} />
+                <div className="register-divider-container">
+                    <hr className="register-divider-line" />
+                    <span className="register-divider-text">or</span>
+                    <hr className="register-divider-line" />
                 </div>
 
                 {/* Form */}

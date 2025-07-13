@@ -42,22 +42,15 @@ const Dashboard = () => {
 
           {/* Loading state */}
           {loading && (
-            <div className="loading-state" style={{ textAlign: 'center', padding: '40px' }}>
+            <div className="dashboard-loading-state">
               <p>Loading your courses...</p>
             </div>
           )}
 
           {/* Error state */}
           {error && (
-            <div className="error-state" style={{
-              background: 'rgba(245, 101, 101, 0.1)',
-              border: '1px solid rgba(245, 101, 101, 0.3)',
-              borderRadius: '8px',
-              padding: '16px',
-              margin: '20px 0',
-              textAlign: 'center'
-            }}>
-              <p style={{ color: '#f56565', margin: 0 }}>
+            <div className="dashboard-error-state">
+              <p className="dashboard-error-text">
                 Error loading courses: {error}
               </p>
             </div>

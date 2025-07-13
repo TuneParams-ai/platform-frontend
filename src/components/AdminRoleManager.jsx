@@ -5,6 +5,7 @@ import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { assignUserRole, USER_ROLES, logRoleAction, getUserRole } from '../services/roleService';
 import { useAuth } from '../hooks/useAuth';
+import '../styles/admin-role-manager.css';
 
 const AdminRoleManager = () => {
     const { user } = useAuth();
@@ -118,28 +119,18 @@ const AdminRoleManager = () => {
     };
 
     return (
-        <div style={{
-            padding: '20px',
-            backgroundColor: 'rgba(29, 126, 153, 0.1)',
-            borderRadius: '8px',
-            margin: '20px 0'
-        }}>
+        <div className="admin-role-manager">
             <h3>👑 Role Management</h3>
 
             {loading && <p>Loading users...</p>}
-            {error && <p style={{ color: '#f56565' }}>❌ {error}</p>}
-            {message && <p style={{ color: '#48bb78' }}>✅ {message}</p>}
+            {error && <p className="admin-role-error">❌ {error}</p>}
+            {message && <p className="admin-role-success">✅ {message}</p>}
 
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '20px' }}>
+            <div className="admin-role-form">
                 <select
                     value={selectedUser}
                     onChange={(e) => setSelectedUser(e.target.value)}
-                    style={{
-                        padding: '8px',
-                        borderRadius: '4px',
-                        border: '1px solid #ccc',
-                        minWidth: '200px'
-                    }}
+                    className="admin-role-select"
                 >
                     <option value="">Select User</option>
                     {users.map(user => (
@@ -153,11 +144,7 @@ const AdminRoleManager = () => {
                 <select
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    style={{
-                        padding: '8px',
-                        borderRadius: '4px',
-                        border: '1px solid #ccc'
-                    }}
+                    className="admin-role-select"
                 >
                     <option value={USER_ROLES.STUDENT}>Student</option>
                     <option value={USER_ROLES.INSTRUCTOR}>Instructor</option>
@@ -167,55 +154,25 @@ const AdminRoleManager = () => {
                 <button
                     onClick={handleAssignRole}
                     disabled={!selectedUser || !selectedRole || loading}
-                    style={{
-                        padding: '8px 16px',
-                        backgroundColor: (!selectedUser || !selectedRole || loading) ? '#ccc' : '#3b82f6',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: (!selectedUser || !selectedRole || loading) ? 'not-allowed' : 'pointer'
-                    }}
+                    className={`admin-role-button ${(!selectedUser || !selectedRole || loading) ? 'loading' : ''}`}
                 >
                     {loading ? 'Assigning...' : 'Assign Role'}
                 </button>
-            </div>
-
-            {/* Current User Roles Display */}
+            </div>            {/* Current User Roles Display */}
             {users.length > 0 && (
-                <div style={{ marginBottom: '20px' }}>
+                <div className="admin-current-roles">
                     <h4>Current User Roles:</h4>
-                    <div style={{
-                        backgroundColor: 'white',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '4px',
-                        padding: '12px',
-                        maxHeight: '200px',
-                        overflowY: 'auto'
-                    }}>
+                    <div className="admin-roles-list">
                         {users.map(user => (
-                            <div key={user.userId} style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                padding: '8px 0',
-                                borderBottom: '1px solid #f7fafc'
-                            }}>
-                                <div>
-                                    <strong>{user.displayName}</strong>
-                                    {user.email && <span style={{ color: '#666', fontSize: '12px' }}> ({user.email})</span>}
-                                    <div style={{ fontSize: '11px', color: '#888' }}>
+                            <div key={user.userId} className="admin-role-user-item">
+                                <div className="admin-role-user-info">
+                                    <div className="admin-role-user-name">{user.displayName}</div>
+                                    {user.email && <div className="admin-role-user-email">({user.email})</div>}
+                                    <div className="admin-role-user-id">
                                         ID: {user.userId.substring(0, 12)}...
                                     </div>
                                 </div>
-                                <div style={{
-                                    padding: '4px 8px',
-                                    backgroundColor: userRoles.get(user.userId) === USER_ROLES.ADMIN ? '#e53e3e' :
-                                        userRoles.get(user.userId) === USER_ROLES.INSTRUCTOR ? '#3b82f6' : '#48bb78',
-                                    color: 'white',
-                                    borderRadius: '12px',
-                                    fontSize: '12px',
-                                    fontWeight: 'bold'
-                                }}>
+                                <div className={`admin-role-badge ${userRoles.get(user.userId)?.toLowerCase() || 'student'}`}>
                                     {userRoles.get(user.userId) || 'Loading...'}
                                 </div>
                             </div>
@@ -224,13 +181,7 @@ const AdminRoleManager = () => {
                 </div>
             )}
 
-            <div style={{
-                backgroundColor: '#fff3cd',
-                border: '1px solid #ffc107',
-                borderRadius: '4px',
-                padding: '12px',
-                fontSize: '14px'
-            }}>
+            <div className="admin-setup-note">
                 <strong>⚠️ Quick Setup:</strong><br />
                 To make yourself an admin immediately, use the Firestore Test page:<br />
                 1. Go to <code>/firestore-test</code><br />

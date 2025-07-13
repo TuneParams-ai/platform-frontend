@@ -348,6 +348,18 @@
     line-height: 1.4;
 }
 
+/* Additional Contact Page Inline Styles */
+
+.contact-form-note {
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.contact-form-link {
+    color: #1d7e99;
+    text-decoration: underline;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .contact-page-container {

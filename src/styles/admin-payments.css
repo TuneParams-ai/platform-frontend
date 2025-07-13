@@ -1,0 +1,104 @@
+/* Admin Payments Page Styles */
+
+.admin-container {
+    padding: 20px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+}
+
+.admin-access-denied {
+    padding: 40px;
+    text-align: center;
+}
+
+.admin-loading {
+    padding: 40px;
+    text-align: center;
+}
+
+.admin-note {
+    margin-top: 20px;
+    padding: 16px;
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+}
+
+.admin-tabs {
+    margin-bottom: 20px;
+}
+
+.admin-tab-button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--text-color);
+}
+
+.admin-tab-button.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.admin-refresh-button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: var(--secondary-color);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-error {
+    color: #f56565;
+}
+
+.admin-table-container {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(29, 126, 153, 0.1);
+    border-radius: 8px;
+}
+
+.admin-table thead tr {
+    background-color: rgba(29, 126, 153, 0.2);
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    border: 1px solid rgba(29, 126, 153, 0.3);
+}
+
+.admin-table td {
+    padding: 8px;
+}
+
+.admin-table .payment-id,
+.admin-table .user-id {
+    font-size: 0.8rem;
+}
+
+.status-completed {
+    color: #10b981;
+    font-weight: bold;
+}
+
+.status-enrolled {
+    color: #3b82f6;
+    font-weight: bold;
+}
+
+.status-error {
+    color: #f56565;
+    font-weight: bold;
+}
