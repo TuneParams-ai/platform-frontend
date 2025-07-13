@@ -20,9 +20,10 @@
 .admin-note {
     margin-top: 20px;
     padding: 16px;
-    background-color: #fff3cd;
-    border: 1px solid #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
     border-radius: 4px;
+    color: var(--text-color);
 }
 
 .admin-tabs {
@@ -65,18 +66,20 @@
 .admin-table {
     width: 100%;
     border-collapse: collapse;
-    background-color: rgba(29, 126, 153, 0.1);
+    background-color: rgba(29, 126, 153, 0.15);
     border-radius: 8px;
+    color: var(--text-color);
 }
 
 .admin-table thead tr {
-    background-color: rgba(29, 126, 153, 0.2);
+    background-color: rgba(29, 126, 153, 0.3);
 }
 
 .admin-table th,
 .admin-table td {
     padding: 12px;
-    border: 1px solid rgba(29, 126, 153, 0.3);
+    border: 1px solid rgba(29, 126, 153, 0.4);
+    color: var(--text-color);
 }
 
 .admin-table td {
