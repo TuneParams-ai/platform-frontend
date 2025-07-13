@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from '../hooks/useAuth';
+import { isUserAdmin } from '../services/roleService';
+import AdminRoleManager from '../components/AdminRoleManager';
 
 const AdminPayments = () => {
     const { user } = useAuth();
@@ -12,20 +14,47 @@ const AdminPayments = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('payments');
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [adminLoading, setAdminLoading] = useState(true);
 
-    // Simple access control - only allow specific admin emails
+    // Check if user is admin using database roles
+    useEffect(() => {
+        const checkAdminStatus = async () => {
+            if (!user) {
+                setIsAdmin(false);
+                setAdminLoading(false);
+                return;
+            }
+
+            try {
+                const adminStatus = await isUserAdmin(user.uid);
+                setIsAdmin(adminStatus);
+            } catch (err) {
+                console.error('Error checking admin status:', err);
+                setIsAdmin(false);
+            } finally {
+                setAdminLoading(false);
+            }
+        };
+
+        checkAdminStatus();
+    }, [user]);
+
+    // Fallback: Simple email-based admin check for development
     const adminEmails = [
         'admin@tuneparams.ai',
-        // Add your admin email here
+        'abhinaykotla.com', // Replace with your actual email
+        // Add more admin emails here as needed
     ];
 
-    const isAdmin = user && adminEmails.includes(user.email);
+    const isEmailAdmin = user && adminEmails.includes(user.email);
+    const hasAdminAccess = isAdmin || isEmailAdmin;
 
     useEffect(() => {
-        if (isAdmin) {
+        if (hasAdminAccess) {
             loadData();
         }
-    }, [isAdmin]);
+    }, [hasAdminAccess]);
 
     const loadData = async () => {
         setLoading(true);
@@ -72,11 +101,31 @@ const AdminPayments = () => {
         );
     }
 
-    if (!isAdmin) {
+    if (adminLoading) {
+        return (
+            <div style={{ padding: '40px', textAlign: 'center' }}>
+                <h2>Checking admin permissions...</h2>
+            </div>
+        );
+    }
+
+    if (!hasAdminAccess) {
         return (
             <div style={{ padding: '40px', textAlign: 'center' }}>
                 <h2>Access Denied</h2>
                 <p>You don't have permission to access this page.</p>
+                {isEmailAdmin && (
+                    <div style={{
+                        marginTop: '20px',
+                        padding: '16px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffc107',
+                        borderRadius: '4px'
+                    }}>
+                        <p><strong>Note:</strong> You have email-based admin access but no database role.</p>
+                        <p>Use the Role Manager below to set up proper database roles.</p>
+                    </div>
+                )}
             </div>
         );
     }
@@ -89,6 +138,9 @@ const AdminPayments = () => {
             minHeight: '100vh'
         }}>
             <h1>Admin Dashboard</h1>
+
+            {/* Role Manager for admins */}
+            {isEmailAdmin && <AdminRoleManager />}
 
             <div style={{ marginBottom: '20px' }}>
                 <button

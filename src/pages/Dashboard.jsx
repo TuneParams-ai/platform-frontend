@@ -11,9 +11,9 @@ const Dashboard = () => {
   const {
     allEnrollments,
     loading,
-    error,
-    hasAnyCourseAccess,
-    updateProgress
+    error
+    // hasAnyCourseAccess, - currently unused
+    // updateProgress - currently unused  
   } = useCourseAccess();
 
   // Convert enrollments to the format expected by the UI
