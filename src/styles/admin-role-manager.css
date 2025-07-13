@@ -6,6 +6,7 @@
     border-radius: 8px;
     margin: 20px 0;
     border: 1px solid rgba(29, 126, 153, 0.3);
+    min-height: 400px;
 }
 
 .admin-role-manager h3 {
@@ -82,7 +83,7 @@
     border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 4px;
     padding: 12px;
-    max-height: 200px;
+    max-height: 1000px;
     overflow-y: auto;
 }
 
@@ -90,7 +91,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 12px 8px;
     border-bottom: 1px solid rgba(29, 126, 153, 0.2);
 }
 
