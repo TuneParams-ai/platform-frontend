@@ -44,7 +44,7 @@ const AdminPayments = () => {
     // Fallback: Simple email-based admin check for development
     const adminEmails = [
         'admin@tuneparams.ai',
-        'abhinaykotla.com', // Replace with your actual email
+        'abhinaykotla@gmail.com',
         // Add more admin emails here as needed
     ];
 
@@ -181,7 +181,7 @@ const AdminPayments = () => {
                                             {payment.courseTitle}
                                         </td>
                                         <td>
-                                            {payment.payerEmail}
+                                            {payment.userEmail || payment.payerEmail}
                                         </td>
                                         <td>
                                             ${payment.amount}
