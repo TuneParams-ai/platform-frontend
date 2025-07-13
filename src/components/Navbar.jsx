@@ -10,6 +10,16 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
+  // Admin emails list
+  const adminEmails = [
+    'admin@tuneparams.ai',
+    'abhinaykotla@gmail.com',
+    // Add more admin emails here as needed
+  ];
+
+  // Check if current user is admin
+  const isAdmin = user && adminEmails.includes(user.email);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -109,6 +119,15 @@ const Navbar = () => {
             Dashboard
           </Link>
         )}
+        {isAdmin && (
+          <Link
+            to="/admin/payments"
+            onClick={closeMenu}
+            className={isActivePath("/admin/payments") ? "active" : ""}
+          >
+            Admin Panel
+          </Link>
+        )}
         <Link
           to="/contact"
           onClick={closeMenu}
@@ -193,9 +212,55 @@ const Navbar = () => {
                     {user.email}
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--secondary-text-color)', marginTop: '4px' }}>
-                    Role: {user.role}
+                    Role: {user.role} {isAdmin && '(Admin)'}
                   </div>
                 </div>
+
+                {isAdmin && (
+                  <>
+                    <Link
+                      to="/admin/payments"
+                      onClick={closeMenu}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '8px 12px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-color)',
+                        textAlign: 'left',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.3s ease'
+                      }}
+                    >
+                      🏛️ Admin Panel
+                    </Link>
+                    <Link
+                      to="/paypal-test"
+                      onClick={closeMenu}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        padding: '8px 12px',
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-color)',
+                        textAlign: 'left',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        transition: 'background 0.3s ease'
+                      }}
+                    >
+                      💳 PayPal Test
+                    </Link>
+                    <div style={{ height: '1px', background: 'rgba(29, 126, 153, 0.2)', margin: '8px 0' }}></div>
+                  </>
+                )}
 
                 <button
                   onClick={handleLogout}
