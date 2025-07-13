@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import CourseCard from "../components/CourseCard";
 import { coursesData, getCategories } from "../data/coursesData";
+import { useCourseAccess } from "../hooks/useCourseAccess";
 import "../styles/courses.css";
 
 const Courses = () => {
   const [activeFilter, setActiveFilter] = useState("All");
+
+  // Get enrollment data to show enrollment status
+  const { allEnrollments } = useCourseAccess();
 
   // Get filter categories dynamically
   const filterCategories = getCategories();
@@ -12,6 +16,11 @@ const Courses = () => {
   const filteredCourses = activeFilter === "All"
     ? coursesData
     : coursesData.filter(course => course.category === activeFilter);
+
+  // Helper function to check if user is enrolled in a course
+  const isEnrolled = (courseId) => {
+    return allEnrollments.some(enrollment => enrollment.courseId === courseId);
+  };
 
   return (
     <div className="courses-page-container">
@@ -36,7 +45,11 @@ const Courses = () => {
 
       <div className="courses-grid">
         {filteredCourses.map(course => (
-          <CourseCard key={course.id} course={course} />
+          <CourseCard
+            key={course.id}
+            course={course}
+            isEnrolled={isEnrolled(course.id)}
+          />
         ))}
       </div>
     </div>

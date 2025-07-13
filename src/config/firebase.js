@@ -3,6 +3,7 @@
 // No sensitive data is exposed in this file - all keys come from .env.local
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 // Your Firebase configuration - using only environment variables
 const firebaseConfig = {
@@ -37,6 +38,7 @@ if (missingVars.length > 0) {
 // Initialize Firebase
 let app;
 let auth;
+let db;
 let googleProvider;
 let isFirebaseConfigured = false;
 
@@ -52,6 +54,7 @@ try {
     // Initialize Firebase with environment variables
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
+    db = getFirestore(app);
     googleProvider = new GoogleAuthProvider();
 
     // Configure Google provider
@@ -62,14 +65,16 @@ try {
     isFirebaseConfigured = true;
     console.log('✅ Firebase initialized successfully using environment variables');
     console.log('Auth domain configured:', firebaseConfig.authDomain);
+    console.log('Firestore database connected:', firebaseConfig.projectId);
 
 } catch (error) {
     console.error('Firebase initialization error:', error);
     // Create mock objects to prevent app crashes
     auth = null;
+    db = null;
     googleProvider = null;
     isFirebaseConfigured = false;
 }
 
-export { auth, googleProvider, isFirebaseConfigured };
+export { auth, db, googleProvider, isFirebaseConfigured };
 export default app;

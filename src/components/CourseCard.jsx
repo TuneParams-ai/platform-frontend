@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { isCourseNearlyFull, isCourseFull, isComingSoon } from "../data/coursesData";
 import "../styles/course-image.css";
 
-const CourseCard = ({ course }) => {
+const CourseCard = ({ course, isEnrolled = false }) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -39,7 +39,12 @@ const CourseCard = ({ course }) => {
 
   return (
     <div className="course-card" onClick={handleCardClick}>
-      {comingSoon ? (
+      {/* Show enrollment status - prioritize enrolled status */}
+      {isEnrolled ? (
+        <div className="enrollment-status enrolled">
+          ✅ Enrolled
+        </div>
+      ) : comingSoon ? (
         <div className="enrollment-status coming-soon">
           Coming Soon
         </div>
@@ -88,11 +93,11 @@ const CourseCard = ({ course }) => {
       </div>
       <div className="course-action">
         <button
-          className={`btn enroll-btn ${comingSoon ? 'coming-soon' : ''}`}
+          className={`btn enroll-btn ${comingSoon ? 'coming-soon' : ''} ${isEnrolled ? 'enrolled' : ''}`}
           onClick={handleEnroll}
           disabled={comingSoon}
         >
-          {comingSoon ? "Coming Soon" : "Enroll Now"}
+          {isEnrolled ? "Continue Learning" : (comingSoon ? "Coming Soon" : "Enroll Now")}
         </button>
       </div>
     </div>

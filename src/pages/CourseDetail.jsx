@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
+import { useCourseAccess } from "../hooks/useCourseAccess";
 import PayPalCheckout from "../components/PayPalCheckout";
 import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import "../styles/course-detail.css";
@@ -14,29 +15,43 @@ const CourseDetail = () => {
     const [paymentData, setPaymentData] = useState(null);
     const [showPayPal, setShowPayPal] = useState(false);
 
+    // Use the course access hook
+    const {
+        hasAccess,
+        enrollment,
+        loading: accessLoading,
+        error: accessError,
+        processEnrollment,
+        clearError
+    } = useCourseAccess(courseId);
+
     // Find the course data based on courseId (now supports alphanumeric IDs)
     const courseData = findCourseById(courseId);
 
     // All useCallback hooks must be at the top level, before any conditional returns
-    const handlePaymentSuccess = useCallback((paymentDetails) => {
+    const handlePaymentSuccess = useCallback(async (paymentDetails) => {
         console.log('Payment successful:', paymentDetails);
-        setPaymentData(paymentDetails);
-        setShowSuccessModal(true);
-        setShowPayPal(false);
 
-        // Here you would typically:
-        // 1. Send payment data to your backend
-        // 2. Enroll the user in the course
-        // 3. Send confirmation email
-        // For now, we'll just log the data
+        try {
+            // Process the enrollment using our payment service
+            const result = await processEnrollment(paymentDetails);
 
-        // Example API call (commented out):
-        // fetch('/api/enroll', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(paymentDetails)
-        // });
-    }, []);
+            if (result.success) {
+                setPaymentData(paymentDetails);
+                setShowSuccessModal(true);
+                setShowPayPal(false);
+
+                console.log('Enrollment processed successfully:', {
+                    paymentRecordId: result.paymentRecordId,
+                    enrollmentId: result.enrollmentId
+                });
+            }
+        } catch (error) {
+            console.error('Enrollment processing failed:', error);
+            alert(`Enrollment failed: ${error.message}. Please contact support with your payment details.`);
+            setShowPayPal(false);
+        }
+    }, [processEnrollment]);
 
     const handlePaymentError = useCallback((error) => {
         console.error('Payment error:', error);
@@ -103,12 +118,21 @@ const CourseDetail = () => {
     }
 
     const handleEnroll = () => {
+        // Clear any previous errors
+        clearError();
+
         if (isComingSoon(courseData)) {
             alert("This course is still in planning phase. Please check back for updates!");
             return;
         }
         if (isCourseFull(courseData)) {
             alert("This course is currently full. Please check back for the next batch or contact us to join the waitlist.");
+            return;
+        }
+
+        // Check if user already has access
+        if (hasAccess) {
+            navigate('/dashboard');
             return;
         }
 
@@ -164,15 +188,74 @@ const CourseDetail = () => {
                                     </span>
                                 </div>
 
-                                {!showPayPal ? (
-                                    <button
-                                        className={`btn enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
-                                        onClick={handleEnroll}
-                                        disabled={courseFull || comingSoon}
-                                    >
-                                        {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : "Enroll Now")}
-                                    </button>
-                                ) : (
+                                {/* Show loading state */}
+                                {accessLoading && (
+                                    <div className="enrollment-loading">
+                                        <p>Checking enrollment status...</p>
+                                    </div>
+                                )}
+
+                                {/* Show error if any */}
+                                {accessError && (
+                                    <div className="enrollment-error">
+                                        <p style={{ color: '#f56565', fontSize: '0.9rem' }}>
+                                            {accessError}
+                                        </p>
+                                        <button
+                                            className="btn btn-secondary"
+                                            onClick={clearError}
+                                            style={{ marginTop: '8px', padding: '6px 12px', fontSize: '0.8rem' }}
+                                        >
+                                            Retry
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Show different content based on access status */}
+                                {!accessLoading && !showPayPal && (
+                                    <>
+                                        {hasAccess ? (
+                                            // User already has access
+                                            <div className="enrollment-success">
+                                                <div style={{
+                                                    background: 'rgba(16, 185, 129, 0.1)',
+                                                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                    borderRadius: '8px',
+                                                    padding: '16px',
+                                                    marginBottom: '16px',
+                                                    textAlign: 'center'
+                                                }}>
+                                                    <p style={{ color: '#10b981', fontWeight: '600', margin: '0 0 8px 0' }}>
+                                                        ✅ You're enrolled!
+                                                    </p>
+                                                    {enrollment && (
+                                                        <p style={{ color: 'var(--secondary-text-color)', fontSize: '0.9rem', margin: 0 }}>
+                                                            Progress: {enrollment.progress || 0}%
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <button
+                                                    className="btn enroll-btn-detail"
+                                                    onClick={() => navigate('/dashboard')}
+                                                >
+                                                    Go to Dashboard
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            // User doesn't have access - show enrollment button
+                                            <button
+                                                className={`btn enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
+                                                onClick={handleEnroll}
+                                                disabled={courseFull || comingSoon}
+                                            >
+                                                {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : "Enroll Now")}
+                                            </button>
+                                        )}
+                                    </>
+                                )}
+
+                                {/* PayPal checkout section */}
+                                {showPayPal && (
                                     <div className="enrollment-options">
                                         <button
                                             className="back-to-enroll-btn"

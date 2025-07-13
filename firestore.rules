@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read/write access for authenticated users during development
+    // TODO: Implement proper security rules for production
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Alternative: More specific rules (uncomment when ready for production)
+    /*
+    // Payments collection - only the user who made the payment can read it
+    match /payments/{paymentId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow write: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+    
+    // Enrollments collection - only the enrolled user can read/write
+    match /enrollments/{enrollmentId} {
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    
+    // Test collection - allow all authenticated users for testing
+    match /test_collection/{document} {
+      allow read, write: if request.auth != null;
+    }
+    */
+  }
+}

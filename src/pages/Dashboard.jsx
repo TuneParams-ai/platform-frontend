@@ -1,20 +1,33 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCourseAccess } from '../hooks/useCourseAccess';
+import { findCourseById } from '../data/coursesData';
 import '../styles/dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  // This would typically fetch the user's enrolled courses from an API
-  const enrolledCourses = [
-    {
-      id: "FAAI",
-      title: "Foundations to Frontiers of Artificial Intelligence",
-      progress: 0,
-      status: "enrolled",
-      enrolledDate: new Date().toISOString()
-    }
-  ];
+  // Use the course access hook to get real enrollment data
+  const {
+    allEnrollments,
+    loading,
+    error,
+    hasAnyCourseAccess,
+    updateProgress
+  } = useCourseAccess();
+
+  // Convert enrollments to the format expected by the UI
+  const enrolledCourses = allEnrollments.map(enrollment => {
+    const courseData = findCourseById(enrollment.courseId);
+    return {
+      id: enrollment.courseId,
+      title: enrollment.courseTitle || courseData?.title || 'Unknown Course',
+      progress: enrollment.progress || 0,
+      status: enrollment.status || 'enrolled',
+      enrolledDate: enrollment.enrolledAt?.toDate?.() || new Date(enrollment.enrolledAt) || new Date(),
+      ...courseData // Include additional course data
+    };
+  });
 
   return (
     <div className="dashboard-container">
@@ -26,7 +39,32 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <section className="enrolled-courses">
           <h2>My Courses</h2>
-          {enrolledCourses.length > 0 ? (
+
+          {/* Loading state */}
+          {loading && (
+            <div className="loading-state" style={{ textAlign: 'center', padding: '40px' }}>
+              <p>Loading your courses...</p>
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <div className="error-state" style={{
+              background: 'rgba(245, 101, 101, 0.1)',
+              border: '1px solid rgba(245, 101, 101, 0.3)',
+              borderRadius: '8px',
+              padding: '16px',
+              margin: '20px 0',
+              textAlign: 'center'
+            }}>
+              <p style={{ color: '#f56565', margin: 0 }}>
+                Error loading courses: {error}
+              </p>
+            </div>
+          )}
+
+          {/* Courses list */}
+          {!loading && !error && enrolledCourses.length > 0 ? (
             <div className="courses-grid">
               {enrolledCourses.map(course => (
                 <div key={course.id} className="course-dashboard-card">
@@ -46,14 +84,14 @@ const Dashboard = () => {
                   <div className="course-actions">
                     <button
                       className="btn"
-                      onClick={() => navigate(`/course/${course.id}`)}
+                      onClick={() => navigate(`/courses/${course.id}`)}
                     >
                       {course.progress === 0 ? 'Start Learning' : 'Continue Learning'}
                     </button>
                   </div>
                   <div className="enrollment-info">
                     <small>
-                      Enrolled: {new Date(course.enrolledDate).toLocaleDateString('en-US', {
+                      Enrolled: {course.enrolledDate.toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
@@ -64,17 +102,19 @@ const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <div className="no-courses">
-              <div className="no-courses-icon">📚</div>
-              <h3>No courses enrolled yet</h3>
-              <p>Start your learning journey by enrolling in one of our courses!</p>
-              <button
-                className="btn"
-                onClick={() => navigate('/courses')}
-              >
-                Browse Courses
-              </button>
-            </div>
+            !loading && !error && (
+              <div className="no-courses">
+                <div className="no-courses-icon">📚</div>
+                <h3>No courses enrolled yet</h3>
+                <p>Start your learning journey by enrolling in one of our courses!</p>
+                <button
+                  className="btn"
+                  onClick={() => navigate('/courses')}
+                >
+                  Browse Courses
+                </button>
+              </div>
+            )
           )}
         </section>
 
