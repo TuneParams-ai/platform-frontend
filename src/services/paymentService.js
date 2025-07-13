@@ -13,6 +13,7 @@ import {
     updateDoc
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { getUserProfile } from './userService';
 
 /**
  * Records a successful payment in Firestore
@@ -26,6 +27,10 @@ export const recordPayment = async (paymentData, userId) => {
             throw new Error('Firestore not initialized');
         }
 
+        // Get user profile to store actual user data
+        const userProfile = await getUserProfile(userId);
+        const userData = userProfile.success ? userProfile.userData : null;
+
         const payment = {
             // Payment details
             paymentId: paymentData.paymentID,
@@ -37,8 +42,12 @@ export const recordPayment = async (paymentData, userId) => {
             courseTitle: paymentData.courseTitle,
             amount: parseFloat(paymentData.amount),
 
-            // User details
+            // User details - use actual user data instead of payer data
             userId: userId,
+            userEmail: userData?.email || paymentData.payerEmail, // Prefer user profile email
+            userName: userData?.displayName || paymentData.payerName,
+
+            // Keep payer data for reconciliation
             payerEmail: paymentData.payerEmail,
             payerName: paymentData.payerName,
 
