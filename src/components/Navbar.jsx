@@ -166,7 +166,7 @@ const Navbar = () => {
                 {isAdmin && (
                   <>
                     <Link
-                      to="/admin/payments"
+                      to="/admin/dashboard"
                       onClick={closeMenu}
                       className="admin-menu-link"
                     >

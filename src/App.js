@@ -18,7 +18,7 @@ import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import PayPalTest from "./pages/PayPalTest";
-import AdminPayments from "./pages/AdminPayments";
+import AdminDashboard from "./pages/AdminDashboard";
 import FirebaseTest from "./components/FirebaseTest";
 import FirestoreTest from "./components/FirestoreTest";
 
@@ -50,9 +50,9 @@ function App() {
               <Route path="/firebase-test" element={<FirebaseTest />} />
               <Route path="/firestore-test" element={<FirestoreTest />} />
               <Route path="/paypal-test" element={<PayPalTest />} />
-              <Route path="/admin/payments" element={
+              <Route path="/admin/dashboard" element={
                 <ProtectedRoute>
-                  <AdminPayments />
+                  <AdminDashboard />
                 </ProtectedRoute>
               } />
               {/* Catch-all route for unmatched paths */}

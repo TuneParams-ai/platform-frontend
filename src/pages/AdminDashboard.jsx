@@ -1,14 +1,14 @@
-// src/pages/AdminPayments.jsx
-// Simple admin panel to view payments (for testing/debugging)
+// src/pages/AdminDashboard.jsx
+// Admin dashboard to view payments and manage users
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from '../hooks/useAuth';
 import { isUserAdmin } from '../services/roleService';
 import AdminRoleManager from '../components/AdminRoleManager';
-import '../styles/admin-payments.css';
+import '../styles/admin-dashboard.css';
 
-const AdminPayments = () => {
+const AdminDashboard = () => {
     const { user } = useAuth();
     const [payments, setPayments] = useState([]);
     const [enrollments, setEnrollments] = useState([]);
@@ -251,4 +251,4 @@ const AdminPayments = () => {
     );
 };
 
-export default AdminPayments;
+export default AdminDashboard;

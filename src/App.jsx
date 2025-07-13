@@ -9,7 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import Contact from "./pages/Contact";
-import AdminPayments from "./pages/AdminPayments";
+import AdminDashboard from "./pages/AdminDashboard";
 import PayPalTest from "./pages/PayPalTest";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -42,9 +42,9 @@ function App() {
         } />
 
         {/* Admin Only Routes */}
-        <Route path="/admin/payments" element={
+        <Route path="/admin/dashboard" element={
           <ProtectedRoute requiredRole="admin">
-            <AdminPayments />
+            <AdminDashboard />
           </ProtectedRoute>
         } />
         <Route path="/paypal-test" element={
