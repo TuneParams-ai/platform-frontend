@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/payment-success-modal.css';
+import '../styles/components.css';
 
 const PaymentSuccessModal = ({
     isOpen,
@@ -71,13 +72,13 @@ const PaymentSuccessModal = ({
 
                 <div className="modal-actions">
                     <button
-                        className="btn-secondary"
+                        className="btn btn-secondary"
                         onClick={onDownloadReceipt}
                     >
                         📄 Download Receipt
                     </button>
                     <button
-                        className="btn-primary"
+                        className="btn"
                         onClick={onGoToDashboard}
                     >
                         🚀 Go to Dashboard
