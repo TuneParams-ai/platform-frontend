@@ -1,15 +1,25 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import { isCourseNearlyFull, isCourseFull, isComingSoon } from "../data/coursesData";
 import "../styles/course-image.css";
 
 const CourseCard = ({ course, isEnrolled = false }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleEnroll = (e) => {
     e.stopPropagation(); // Prevent card click when clicking enroll
+
+    // If user is not logged in, redirect to login
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    // If user is logged in, proceed to course detail for enrollment
     navigate(`/courses/${course.id}`);
   };
 
@@ -97,7 +107,7 @@ const CourseCard = ({ course, isEnrolled = false }) => {
           onClick={handleEnroll}
           disabled={comingSoon}
         >
-          {isEnrolled ? "Continue Learning" : (comingSoon ? "Coming Soon" : "Enroll Now")}
+          {isEnrolled ? "Continue Learning" : (comingSoon ? "Coming Soon" : user ? "Enroll Now" : "Login to Enroll")}
         </button>
       </div>
     </div>

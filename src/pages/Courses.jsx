@@ -1,13 +1,15 @@
 import React, { useState } from "react";
+import { useAuth } from "../hooks/useAuth";
 import CourseCard from "../components/CourseCard";
 import { coursesData, getCategories } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import "../styles/courses.css";
 
 const Courses = () => {
+  const { user } = useAuth();
   const [activeFilter, setActiveFilter] = useState("All");
 
-  // Get enrollment data to show enrollment status
+  // Get enrollment data to show enrollment status (only if user is logged in)
   const { allEnrollments } = useCourseAccess();
 
   // Get filter categories dynamically
@@ -19,6 +21,8 @@ const Courses = () => {
 
   // Helper function to check if user is enrolled in a course
   const isEnrolled = (courseId) => {
+    // If user is not logged in, they can't be enrolled
+    if (!user || !allEnrollments) return false;
     return allEnrollments.some(enrollment => enrollment.courseId === courseId);
   };
 
@@ -28,6 +32,7 @@ const Courses = () => {
         <h1 className="courses-title">Available Courses</h1>
         <p className="courses-subtitle">
           Discover our comprehensive collection of machine learning and data science courses designed to take you from beginner to expert.
+          {!user && " Login to enroll and track your progress!"}
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import PayPalCheckout from "../components/PayPalCheckout";
@@ -11,6 +12,7 @@ import "../styles/paypal-checkout.css";
 const CourseDetail = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
     const [showPayPal, setShowPayPal] = useState(false);
@@ -118,6 +120,12 @@ const CourseDetail = () => {
     }
 
     const handleEnroll = () => {
+        // Check if user is logged in first
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
         // Clear any previous errors
         clearError();
 
@@ -240,7 +248,7 @@ const CourseDetail = () => {
                                                 onClick={handleEnroll}
                                                 disabled={courseFull || comingSoon}
                                             >
-                                                {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : "Enroll Now")}
+                                                {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : user ? "Enroll Now" : "Login to Enroll")}
                                             </button>
                                         )}
                                     </>

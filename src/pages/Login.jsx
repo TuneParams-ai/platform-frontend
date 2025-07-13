@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "../styles/login.css";
 
@@ -16,6 +16,7 @@ const Login = () => {
 
     const { signInWithEmail, signInWithGoogle, resendVerificationEmail } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [searchParams] = useSearchParams();
 
     // Check for URL parameters on component mount
@@ -23,13 +24,16 @@ const Login = () => {
         const urlMessage = searchParams.get('message');
         const verified = searchParams.get('verified');
         const emailVerified = searchParams.get('emailVerified');
+        const from = location.state?.from;
 
-        if (urlMessage === 'verify-email') {
+        if (from && from.pathname !== '/login') {
+            setMessage("Please log in to access this page.");
+        } else if (urlMessage === 'verify-email') {
             setMessage("Registration successful! Please check your email and click the verification link before signing in.");
         } else if (verified === 'true' || emailVerified === 'true') {
             setMessage("Email verified successfully! You can now sign in.");
         }
-    }, [searchParams]);
+    }, [searchParams, location]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -51,7 +55,9 @@ const Login = () => {
         const result = await signInWithEmail(formData.email, formData.password);
 
         if (result.success) {
-            navigate('/dashboard');
+            // Navigate to the page they were trying to access, or dashboard as default
+            const from = location.state?.from?.pathname || '/dashboard';
+            navigate(from);
         } else {
             setError(result.error);
             // If email verification is required, show resend option
@@ -74,7 +80,9 @@ const Login = () => {
         const result = await signInWithGoogle();
 
         if (result.success) {
-            navigate('/dashboard');
+            // Navigate to the page they were trying to access, or dashboard as default
+            const from = location.state?.from?.pathname || '/dashboard';
+            navigate(from);
         } else {
             setError(result.error);
         }
