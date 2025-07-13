@@ -76,7 +76,7 @@ const AdminRoleManager = () => {
                     uniqueUsers.set(data.userId, {
                         id: data.userId,
                         uid: data.userId,
-                        displayName: data.userId.substring(0, 8) + '...',
+                        displayName: data.userId,
                         email: null,
                         source: 'enrollment'
                     });
@@ -91,7 +91,7 @@ const AdminRoleManager = () => {
                     uniqueUsers.set(data.userId, {
                         id: data.userId,
                         uid: data.userId,
-                        displayName: data.payerEmail || existing?.displayName || data.userId.substring(0, 8) + '...',
+                        displayName: data.payerEmail || existing?.displayName || data.userId,
                         email: data.payerEmail,
                         source: existing ? 'both' : 'payment'
                     });
@@ -255,7 +255,7 @@ const AdminRoleManager = () => {
                                     <div className="admin-role-user-name">{user.displayName || user.email}</div>
                                     {user.email && <div className="admin-role-user-email">({user.email})</div>}
                                     <div className="admin-role-user-id">
-                                        ID: {(user.id || user.uid).substring(0, 12)}...
+                                        ID: {user.id || user.uid}
                                     </div>
                                 </div>
                                 <div className={`admin-role-badge ${(userRoles.get(user.id || user.uid) || 'student').toLowerCase()}`}>

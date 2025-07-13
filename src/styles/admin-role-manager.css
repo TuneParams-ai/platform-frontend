@@ -112,6 +112,8 @@
 .admin-role-user-id {
     font-size: 11px;
     color: var(--secondary-text-color);
+    word-break: break-all;
+    font-family: monospace;
 }
 
 .admin-role-badge {
