@@ -232,6 +232,19 @@
 /* Enroll button customizations */
 .enroll-btn {
     flex: 1;
+    background: var(--metallic-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.4);
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.enroll-btn:hover {
+    background: var(--metallic-gradient-reverse);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(29, 126, 153, 0.5);
 }
 
 .enroll-btn.coming-soon,

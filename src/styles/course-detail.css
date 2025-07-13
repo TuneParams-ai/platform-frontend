@@ -42,6 +42,9 @@
 .course-detail-header-content {
     position: relative;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .course-hero {
@@ -148,6 +151,19 @@
     width: 100%;
     font-size: 1.1rem;
     padding: 15px 25px;
+    background: var(--metallic-gradient);
+    color: white;
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.4);
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.enroll-btn-detail:hover {
+    background: var(--metallic-gradient-reverse);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(29, 126, 153, 0.5);
 }
 
 .enroll-btn-detail.coming-soon {
@@ -411,12 +427,15 @@
 }
 
 .back-btn {
-    font-size: 0.8rem;
     margin-bottom: 15px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
+    font-size: 0.85rem !important;
+    padding: 8px 16px !important;
+    min-height: auto !important;
+    min-width: auto !important;
+    width: auto !important;
+    max-width: 200px !important;
+    align-self: flex-start !important;
+    display: inline-flex !important;
 }
 
 /* Course materials and downloads */
@@ -628,9 +647,11 @@
     }
 
     .back-btn {
-        padding: 6px 12px;
-        font-size: 0.75rem;
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
         margin-bottom: 12px;
+        width: auto !important;
+        max-width: 150px !important;
     }
 
     .download-btn {

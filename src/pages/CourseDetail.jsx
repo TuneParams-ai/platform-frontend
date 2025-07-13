@@ -163,7 +163,7 @@ const CourseDetail = () => {
                 >
                     <div className="course-detail-header-overlay"></div>
                     <div className="course-detail-header-content">
-                        <button className="btn btn-secondary back-btn" onClick={handleGoBack}>
+                        <button className="btn btn-secondary btn-small back-btn" onClick={handleGoBack}>
                             ← Back to Courses
                         </button>
                         <div className="course-hero">
