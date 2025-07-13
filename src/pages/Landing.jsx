@@ -1,9 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import "./../styles/landing.css";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleEnrollClick = () => {
     navigate('/courses');
@@ -11,6 +13,10 @@ const Landing = () => {
 
   const handleRegisterClick = () => {
     navigate('/register');
+  };
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
   };
 
   return (
@@ -30,9 +36,15 @@ const Landing = () => {
               <button className="cta-primary" onClick={handleEnrollClick}>
                 Browse Courses
               </button>
-              <button className="cta-secondary" onClick={handleRegisterClick}>
-                Register Now
-              </button>
+              {user ? (
+                <button className="cta-secondary" onClick={handleDashboardClick}>
+                  Go to Dashboard
+                </button>
+              ) : (
+                <button className="cta-secondary" onClick={handleRegisterClick}>
+                  Register Now
+                </button>
+              )}
             </div>
           </div>
           <div className="hero-image">
@@ -160,10 +172,16 @@ const Landing = () => {
 
       {/* CTA Section */}
       <section className="cta-section">
-        <h2>Ready to Level Up Your Skills?</h2>
-        <button className="cta-final" onClick={handleRegisterClick}>
-          Register Here
-        </button>
+        <h2>{user ? "Continue Your Learning Journey" : "Ready to Level Up Your Skills?"}</h2>
+        {user ? (
+          <button className="cta-final" onClick={handleDashboardClick}>
+            Go to Dashboard
+          </button>
+        ) : (
+          <button className="cta-final" onClick={handleRegisterClick}>
+            Register Here
+          </button>
+        )}
       </section>
     </div>
   );
