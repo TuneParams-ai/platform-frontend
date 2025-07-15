@@ -1,7 +1,38 @@
 // Shared course data for the application
-// In a real application, this would come from an API
 
 export const coursesData = [
+    // {
+    //     id: "MathAI",
+    //     title: "Math Fundamentals for AI",
+    //     description: "Essential mathematical foundations for artificial intelligence and machine learning. Master linear algebra, calculus, probability, and statistics needed for AI success.",
+    //     level: "Beginner",
+    //     duration: "3 weeks",
+    //     lessons: 9,
+    //     students: 5,
+    //     maxCapacity: 25,
+    //     nextBatchDate: "2025-09-1",
+    //     rating: 4.8,
+    //     price: 99,
+    //     originalPrice: 259,
+    //     icon: "📐",
+    //     image: "/data/MathAI/MathAI_thumbnail.png",
+    //     category: "Mathematics",
+    //     instructor: "NA",
+    //     instructorBio: "NA",
+    //     curriculum: [
+    //         { week: 1, title: "Linear Algebra: Vectors, Matrices, and Operations", lessons: 3 },
+    //         { week: 2, title: "Calculus: Derivatives, Gradients, and Optimization", lessons: 3 },
+    //         { week: 3, title: "Probability & Statistics: Distributions, Bayes' Theorem, Statistical Inference", lessons: 3 }
+    //     ],
+    //     prerequisites: ["High school algebra", "Basic calculus knowledge helpful but not required"],
+    //     outcomes: [
+    //         "Master vector and matrix operations essential for ML",
+    //         "Understand derivatives and gradients for optimization",
+    //         "Apply probability and statistics to data analysis",
+    //         "Build mathematical intuition for AI algorithms"
+    //     ],
+    //     downloadUrl: "/data/sample-math-course-info.pdf"
+    // },
     {
         id: "FAAI",
         title: "Foundations to Frontiers of Artificial Intelligence",
