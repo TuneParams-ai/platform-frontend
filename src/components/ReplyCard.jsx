@@ -8,7 +8,7 @@ const ReplyCard = ({ reply, onDelete }) => {
     const { userRole } = useUserRole();
     const dateInfo = formatDateWithTooltip(reply.createdAt);
 
-    // Check if user can delete this reply
+    // Check if user can delete this reply (only if user is logged in)
     const canDelete = user && (
         user.uid === reply.authorId ||
         userRole?.role === 'admin'

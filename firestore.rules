@@ -2,12 +2,6 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow read/write access for authenticated users during development
-    // TODO: Implement proper security rules for production
-    match /{document=**} {
-      allow read, write: if request.auth != null;
-    }
-    
     // Forum collections - public read, authenticated write
     match /forum_threads/{threadId} {
       allow read: if true;  // Public read access
@@ -21,6 +15,11 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == request.resource.data.authorId;
       allow update: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true);
       allow delete: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true);
+    }
+    
+    // All other collections require authentication
+    match /{document=**} {
+      allow read, write: if request.auth != null;
     }
     
     // Alternative: More specific rules (uncomment when ready for production)

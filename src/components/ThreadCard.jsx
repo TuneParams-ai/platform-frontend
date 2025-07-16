@@ -7,6 +7,7 @@ import { useUserRole } from '../hooks/useUserRole';
 const ThreadCard = ({ thread, onClick, onDelete }) => {
     const { user } = useAuth();
     const { userRole } = useUserRole();
+
     const stripHtml = (html) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
@@ -15,7 +16,7 @@ const ThreadCard = ({ thread, onClick, onDelete }) => {
     const dateInfo = formatDateWithTooltip(thread.createdAt);
     const lastReplyInfo = formatDateWithTooltip(thread.lastReplyAt);
 
-    // Check if user can delete this thread
+    // Check if user can delete this thread (only if user is logged in)
     const canDelete = user && (
         user.uid === thread.authorId ||
         userRole?.role === 'admin'
