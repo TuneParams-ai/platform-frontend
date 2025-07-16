@@ -45,7 +45,6 @@ class ForumsErrorBoundary extends React.Component {
 }
 
 const ForumsComponent = () => {
-    console.log('Forums component rendered');
     const { user } = useAuth();
     const navigate = useNavigate();
 
@@ -60,13 +59,11 @@ const ForumsComponent = () => {
     const [error, setError] = useState(null);
 
     const loadThreads = useCallback(async (reset = false) => {
-        console.log('Loading threads...', { reset, selectedCategory });
         setLoading(true);
         setError(null);
 
         try {
             const result = await getThreads(selectedCategory, 10, reset ? null : lastDoc);
-            console.log('Threads result:', result);
 
             if (result.success) {
                 setThreads(prev => reset ? result.threads : [...prev, ...result.threads]);
@@ -89,8 +86,8 @@ const ForumsComponent = () => {
     }, [selectedCategory, lastDoc]);
 
     useEffect(() => {
-        console.log('Forum useEffect triggered');
         setIsSearching(false);
+        setLastDoc(null); // Reset pagination when category changes
 
         // Wrap the loadThreads call in a try-catch to prevent uncaught errors
         try {
@@ -100,30 +97,53 @@ const ForumsComponent = () => {
             setError(error.message);
             setLoading(false);
         }
-    }, [selectedCategory, loadThreads]);
+    }, [selectedCategory]); // Remove loadThreads from dependencies
 
     const handleSearch = async (e) => {
-        e.preventDefault();
-        if (!searchTerm.trim()) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        if (!searchTerm || !searchTerm.trim()) {
             setIsSearching(false);
+            setSearchTerm('');
             loadThreads(true);
             return;
         }
 
         setLoading(true);
         setIsSearching(true);
+        setError(null);
+
         try {
-            const result = await searchThreads(searchTerm, selectedCategory);
+            const result = await searchThreads(searchTerm.trim(), selectedCategory);
+
             if (result.success) {
                 setThreads(result.threads);
                 setHasMore(false);
             } else {
                 console.error("Failed to search threads:", result.error);
+                setError(result.error || 'Search failed');
             }
         } catch (error) {
             console.error('Error searching threads:', error);
+            setError(error.message || 'An error occurred during search');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSearchClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSearch();
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearch();
         }
     };
 
@@ -153,16 +173,31 @@ const ForumsComponent = () => {
             </div>
 
             <div className="forum-controls">
-                <form onSubmit={handleSearch} className="search-form">
+                <div className="search-form">
                     <input
                         type="text"
                         placeholder="Search discussions..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyPress={handleKeyPress}
                         className="search-input"
                     />
-                    <button type="submit" className="search-btn">🔍</button>
-                </form>
+                    <button type="button" onClick={handleSearchClick} className="search-btn">🔍</button>
+                    {searchTerm && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSearchTerm('');
+                                setIsSearching(false);
+                                loadThreads(true);
+                            }}
+                            className="search-btn"
+                            style={{ marginLeft: '5px' }}
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
 
                 <div className="category-filter">
                     <button
@@ -222,10 +257,7 @@ const ForumsComponent = () => {
                                 <ThreadCard
                                     key={thread.id}
                                     thread={thread}
-                                    onClick={() => {
-                                        console.log('Clicking thread:', thread.id, thread.title);
-                                        navigate(`/forums/thread/${thread.id}`);
-                                    }}
+                                    onClick={() => navigate(`/forums/thread/${thread.id}`)}
                                 />
                             ))}
                         </div>
