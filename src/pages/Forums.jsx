@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { getThreads, searchThreads, CATEGORY_LABELS } from '../services/forumServiceSimple';
+import { getThreads, searchThreads, deleteThread, CATEGORY_LABELS } from '../services/forumServiceSimple';
 import ThreadCard from '../components/ThreadCard';
 import CreateThreadModal from '../components/CreateThreadModal';
 import '../styles/forum.css';
@@ -221,6 +221,25 @@ const ForumsComponent = () => {
         loadThreads(true);
     };
 
+    const handleThreadDelete = async (threadId) => {
+        setLoading(true);
+        try {
+            const result = await deleteThread(threadId);
+            if (result.success) {
+                // Remove the deleted thread from the current list
+                setThreads(prevThreads => prevThreads.filter(thread => thread.id !== threadId));
+            } else {
+                console.error('Failed to delete thread:', result.error);
+                alert('Failed to delete thread. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting thread:', error);
+            alert('An error occurred while deleting the thread.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="forum-container">
             <div className="forum-header">
@@ -319,6 +338,7 @@ const ForumsComponent = () => {
                                     key={thread.id}
                                     thread={thread}
                                     onClick={() => navigate(`/forums/thread/${thread.id}`)}
+                                    onDelete={handleThreadDelete}
                                 />
                             ))}
                         </div>

@@ -50,14 +50,54 @@
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    opacity: 0.9;
+    transition: background-color 0.2s;
 }
 
 .create-thread-btn:hover {
-    opacity: 1;
-    background-color: var(--primary-color);
-    transform: translateY(-1px);
+    background-color: var(--primary-hover);
+}
+
+/* Delete button styles */
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.delete-btn:hover {
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+.reply-delete-btn {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+}
+
+.thread-delete-btn {
+    background-color: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+    border: 1px solid #ff4444;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.thread-delete-btn:hover {
+    background-color: rgba(255, 68, 68, 0.2);
 }
 
 .forum-controls {
@@ -221,6 +261,7 @@
 
 .thread-stats {
     display: flex;
+    align-items: center;
     gap: 1rem;
 }
 

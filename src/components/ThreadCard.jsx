@@ -1,8 +1,12 @@
 import React from 'react';
 import { CATEGORY_LABELS, roundViewCount } from '../services/forumServiceSimple';
 import { formatDateWithTooltip } from '../utils/dateUtils';
+import { useAuth } from '../hooks/useAuth';
+import { useUserRole } from '../hooks/useUserRole';
 
-const ThreadCard = ({ thread, onClick }) => {
+const ThreadCard = ({ thread, onClick, onDelete }) => {
+    const { user } = useAuth();
+    const { userRole } = useUserRole();
     const stripHtml = (html) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
@@ -11,8 +15,34 @@ const ThreadCard = ({ thread, onClick }) => {
     const dateInfo = formatDateWithTooltip(thread.createdAt);
     const lastReplyInfo = formatDateWithTooltip(thread.lastReplyAt);
 
+    // Check if user can delete this thread
+    const canDelete = user && (
+        user.uid === thread.authorId ||
+        userRole?.role === 'admin'
+    );
+
+    const handleDelete = async (e) => {
+        e.stopPropagation();
+
+        if (window.confirm('Are you sure you want to delete this thread? This action cannot be undone.')) {
+            if (onDelete) {
+                await onDelete(thread.id);
+            }
+        }
+    };
+
+    const handleCardClick = (e) => {
+        // Don't trigger onClick if clicking on delete button
+        if (e.target.closest('.delete-btn')) {
+            return;
+        }
+        if (onClick) {
+            onClick();
+        }
+    };
+
     return (
-        <div className="thread-card" onClick={onClick}>
+        <div className="thread-card" onClick={handleCardClick}>
             <div className="thread-header">
                 <div className="thread-title-row">
                     <h3 className="thread-title">
@@ -63,6 +93,15 @@ const ThreadCard = ({ thread, onClick }) => {
                             <span className="stat-icon">⏱️</span>
                             {lastReplyInfo.display}
                         </span>
+                    )}
+                    {canDelete && (
+                        <button
+                            className="delete-btn thread-stats-delete"
+                            onClick={handleDelete}
+                            title="Delete thread"
+                        >
+                            🗑️
+                        </button>
                     )}
                 </div>
             </div>

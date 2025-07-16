@@ -1,6 +1,6 @@
 // Minimal forum service for testing - no composite indexes required
 import {
-    collection, doc, addDoc, getDoc, getDocs, updateDoc,
+    collection, doc, addDoc, getDoc, getDocs, updateDoc, deleteDoc,
     query, where, limit, serverTimestamp, increment
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
@@ -238,6 +238,47 @@ export const searchThreads = async (searchTerm, category = null) => {
         return { success: true, threads: threads.slice(0, 20) };
     } catch (error) {
         console.error("Error searching threads: ", error);
+        return { success: false, error: error.message };
+    }
+};
+
+// Delete operations
+export const deleteThread = async (threadId) => {
+    try {
+        // First, delete all replies for this thread
+        const repliesQuery = query(
+            collection(db, 'forum_replies'),
+            where('threadId', '==', threadId)
+        );
+
+        const repliesSnapshot = await getDocs(repliesQuery);
+        const deletePromises = repliesSnapshot.docs.map(doc => deleteDoc(doc.ref));
+        await Promise.all(deletePromises);
+
+        // Then delete the thread itself
+        await deleteDoc(doc(db, 'forum_threads', threadId));
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting thread: ", error);
+        return { success: false, error: error.message };
+    }
+};
+
+export const deleteReply = async (replyId, threadId) => {
+    try {
+        // Delete the reply
+        await deleteDoc(doc(db, 'forum_replies', replyId));
+
+        // Update thread reply count
+        const threadRef = doc(db, 'forum_threads', threadId);
+        await updateDoc(threadRef, {
+            replyCount: increment(-1)
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting reply: ", error);
         return { success: false, error: error.message };
     }
 };
