@@ -11,6 +11,8 @@ import CourseDetail from "./pages/CourseDetail";
 import Contact from "./pages/Contact";
 import AdminDashboard from "./pages/AdminDashboard";
 import PayPalTest from "./pages/PayPalTest";
+import Forums from "./pages/Forums";
+import ThreadDetail from "./pages/ThreadDetail";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -28,6 +30,8 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/course/:id" element={<CourseDetail />} />
+        <Route path="/forums" element={<Forums />} />
+        <Route path="/forums/thread/:threadId" element={<ThreadDetail />} />
 
         {/* Protected Routes - Require Authentication */}
         <Route path="/verify-email" element={

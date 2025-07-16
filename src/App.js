@@ -19,6 +19,8 @@ import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import PayPalTest from "./pages/PayPalTest";
 import AdminDashboard from "./pages/AdminDashboard";
+import Forums from "./pages/Forums";
+import ThreadDetail from "./pages/ThreadDetail";
 import FirebaseTest from "./components/FirebaseTest";
 import FirestoreTest from "./components/FirestoreTest";
 
@@ -43,6 +45,8 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/forums" element={<Forums />} />
+              <Route path="/forums/thread/:threadId" element={<ThreadDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/verify-email" element={<VerifyEmail />} />

@@ -111,6 +111,13 @@ const Navbar = () => {
         >
           Courses
         </Link>
+        <Link
+          to="/forums"
+          onClick={closeMenu}
+          className={isActivePath("/forums") ? "active" : ""}
+        >
+          Forums
+        </Link>
         {user && (
           <Link
             to="/dashboard"
