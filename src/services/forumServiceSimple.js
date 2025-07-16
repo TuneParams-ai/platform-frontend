@@ -99,10 +99,12 @@ export const getThreads = async (category = null, pageSize = 10, lastDoc = null)
 
 export const getThread = async (threadId) => {
     try {
+        console.log('Getting thread with ID:', threadId);
         const docRef = doc(db, 'forum_threads', threadId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
+            console.log('Thread found:', docSnap.id);
             // Increment view count
             await updateDoc(docRef, {
                 viewCount: increment(1)
@@ -119,6 +121,7 @@ export const getThread = async (threadId) => {
                 }
             };
         } else {
+            console.log('Thread not found in database:', threadId);
             return { success: false, error: 'Thread not found' };
         }
     } catch (error) {
@@ -209,6 +212,7 @@ export const searchThreads = async (searchTerm, category = null) => {
             const data = doc.data();
             if (data.title.toLowerCase().includes(searchLower) ||
                 data.content.toLowerCase().includes(searchLower)) {
+                console.log('Found matching thread:', doc.id, data.title);
                 threads.push({
                     id: doc.id,
                     ...data,
@@ -226,6 +230,7 @@ export const searchThreads = async (searchTerm, category = null) => {
             return b.createdAt.getTime() - a.createdAt.getTime();
         });
 
+        console.log('Search results:', threads.length, 'threads found');
         return { success: true, threads: threads.slice(0, 20) };
     } catch (error) {
         console.error("Error searching threads: ", error);

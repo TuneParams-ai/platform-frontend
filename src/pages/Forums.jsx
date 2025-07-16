@@ -222,7 +222,10 @@ const ForumsComponent = () => {
                                 <ThreadCard
                                     key={thread.id}
                                     thread={thread}
-                                    onClick={() => navigate(`/forums/thread/${thread.id}`)}
+                                    onClick={() => {
+                                        console.log('Clicking thread:', thread.id, thread.title);
+                                        navigate(`/forums/thread/${thread.id}`);
+                                    }}
                                 />
                             ))}
                         </div>

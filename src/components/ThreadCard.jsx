@@ -1,5 +1,5 @@
 import React from 'react';
-import { CATEGORY_LABELS } from '../services/forumService';
+import { CATEGORY_LABELS } from '../services/forumServiceSimple';
 
 const ThreadCard = ({ thread, onClick }) => {
     const formatDate = (date) => {

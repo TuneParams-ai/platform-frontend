@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { getThread, getReplies } from '../services/forumServiceSimple';
 import ReplyCard from '../components/ReplyCard';
@@ -9,7 +9,6 @@ import '../styles/thread-detail.css';
 const ThreadDetail = () => {
     const { threadId } = useParams();
     const { user } = useAuth();
-    const navigate = useNavigate();
 
     const [thread, setThread] = useState(null);
     const [replies, setReplies] = useState([]);
@@ -19,8 +18,10 @@ const ThreadDetail = () => {
     const loadThreadAndReplies = useCallback(async () => {
         setLoading(true);
         setError(null);
+        console.log('Loading thread with ID:', threadId);
         try {
             const threadResult = await getThread(threadId);
+            console.log('Thread result:', threadResult);
             if (threadResult.success) {
                 setThread(threadResult.thread);
                 const repliesResult = await getReplies(threadId);
@@ -34,9 +35,7 @@ const ThreadDetail = () => {
             } else {
                 console.error('Failed to load thread:', threadResult.error);
                 setError(`Failed to load thread: ${threadResult.error}`);
-                if (threadResult.error === 'Thread not found') {
-                    setTimeout(() => navigate('/forums'), 2000);
-                }
+                // Don't automatically redirect - let user choose to go back
             }
         } catch (err) {
             console.error('Error in loadThreadAndReplies:', err);
@@ -44,7 +43,7 @@ const ThreadDetail = () => {
         } finally {
             setLoading(false);
         }
-    }, [threadId, navigate]);
+    }, [threadId]);
 
     useEffect(() => {
         loadThreadAndReplies();
