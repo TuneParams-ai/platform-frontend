@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { getThread, getReplies } from '../services/forumServiceSimple';
+import { getThread, getReplies, incrementThreadViewCount } from '../services/forumServiceSimple';
 import ReplyCard from '../components/ReplyCard';
 import ReplyForm from '../components/ReplyForm';
 import { formatDateWithTooltip } from '../utils/dateUtils';
@@ -10,48 +10,85 @@ import '../styles/thread-detail.css';
 const ThreadDetail = () => {
     const { threadId } = useParams();
     const { user } = useAuth();
+    const viewCountIncremented = useRef(null); // Track by threadId
 
     const [thread, setThread] = useState(null);
     const [replies, setReplies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const loadThreadAndReplies = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        console.log('Loading thread with ID:', threadId);
+    const loadRepliesOnly = useCallback(async () => {
         try {
-            const threadResult = await getThread(threadId);
-            console.log('Thread result:', threadResult);
-            if (threadResult.success) {
-                setThread(threadResult.thread);
-                const repliesResult = await getReplies(threadId);
-                if (repliesResult.success) {
-                    setReplies(repliesResult.replies);
-                } else {
-                    console.error('Failed to load replies:', repliesResult.error);
-                    setError(`Failed to load replies: ${repliesResult.error}`);
-                    setReplies([]); // Set empty array as fallback
-                }
+            const repliesResult = await getReplies(threadId);
+            if (repliesResult.success) {
+                setReplies(repliesResult.replies);
             } else {
-                console.error('Failed to load thread:', threadResult.error);
-                setError(`Failed to load thread: ${threadResult.error}`);
-                // Don't automatically redirect - let user choose to go back
+                console.error('Failed to load replies:', repliesResult.error);
             }
         } catch (err) {
-            console.error('Error in loadThreadAndReplies:', err);
-            setError('Failed to load thread data.');
-        } finally {
-            setLoading(false);
+            console.error('Error loading replies:', err);
         }
     }, [threadId]);
 
     useEffect(() => {
-        loadThreadAndReplies();
-    }, [loadThreadAndReplies]);
+        let isMounted = true;
+
+        const loadData = async () => {
+            setLoading(true);
+            setError(null);
+            console.log('Loading thread with ID:', threadId);
+
+            try {
+                const threadResult = await getThread(threadId);
+                console.log('Thread result:', threadResult);
+
+                if (!isMounted) return; // Component unmounted, don't continue
+
+                if (threadResult.success) {
+                    setThread(threadResult.thread);
+
+                    // Only increment view count once per threadId
+                    if (viewCountIncremented.current !== threadId) {
+                        console.log('Incrementing view count for thread:', threadId);
+                        await incrementThreadViewCount(threadId);
+                        viewCountIncremented.current = threadId;
+                    }
+
+                    const repliesResult = await getReplies(threadId);
+                    if (isMounted && repliesResult.success) {
+                        setReplies(repliesResult.replies);
+                    } else if (isMounted) {
+                        console.error('Failed to load replies:', repliesResult.error);
+                        setError(`Failed to load replies: ${repliesResult.error}`);
+                        setReplies([]); // Set empty array as fallback
+                    }
+                } else {
+                    console.error('Failed to load thread:', threadResult.error);
+                    if (isMounted) {
+                        setError(`Failed to load thread: ${threadResult.error}`);
+                    }
+                }
+            } catch (err) {
+                console.error('Error in loadData:', err);
+                if (isMounted) {
+                    setError('Failed to load thread data.');
+                }
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        loadData();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [threadId]);
 
     const handleReplyPosted = () => {
-        loadThreadAndReplies();
+        loadRepliesOnly(); // Only reload replies, not the entire thread
     };
 
     if (loading) {

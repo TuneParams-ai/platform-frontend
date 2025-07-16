@@ -105,11 +105,6 @@ export const getThread = async (threadId) => {
 
         if (docSnap.exists()) {
             console.log('Thread found:', docSnap.id);
-            // Increment view count
-            await updateDoc(docRef, {
-                viewCount: increment(1)
-            });
-
             return {
                 success: true,
                 thread: {
@@ -126,6 +121,19 @@ export const getThread = async (threadId) => {
         }
     } catch (error) {
         console.error("Error getting thread: ", error);
+        return { success: false, error: error.message };
+    }
+};
+
+export const incrementThreadViewCount = async (threadId) => {
+    try {
+        const docRef = doc(db, 'forum_threads', threadId);
+        await updateDoc(docRef, {
+            viewCount: increment(1)
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Error incrementing view count: ", error);
         return { success: false, error: error.message };
     }
 };
