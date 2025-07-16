@@ -819,6 +819,83 @@
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
+    .forum-container {
+        padding: 1rem;
+    }
+
+    .forum-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .forum-header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .forum-title h1 {
+        font-size: 1.8rem;
+    }
+
+    /* Thread card mobile adjustments */
+    .thread-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .thread-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .thread-author {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .author-avatar,
+    .default-avatar {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+    }
+
+    .author-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .author-name {
+        font-size: 0.9rem;
+    }
+
+    .post-date {
+        font-size: 0.8rem;
+    }
+
+    .thread-stats {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .stat-item {
+        font-size: 0.85rem;
+    }
+
+    .like-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+    }
+
+    .thread-stats-delete {
+        margin-left: auto;
+    }
+
+    /* Modal styles */
     .create-thread-modal {
         width: 95%;
         max-width: none;
