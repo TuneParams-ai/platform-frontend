@@ -1,5 +1,5 @@
 import React from 'react';
-import { CATEGORY_LABELS } from '../services/forumServiceSimple';
+import { CATEGORY_LABELS, roundViewCount } from '../services/forumServiceSimple';
 import { formatDateWithTooltip } from '../utils/dateUtils';
 
 const ThreadCard = ({ thread, onClick }) => {
@@ -52,7 +52,7 @@ const ThreadCard = ({ thread, onClick }) => {
                     </span>
                     <span className="stat-item" title="Views">
                         <span className="stat-icon">👀</span>
-                        {thread.viewCount}
+                        {roundViewCount(thread.viewCount)}
                     </span>
                     <span className="stat-item" title="Likes">
                         <span className="stat-icon">👍</span>

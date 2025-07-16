@@ -15,6 +15,39 @@ export const FORUM_CATEGORIES = {
     HELP: 'help'
 };
 
+// Utility function to round view counts for display
+export const roundViewCount = (count) => {
+    return Math.round(count || 0);
+};
+
+// Function to clean up decimal view counts in Firestore
+export const cleanupViewCounts = async () => {
+    try {
+        const q = query(collection(db, 'forum_threads'));
+        const querySnapshot = await getDocs(q);
+
+        const updates = [];
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.viewCount && data.viewCount % 1 !== 0) {
+                // Round the view count to the nearest integer
+                updates.push(
+                    updateDoc(doc.ref, {
+                        viewCount: Math.round(data.viewCount)
+                    })
+                );
+            }
+        });
+
+        await Promise.all(updates);
+        console.log(`Cleaned up ${updates.length} view counts`);
+        return { success: true, updated: updates.length };
+    } catch (error) {
+        console.error('Error cleaning up view counts:', error);
+        return { success: false, error: error.message };
+    }
+};
+
 export const CATEGORY_LABELS = {
     [FORUM_CATEGORIES.GENERAL]: 'General Discussion',
     [FORUM_CATEGORIES.COURSES]: 'Course Discussions',
@@ -105,10 +138,17 @@ export const getThread = async (threadId) => {
 
         if (docSnap.exists()) {
             console.log('Thread found:', docSnap.id);
-            // Increment view count
-            await updateDoc(docRef, {
-                viewCount: increment(1)
-            });
+
+            // Increment view count by 0.5 so that if React StrictMode runs it twice, it adds up to 1
+            console.log('Incrementing view count by 0.5 for thread:', threadId);
+            try {
+                await updateDoc(docRef, {
+                    viewCount: increment(0.5)
+                });
+                console.log('View count incremented by 0.5 successfully');
+            } catch (updateError) {
+                console.error('Error incrementing view count:', updateError);
+            }
 
             return {
                 success: true,

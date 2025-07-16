@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { getThreads, searchThreads, CATEGORY_LABELS } from '../services/forumServiceSimple';
+import { getThreads, searchThreads, CATEGORY_LABELS, cleanupViewCounts } from '../services/forumServiceSimple';
 import ThreadCard from '../components/ThreadCard';
 import CreateThreadModal from '../components/CreateThreadModal';
 import '../styles/forum.css';
@@ -69,7 +69,8 @@ const ForumsComponent = () => {
         setError(null);
 
         try {
-            const result = await getThreads(selectedCategory, 10, reset ? null : lastDocRef.current);
+            const docToUse = reset ? null : lastDocRef.current;
+            const result = await getThreads(selectedCategory, 10, docToUse);
 
             if (result.success) {
                 setThreads(prev => reset ? result.threads : [...prev, ...result.threads]);
@@ -126,16 +127,38 @@ const ForumsComponent = () => {
     useEffect(() => {
         setIsSearching(false);
         setLastDoc(null); // Reset pagination when category changes
+        lastDocRef.current = null; // Also reset the ref
 
-        // Wrap the loadThreads call in a try-catch to prevent uncaught errors
-        try {
-            loadThreads(true);
-        } catch (error) {
-            console.error('Error in useEffect:', error);
-            setError(error.message);
-            setLoading(false);
-        }
-    }, [selectedCategory, loadThreads]); // Include loadThreads in dependencies
+        // Load threads directly without dependency on loadThreads callback
+        const loadInitialThreads = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const result = await getThreads(selectedCategory, 10, null);
+
+                if (result.success) {
+                    setThreads(result.threads);
+                    setHasMore(result.hasMore);
+                    setLastDoc(result.lastDoc);
+                } else {
+                    console.error("Failed to load threads:", result.error);
+                    setError(result.error);
+                    setThreads([]);
+                    setHasMore(false);
+                }
+            } catch (error) {
+                console.error('Error loading threads:', error);
+                setError(error.message);
+                setThreads([]);
+                setHasMore(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadInitialThreads();
+    }, [selectedCategory]); // Only depend on selectedCategory
 
     const handleSearch = async (e) => {
         if (e) {
@@ -197,6 +220,15 @@ const ForumsComponent = () => {
         setShowCreateModal(false);
         loadThreads(true);
     };
+
+    // Debug function to clean up decimal view counts - can be called from browser console
+    // Usage: window.cleanupViewCounts()
+    React.useEffect(() => {
+        window.cleanupViewCounts = cleanupViewCounts;
+        return () => {
+            delete window.cleanupViewCounts;
+        };
+    }, []);
 
     return (
         <div className="forum-container">
