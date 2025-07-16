@@ -199,41 +199,38 @@ const ForumsComponent = () => {
                     <h1>Community Forums</h1>
                     <p>Join the conversation and connect with fellow learners</p>
                 </div>
-                <button className="create-thread-btn" onClick={handleCreateThread}>
-                    {user ? 'Start New Discussion' : 'Login to Post'}
-                </button>
+                <div className="forum-header-actions">
+                    <div className="search-form-compact">
+                        <input
+                            type="text"
+                            placeholder="Search discussions..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyPress={handleKeyPress}
+                            className="search-input-compact"
+                        />
+                        <button type="button" onClick={handleSearchClick} className="search-btn-compact">🔍</button>
+                        {searchTerm && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSearchTerm('');
+                                    setIsSearching(false);
+                                    loadThreads(true);
+                                }}
+                                className="search-btn-compact clear-btn"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                    <button className="create-thread-btn" onClick={handleCreateThread}>
+                        {user ? 'Start New Discussion' : 'Login to Post'}
+                    </button>
+                </div>
             </div>
 
             <div className="forum-controls">
-                <div className="search-section-header">
-                    <h3>🔍 Search Discussions</h3>
-                </div>
-                <div className="search-form">
-                    <input
-                        type="text"
-                        placeholder="Search discussions..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                        className="search-input"
-                    />
-                    <button type="button" onClick={handleSearchClick} className="search-btn">🔍</button>
-                    {searchTerm && (
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setSearchTerm('');
-                                setIsSearching(false);
-                                loadThreads(true);
-                            }}
-                            className="search-btn"
-                            style={{ marginLeft: '5px' }}
-                        >
-                            ✕
-                        </button>
-                    )}
-                </div>
-
                 <div className="category-filter">
                     <button
                         className={`category-btn ${selectedCategory === null ? 'active' : ''}`}
