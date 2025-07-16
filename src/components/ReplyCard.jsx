@@ -1,6 +1,9 @@
 import React from 'react';
+import { formatDateWithTooltip } from '../utils/dateUtils';
 
 const ReplyCard = ({ reply }) => {
+    const dateInfo = formatDateWithTooltip(reply.createdAt);
+
     return (
         <div className="reply-card">
             <div className="reply-author">
@@ -9,13 +12,18 @@ const ReplyCard = ({ reply }) => {
                         <img src={reply.authorAvatar} alt={reply.authorName} />
                     ) : (
                         <div className="default-avatar-reply">
-                            {reply.authorName?.charAt(0)?.toUpperCase()}
+                            {reply.authorName?.charAt(0)?.toUpperCase() || 'A'}
                         </div>
                     )}
                 </div>
                 <div className="author-info-reply">
-                    <span className="author-name-reply">{reply.authorName}</span>
-                    <span className="post-date-reply">{reply.createdAt?.toLocaleDateString()}</span>
+                    <span className="author-name-reply">{reply.authorName || 'Anonymous'}</span>
+                    <span
+                        className="post-date-reply"
+                        title={dateInfo.tooltip}
+                    >
+                        {dateInfo.display}
+                    </span>
                 </div>
             </div>
             <div className="reply-content" dangerouslySetInnerHTML={{ __html: reply.content }}>

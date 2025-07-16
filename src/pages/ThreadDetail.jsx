@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { getThread, getReplies } from '../services/forumServiceSimple';
 import ReplyCard from '../components/ReplyCard';
 import ReplyForm from '../components/ReplyForm';
+import { formatDateWithTooltip } from '../utils/dateUtils';
 import '../styles/thread-detail.css';
 
 const ThreadDetail = () => {
@@ -76,6 +77,8 @@ const ThreadDetail = () => {
         return null; // Redirect is handled in error state
     }
 
+    const threadDateInfo = formatDateWithTooltip(thread.createdAt);
+
     return (
         <div className="thread-detail-container">
             <div className="thread-detail-header">
@@ -87,7 +90,7 @@ const ThreadDetail = () => {
                         <span>By {thread.authorName}</span>
                     </div>
                     <span>&bull;</span>
-                    <span>{thread.createdAt?.toLocaleDateString()}</span>
+                    <span title={threadDateInfo.tooltip}>{threadDateInfo.display}</span>
                 </div>
             </div>
 

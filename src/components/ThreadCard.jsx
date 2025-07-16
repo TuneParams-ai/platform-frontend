@@ -1,23 +1,15 @@
 import React from 'react';
 import { CATEGORY_LABELS } from '../services/forumServiceSimple';
+import { formatDateWithTooltip } from '../utils/dateUtils';
 
 const ThreadCard = ({ thread, onClick }) => {
-    const formatDate = (date) => {
-        if (!date) return 'Unknown';
-        const now = new Date();
-        const diffTime = Math.abs(now - date);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays <= 1) return 'Today';
-        if (diffDays < 7) return `${diffDays} days ago`;
-        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-        return date.toLocaleDateString();
-    };
-
     const stripHtml = (html) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
         return doc.body.textContent || "";
     }
+
+    const dateInfo = formatDateWithTooltip(thread.createdAt);
+    const lastReplyInfo = formatDateWithTooltip(thread.lastReplyAt);
 
     return (
         <div className="thread-card" onClick={onClick}>
@@ -47,7 +39,9 @@ const ThreadCard = ({ thread, onClick }) => {
                     </div>
                     <div className="author-info">
                         <span className="author-name">{thread.authorName}</span>
-                        <span className="post-date">posted {formatDate(thread.createdAt)}</span>
+                        <span className="post-date" title={dateInfo.tooltip}>
+                            posted {dateInfo.display}
+                        </span>
                     </div>
                 </div>
 
@@ -64,6 +58,12 @@ const ThreadCard = ({ thread, onClick }) => {
                         <span className="stat-icon">👍</span>
                         {thread.likedBy?.length || 0}
                     </span>
+                    {thread.lastReplyAt && thread.lastReplyAt.getTime() !== thread.createdAt.getTime() && (
+                        <span className="stat-item" title={`Last reply: ${lastReplyInfo.tooltip}`}>
+                            <span className="stat-icon">⏱️</span>
+                            {lastReplyInfo.display}
+                        </span>
+                    )}
                 </div>
             </div>
         </div>
