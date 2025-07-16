@@ -6,6 +6,8 @@
     margin: 0 auto;
     color: var(--text-color);
     background-color: var(--background-color);
+    overflow-x: hidden;
+    word-wrap: break-word;
 }
 
 .thread-detail-header {
@@ -72,10 +74,17 @@
     line-height: 1.7;
     font-size: 1.1rem;
     margin-bottom: 3rem;
-    padding: 2rem;
+    padding: 1.5rem;
     background-color: rgba(255, 255, 255, 0.02);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.08);
+    min-height: auto;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .replies-section {
@@ -98,12 +107,15 @@
 
 .reply-card {
     display: flex;
-    gap: 1.2rem;
-    padding: 1.5rem;
+    gap: 1rem;
+    padding: 1rem;
     background-color: rgba(255, 255, 255, 0.02);
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     transition: all 0.2s ease;
+    min-height: auto;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .reply-card:hover {
@@ -113,19 +125,18 @@
 
 .reply-author {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 70px;
+    align-items: flex-start;
+    gap: 0.8rem;
+    flex-shrink: 0;
 }
 
 .author-avatar-reply {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    margin-bottom: 0.5rem;
 }
 
 .author-avatar-reply img {
@@ -135,8 +146,8 @@
 }
 
 .default-avatar-reply {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.1);
     color: var(--text-color);
@@ -144,39 +155,47 @@
     align-items: center;
     justify-content: center;
     font-weight: 500;
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-size: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
 }
 
 .reply-content {
     flex-grow: 1;
     background-color: rgba(255, 255, 255, 0.01);
-    padding: 1rem 1.5rem;
+    padding: 0.8rem 1.2rem;
     border-radius: 6px;
     border-left: 2px solid rgba(255, 255, 255, 0.1);
+    min-height: auto;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .author-info-reply {
-    text-align: center;
-    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
 }
 
 .author-name-reply {
     font-weight: 500;
     color: var(--text-color);
     font-size: 0.85rem;
-    display: block;
-    margin-bottom: 0.25rem;
+    margin: 0;
 }
 
 .post-date-reply {
     font-size: 0.7rem;
     color: var(--secondary-text-color);
-    display: block;
     cursor: help;
     transition: color 0.2s ease;
     opacity: 0.8;
+    margin: 0;
 }
 
 .post-date-reply:hover {

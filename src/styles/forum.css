@@ -5,6 +5,8 @@
     max-width: 1200px;
     margin: 0 auto;
     color: var(--text-color);
+    overflow-x: hidden;
+    word-wrap: break-word;
 }
 
 .forum-header {
@@ -111,9 +113,12 @@
     background-color: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
-    padding: 1.5rem;
+    padding: 1.2rem;
     cursor: pointer;
     transition: all 0.2s ease;
+    min-height: auto;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .thread-card:hover {
@@ -159,6 +164,13 @@
     color: var(--secondary-text-color);
     line-height: 1.5;
     opacity: 0.8;
+    margin-bottom: 0.8rem;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .thread-footer {
@@ -172,7 +184,7 @@
 .thread-author {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.6rem;
 }
 
 .author-avatar,
@@ -181,6 +193,7 @@
     height: 28px;
     border-radius: 50%;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .author-avatar img {
@@ -197,23 +210,27 @@
     justify-content: center;
     font-weight: 500;
     font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
 .author-info {
     display: flex;
     flex-direction: column;
+    gap: 0.1rem;
 }
 
 .author-name {
     font-weight: 500;
     color: var(--text-color);
     font-size: 0.85rem;
+    margin: 0;
 }
 
 .post-date {
     font-size: 0.75rem;
     color: var(--secondary-text-color);
     opacity: 0.7;
+    margin: 0;
 }
 
 .thread-stats {
