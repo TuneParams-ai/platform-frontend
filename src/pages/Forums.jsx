@@ -172,7 +172,8 @@ const ForumsComponent = () => {
                 </button>
             </div>
 
-            <div className="forum-controls">
+            <div className="search-section">
+                <h2>Search Discussions</h2>
                 <div className="search-form">
                     <input
                         type="text"
@@ -198,7 +199,9 @@ const ForumsComponent = () => {
                         </button>
                     )}
                 </div>
+            </div>
 
+            <div className="forum-controls">
                 <div className="category-filter">
                     <button
                         className={`category-btn ${selectedCategory === null ? 'active' : ''}`}
