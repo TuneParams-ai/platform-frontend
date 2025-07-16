@@ -3,7 +3,7 @@ import {
     collection, doc, addDoc, getDoc, getDocs, updateDoc, deleteDoc,
     query, where, limit, serverTimestamp, increment
 } from 'firebase/firestore';
-import { db, auth } from '../config/firebase';
+import { db } from '../config/firebase';
 
 // Categories
 export const FORUM_CATEGORIES = {

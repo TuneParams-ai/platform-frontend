@@ -42,6 +42,7 @@ const AdminDashboard = () => {
     const adminEmails = [
         'admin@tuneparams.ai',
         'abhinaykotla@gmail.com',
+        'admin@tuneparams.com',
         // Add more admin emails here as needed
     ];
 
