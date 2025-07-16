@@ -1,12 +1,15 @@
-import React from 'react';
-import { CATEGORY_LABELS, roundViewCount } from '../services/forumServiceSimple';
+import React, { useState } from 'react';
+import { CATEGORY_LABELS, roundViewCount, likeThread } from '../services/forumServiceSimple';
 import { formatDateWithTooltip } from '../utils/dateUtils';
 import { useAuth } from '../hooks/useAuth';
 import { useUserRole } from '../hooks/useUserRole';
 
-const ThreadCard = ({ thread, onClick, onDelete }) => {
+const ThreadCard = ({ thread, onClick, onDelete, onLike }) => {
     const { user } = useAuth();
     const { userRole } = useUserRole();
+    const [isLiking, setIsLiking] = useState(false);
+    const [likeCount, setLikeCount] = useState(thread.likedBy?.length || 0);
+    const [isLiked, setIsLiked] = useState(user ? thread.likedBy?.includes(user.uid) : false);
 
     const stripHtml = (html) => {
         const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -32,9 +35,40 @@ const ThreadCard = ({ thread, onClick, onDelete }) => {
         }
     };
 
+    const handleLike = async (e) => {
+        e.stopPropagation();
+
+        if (!user) {
+            alert('Please log in to like threads');
+            return;
+        }
+
+        if (isLiking) return;
+
+        setIsLiking(true);
+        try {
+            const result = await likeThread(thread.id, user.uid);
+            if (result.success) {
+                setIsLiked(result.liked);
+                setLikeCount(result.likeCount);
+
+                // Call parent callback if provided
+                if (onLike) {
+                    onLike(thread.id, result.liked, result.likeCount);
+                }
+            } else {
+                console.error('Failed to like thread:', result.error);
+            }
+        } catch (error) {
+            console.error('Error liking thread:', error);
+        } finally {
+            setIsLiking(false);
+        }
+    };
+
     const handleCardClick = (e) => {
-        // Don't trigger onClick if clicking on delete button
-        if (e.target.closest('.delete-btn')) {
+        // Don't trigger onClick if clicking on delete button or like button
+        if (e.target.closest('.delete-btn') || e.target.closest('.like-btn')) {
             return;
         }
         if (onClick) {
@@ -85,10 +119,15 @@ const ThreadCard = ({ thread, onClick, onDelete }) => {
                         <span className="stat-icon">👀</span>
                         {roundViewCount(thread.viewCount)}
                     </span>
-                    <span className="stat-item" title="Likes">
-                        <span className="stat-icon">👍</span>
-                        {thread.likedBy?.length || 0}
-                    </span>
+                    <button
+                        className={`like-btn ${isLiked ? 'liked' : ''}`}
+                        onClick={handleLike}
+                        disabled={isLiking}
+                        title={isLiked ? 'Unlike' : 'Like'}
+                    >
+                        <span className="like-icon">👍</span>
+                        <span className="like-count">{likeCount}</span>
+                    </button>
                     {thread.lastReplyAt && thread.lastReplyAt.getTime() !== thread.createdAt.getTime() && (
                         <span className="stat-item" title={`Last reply: ${lastReplyInfo.tooltip}`}>
                             <span className="stat-icon">⏱️</span>

@@ -240,6 +240,17 @@ const ForumsComponent = () => {
         }
     };
 
+    const handleThreadLike = (threadId, liked, likeCount) => {
+        // Update the thread in the current list
+        setThreads(prevThreads =>
+            prevThreads.map(thread =>
+                thread.id === threadId
+                    ? { ...thread, likedBy: liked ? [...(thread.likedBy || []), user.uid] : (thread.likedBy || []).filter(id => id !== user.uid) }
+                    : thread
+            )
+        );
+    };
+
     return (
         <div className="forum-container">
             <div className="forum-header">
@@ -339,6 +350,7 @@ const ForumsComponent = () => {
                                     thread={thread}
                                     onClick={() => navigate(`/forums/thread/${thread.id}`)}
                                     onDelete={handleThreadDelete}
+                                    onLike={handleThreadLike}
                                 />
                             ))}
                         </div>

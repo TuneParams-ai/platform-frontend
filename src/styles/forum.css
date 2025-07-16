@@ -263,6 +263,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .stat-item {
@@ -275,6 +276,13 @@
 
 .stat-icon {
     font-size: 0.8rem;
+}
+
+/* Thread stats delete button positioning */
+.thread-stats-delete {
+    margin-left: auto;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
 }
 
 .load-more-btn {
@@ -847,10 +855,6 @@
     color: #ffffff !important;
 }
 
-.modal-form select:focus {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-}
-
 /* Webkit specific select styling */
 .modal-form select::-webkit-scrollbar {
     width: 8px;
@@ -867,4 +871,104 @@
 
 .modal-form select::-webkit-scrollbar-thumb:hover {
     background: var(--primary-hover);
+}
+
+/* Like button styles */
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.like-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.like-btn.liked {
+    background-color: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+}
+
+.like-btn.liked:hover {
+    background-color: rgba(255, 107, 107, 0.2);
+}
+
+.like-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.like-icon {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.like-count {
+    font-size: 0.85rem;
+    font-weight: 500;
+    min-width: 1rem;
+    text-align: center;
+}
+
+/* Reply like button - smaller */
+.reply-like-btn {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 15px;
+}
+
+.reply-like-btn .like-icon {
+    font-size: 0.9rem;
+}
+
+.reply-like-btn .like-count {
+    font-size: 0.75rem;
+}
+
+/* Thread like button - larger */
+.thread-like-btn {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    margin-bottom: 1rem;
+}
+
+.thread-like-btn .like-icon {
+    font-size: 1.2rem;
+}
+
+.thread-like-btn .like-count {
+    font-size: 0.9rem;
+}
+
+/* Reply footer for like button */
+.reply-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Thread actions container */
+.thread-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }

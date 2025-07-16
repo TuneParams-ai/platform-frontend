@@ -282,3 +282,62 @@ export const deleteReply = async (replyId, threadId) => {
         return { success: false, error: error.message };
     }
 };
+
+// Like/Unlike functions
+export const likeThread = async (threadId, userId) => {
+    try {
+        const threadRef = doc(db, 'forum_threads', threadId);
+        const threadSnap = await getDoc(threadRef);
+
+        if (!threadSnap.exists()) {
+            return { success: false, error: 'Thread not found' };
+        }
+
+        const threadData = threadSnap.data();
+        const likedBy = threadData.likedBy || [];
+
+        if (likedBy.includes(userId)) {
+            // Unlike: remove user from likedBy array
+            const updatedLikedBy = likedBy.filter(id => id !== userId);
+            await updateDoc(threadRef, { likedBy: updatedLikedBy });
+            return { success: true, liked: false, likeCount: updatedLikedBy.length };
+        } else {
+            // Like: add user to likedBy array
+            const updatedLikedBy = [...likedBy, userId];
+            await updateDoc(threadRef, { likedBy: updatedLikedBy });
+            return { success: true, liked: true, likeCount: updatedLikedBy.length };
+        }
+    } catch (error) {
+        console.error("Error liking thread: ", error);
+        return { success: false, error: error.message };
+    }
+};
+
+export const likeReply = async (replyId, userId) => {
+    try {
+        const replyRef = doc(db, 'forum_replies', replyId);
+        const replySnap = await getDoc(replyRef);
+
+        if (!replySnap.exists()) {
+            return { success: false, error: 'Reply not found' };
+        }
+
+        const replyData = replySnap.data();
+        const likedBy = replyData.likedBy || [];
+
+        if (likedBy.includes(userId)) {
+            // Unlike: remove user from likedBy array
+            const updatedLikedBy = likedBy.filter(id => id !== userId);
+            await updateDoc(replyRef, { likedBy: updatedLikedBy });
+            return { success: true, liked: false, likeCount: updatedLikedBy.length };
+        } else {
+            // Like: add user to likedBy array
+            const updatedLikedBy = [...likedBy, userId];
+            await updateDoc(replyRef, { likedBy: updatedLikedBy });
+            return { success: true, liked: true, likeCount: updatedLikedBy.length };
+        }
+    } catch (error) {
+        console.error("Error liking reply: ", error);
+        return { success: false, error: error.message };
+    }
+};

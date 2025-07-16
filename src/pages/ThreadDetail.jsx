@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useUserRole } from '../hooks/useUserRole';
-import { getThread, getReplies, deleteThread, deleteReply } from '../services/forumServiceSimple';
+import { getThread, getReplies, deleteThread, deleteReply, likeThread } from '../services/forumServiceSimple';
 import ReplyCard from '../components/ReplyCard';
 import ReplyForm from '../components/ReplyForm';
 import { formatDateWithTooltip } from '../utils/dateUtils';
@@ -93,6 +93,40 @@ const ThreadDetail = () => {
         }
     };
 
+    const handleThreadLike = async () => {
+        if (!user) {
+            alert('Please log in to like threads');
+            return;
+        }
+
+        try {
+            const result = await likeThread(threadId, user.uid);
+            if (result.success) {
+                setThread(prevThread => ({
+                    ...prevThread,
+                    likedBy: result.liked
+                        ? [...(prevThread.likedBy || []), user.uid]
+                        : (prevThread.likedBy || []).filter(id => id !== user.uid)
+                }));
+            } else {
+                console.error('Failed to like thread:', result.error);
+            }
+        } catch (error) {
+            console.error('Error liking thread:', error);
+        }
+    };
+
+    const handleReplyLike = (replyId, liked, likeCount) => {
+        // Update the reply in the current list
+        setReplies(prevReplies =>
+            prevReplies.map(reply =>
+                reply.id === replyId
+                    ? { ...reply, likedBy: liked ? [...(reply.likedBy || []), user.uid] : (reply.likedBy || []).filter(id => id !== user.uid) }
+                    : reply
+            )
+        );
+    };
+
     if (loading) {
         return (
             <div className="loading-state-detail">
@@ -153,6 +187,17 @@ const ThreadDetail = () => {
             <div className="thread-content-detail" dangerouslySetInnerHTML={{ __html: thread.content }}>
             </div>
 
+            <div className="thread-actions">
+                <button
+                    className={`like-btn thread-like-btn ${thread.likedBy?.includes(user?.uid) ? 'liked' : ''}`}
+                    onClick={handleThreadLike}
+                    title={thread.likedBy?.includes(user?.uid) ? 'Unlike' : 'Like'}
+                >
+                    <span className="like-icon">👍</span>
+                    <span className="like-count">{thread.likedBy?.length || 0}</span>
+                </button>
+            </div>
+
             <div className="replies-section">
                 <h2>{replies.length} {replies.length === 1 ? 'Reply' : 'Replies'}</h2>
                 <div className="replies-list">
@@ -161,6 +206,7 @@ const ThreadDetail = () => {
                             key={reply.id}
                             reply={reply}
                             onDelete={handleReplyDelete}
+                            onLike={handleReplyLike}
                         />
                     ))}
                 </div>
