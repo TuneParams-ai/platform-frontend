@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { getThreads, searchThreads, CATEGORY_LABELS } from '../services/forumServiceSimple';
@@ -57,13 +57,19 @@ const ForumsComponent = () => {
     const [lastDoc, setLastDoc] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
     const [error, setError] = useState(null);
+    const lastDocRef = useRef(null);
+
+    // Keep lastDocRef in sync with lastDoc state
+    useEffect(() => {
+        lastDocRef.current = lastDoc;
+    }, [lastDoc]);
 
     const loadThreads = useCallback(async (reset = false) => {
         setLoading(true);
         setError(null);
 
         try {
-            const result = await getThreads(selectedCategory, 10, reset ? null : lastDoc);
+            const result = await getThreads(selectedCategory, 10, reset ? null : lastDocRef.current);
 
             if (result.success) {
                 setThreads(prev => reset ? result.threads : [...prev, ...result.threads]);
@@ -83,7 +89,7 @@ const ForumsComponent = () => {
         } finally {
             setLoading(false);
         }
-    }, [selectedCategory, lastDoc]);
+    }, [selectedCategory]); // Remove lastDoc from dependencies to prevent infinite loops
 
     // Set document title and ensure favicon is properly configured
     useEffect(() => {
@@ -129,7 +135,7 @@ const ForumsComponent = () => {
             setError(error.message);
             setLoading(false);
         }
-    }, [selectedCategory]); // Remove loadThreads from dependencies
+    }, [selectedCategory, loadThreads]); // Include loadThreads in dependencies
 
     const handleSearch = async (e) => {
         if (e) {
