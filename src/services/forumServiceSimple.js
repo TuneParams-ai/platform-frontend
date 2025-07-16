@@ -20,34 +20,6 @@ export const roundViewCount = (count) => {
     return Math.round(count || 0);
 };
 
-// Function to clean up decimal view counts in Firestore
-export const cleanupViewCounts = async () => {
-    try {
-        const q = query(collection(db, 'forum_threads'));
-        const querySnapshot = await getDocs(q);
-
-        const updates = [];
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            if (data.viewCount && data.viewCount % 1 !== 0) {
-                // Round the view count to the nearest integer
-                updates.push(
-                    updateDoc(doc.ref, {
-                        viewCount: Math.round(data.viewCount)
-                    })
-                );
-            }
-        });
-
-        await Promise.all(updates);
-        console.log(`Cleaned up ${updates.length} view counts`);
-        return { success: true, updated: updates.length };
-    } catch (error) {
-        console.error('Error cleaning up view counts:', error);
-        return { success: false, error: error.message };
-    }
-};
-
 export const CATEGORY_LABELS = {
     [FORUM_CATEGORIES.GENERAL]: 'General Discussion',
     [FORUM_CATEGORIES.COURSES]: 'Course Discussions',
@@ -132,20 +104,15 @@ export const getThreads = async (category = null, pageSize = 10, lastDoc = null)
 
 export const getThread = async (threadId) => {
     try {
-        console.log('Getting thread with ID:', threadId);
         const docRef = doc(db, 'forum_threads', threadId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            console.log('Thread found:', docSnap.id);
-
             // Increment view count by 0.5 so that if React StrictMode runs it twice, it adds up to 1
-            console.log('Incrementing view count by 0.5 for thread:', threadId);
             try {
                 await updateDoc(docRef, {
                     viewCount: increment(0.5)
                 });
-                console.log('View count incremented by 0.5 successfully');
             } catch (updateError) {
                 console.error('Error incrementing view count:', updateError);
             }
@@ -161,7 +128,6 @@ export const getThread = async (threadId) => {
                 }
             };
         } else {
-            console.log('Thread not found in database:', threadId);
             return { success: false, error: 'Thread not found' };
         }
     } catch (error) {
@@ -252,7 +218,6 @@ export const searchThreads = async (searchTerm, category = null) => {
             const data = doc.data();
             if (data.title.toLowerCase().includes(searchLower) ||
                 data.content.toLowerCase().includes(searchLower)) {
-                console.log('Found matching thread:', doc.id, data.title);
                 threads.push({
                     id: doc.id,
                     ...data,
@@ -270,7 +235,6 @@ export const searchThreads = async (searchTerm, category = null) => {
             return b.createdAt.getTime() - a.createdAt.getTime();
         });
 
-        console.log('Search results:', threads.length, 'threads found');
         return { success: true, threads: threads.slice(0, 20) };
     } catch (error) {
         console.error("Error searching threads: ", error);

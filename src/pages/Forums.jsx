@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { getThreads, searchThreads, CATEGORY_LABELS, cleanupViewCounts } from '../services/forumServiceSimple';
+import { getThreads, searchThreads, CATEGORY_LABELS } from '../services/forumServiceSimple';
 import ThreadCard from '../components/ThreadCard';
 import CreateThreadModal from '../components/CreateThreadModal';
 import '../styles/forum.css';
@@ -220,15 +220,6 @@ const ForumsComponent = () => {
         setShowCreateModal(false);
         loadThreads(true);
     };
-
-    // Debug function to clean up decimal view counts - can be called from browser console
-    // Usage: window.cleanupViewCounts()
-    React.useEffect(() => {
-        window.cleanupViewCounts = cleanupViewCounts;
-        return () => {
-            delete window.cleanupViewCounts;
-        };
-    }, []);
 
     return (
         <div className="forum-container">

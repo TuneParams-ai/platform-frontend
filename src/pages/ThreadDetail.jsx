@@ -19,10 +19,8 @@ const ThreadDetail = () => {
     const loadThreadAndReplies = useCallback(async () => {
         setLoading(true);
         setError(null);
-        console.log('Loading thread with ID:', threadId);
         try {
             const threadResult = await getThread(threadId);
-            console.log('Thread result:', threadResult);
             if (threadResult.success) {
                 setThread(threadResult.thread);
                 const repliesResult = await getReplies(threadId);
