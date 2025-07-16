@@ -85,6 +85,38 @@ const ForumsComponent = () => {
         }
     }, [selectedCategory, lastDoc]);
 
+    // Set document title and ensure favicon is properly configured
+    useEffect(() => {
+        document.title = 'Community Forums - TuneParams.ai';
+
+        // Ensure favicon is properly set with cache busting
+        const favicon = document.querySelector('link[rel="icon"]');
+        const timestamp = Date.now();
+
+        if (favicon) {
+            favicon.href = `/favicon.ico?v=${timestamp}`;
+        } else {
+            // Create favicon link if it doesn't exist
+            const newFavicon = document.createElement('link');
+            newFavicon.rel = 'icon';
+            newFavicon.href = `/favicon.ico?v=${timestamp}`;
+            newFavicon.type = 'image/x-icon';
+            document.head.appendChild(newFavicon);
+        }
+
+        // Also handle shortcut icon for better compatibility
+        let shortcutIcon = document.querySelector('link[rel="shortcut icon"]');
+        if (!shortcutIcon) {
+            shortcutIcon = document.createElement('link');
+            shortcutIcon.rel = 'shortcut icon';
+            shortcutIcon.href = `/favicon.ico?v=${timestamp}`;
+            shortcutIcon.type = 'image/x-icon';
+            document.head.appendChild(shortcutIcon);
+        } else {
+            shortcutIcon.href = `/favicon.ico?v=${timestamp}`;
+        }
+    }, []);
+
     useEffect(() => {
         setIsSearching(false);
         setLastDoc(null); // Reset pagination when category changes
@@ -173,6 +205,9 @@ const ForumsComponent = () => {
             </div>
 
             <div className="forum-controls">
+                <div className="search-section-header">
+                    <h3>🔍 Search Discussions</h3>
+                </div>
                 <div className="search-form">
                     <input
                         type="text"
