@@ -120,11 +120,11 @@ const Navbar = () => {
           Forums
         </Link>
         <Link
-          to="/about"
+          to="/about-us"
           onClick={closeMenu}
-          className={isActivePath("/about") ? "active" : ""}
+          className={isActivePath("/about-us") ? "active" : ""}
         >
-          About
+          About Us
         </Link>
         {user && (
           <Link

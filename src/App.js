@@ -47,6 +47,7 @@ function App() {
               } />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
+              <Route path="/about-us" element={<About />} />
               <Route path="/forums" element={<Forums />} />
               <Route path="/forums/thread/:threadId" element={<ThreadDetail />} />
               <Route path="/login" element={<Login />} />
