@@ -13,6 +13,7 @@ import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import Dashboard from "./pages/Dashboard";
 import Contact from "./pages/Contact";
+import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -45,6 +46,7 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
               <Route path="/forums" element={<Forums />} />
               <Route path="/forums/thread/:threadId" element={<ThreadDetail />} />
               <Route path="/login" element={<Login />} />

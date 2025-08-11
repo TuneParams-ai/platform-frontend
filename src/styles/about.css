@@ -1,0 +1,81 @@
+/* About Page Styles */
+
+.about-page-container {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(29, 126, 153, 0.05) 0%, rgba(0, 0, 0, 0.85) 100%);
+}
+
+.about-card {
+    background: rgba(11, 11, 26, 0.95);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(29, 126, 153, 0.1);
+}
+
+.about-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.about-title {
+    font-size: 2rem;
+    margin: 0 0 8px 0;
+    background: var(--metallic-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.about-subtitle {
+    color: var(--secondary-text-color);
+    margin: 0;
+}
+
+.about-section {
+    margin: 18px 0;
+    color: var(--secondary-text-color);
+    line-height: 1.7;
+    font-size: 1.05rem;
+}
+
+.about-highlight {
+    margin: 24px 0;
+    padding: 18px 20px;
+    border-radius: 12px;
+    background: rgba(29, 126, 153, 0.08);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.about-cta {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+    .about-card {
+        padding: 28px;
+    }
+
+    .about-title {
+        font-size: 1.8rem;
+    }
+
+    .about-section {
+        font-size: 1rem;
+    }
+
+    .about-cta {
+        flex-direction: column;
+    }
+}
