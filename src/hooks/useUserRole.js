@@ -7,7 +7,6 @@ import {
     userHasPermission,
     isUserAdmin,
     USER_ROLES,
-    PERMISSIONS
 } from '../services/roleService';
 
 export const useUserRole = () => {
