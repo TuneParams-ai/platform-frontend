@@ -31,7 +31,7 @@ const Courses = () => {
       <div className="courses-header">
         <h1 className="courses-title">Available Courses</h1>
         <p className="courses-subtitle">
-          Discover our comprehensive collection of machine learning and data science courses designed to take you from beginner to expert.
+          Discover our comprehensive collection of AI courses designed to take you from beginner to expert.
           {!user && " Login to enroll and track your progress!"}
         </p>
       </div>

@@ -112,22 +112,17 @@ const Landing = () => {
           <div className="audience-item">
             <div className="audience-icon">🎓</div>
             <h3>Beginners</h3>
-            <p>Looking to enter the field of machine learning</p>
+            <p>Looking to enter the field of AI/ML</p>
           </div>
           <div className="audience-item">
             <div className="audience-icon">📚</div>
             <h3>Students</h3>
-            <p>High school students seeking an applied introduction to ML</p>
+            <p>High school students seeking an applied introduction to AI/ML</p>
           </div>
           <div className="audience-item">
             <div className="audience-icon">💼</div>
             <h3>Professionals</h3>
             <p>Experienced IT professionals wanting to upskill</p>
-          </div>
-          <div className="audience-item">
-            <div className="audience-icon">🔍</div>
-            <h3>Curious Minds</h3>
-            <p>Anyone curious about how AI and ML work behind the scenes</p>
           </div>
           <div className="audience-item">
             <div className="audience-icon">👨‍💻</div>
@@ -138,6 +133,11 @@ const Landing = () => {
             <div className="audience-icon">📊</div>
             <h3>Data Analysts</h3>
             <p>Data professionals wanting to advance to machine learning roles</p>
+          </div>
+          <div className="audience-item">
+            <div className="audience-icon">🔍</div>
+            <h3>Curious Minds</h3>
+            <p>Anyone curious about how AI and ML work behind the scenes</p>
           </div>
         </div>
       </section>
