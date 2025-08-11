@@ -177,9 +177,9 @@ const CourseDetail = () => {
                                     <div className="course-meta-detail">
                                         <span className="course-level-detail">{displayValue(courseData.level)}</span>
                                         <span className="course-duration-detail">⏱️ {displayValue(courseData.duration)}</span>
-                                        <span className="course-rating-detail">
+                                        {/* <span className="course-rating-detail">
                                             ⭐ {displayValue(courseData.rating)}/5
-                                        </span>
+                                        </span> */}
                                         <span className="course-enrollment-detail">
                                             👥 {displayValue(courseData.students)}/{displayValue(courseData.maxCapacity)} seats
                                         </span>
@@ -315,14 +315,15 @@ const CourseDetail = () => {
                         </section>
 
                         <section className="course-section">
-                            <h2>Course Curriculum</h2>
+                            <h2>Course Content</h2>
                             {courseData.curriculum && courseData.curriculum.length > 0 ? (
                                 <div className="curriculum-list">
                                     {courseData.curriculum.map((week, index) => (
                                         <div key={index} className="curriculum-item">
                                             <div className="week-header">
-                                                <h3>Week {week.week}: {week.title}</h3>
-                                                <span className="lesson-count">{week.lessons} lessons</span>
+                                                {/* Add Week here */}
+                                                <h3>{week.week}: {week.title}</h3>
+                                                {/* <span className="lesson-count">{week.lessons} lessons</span> */}
                                             </div>
                                         </div>
                                     ))}
@@ -330,7 +331,7 @@ const CourseDetail = () => {
                             ) : (
                                 <div className="na-message">
                                     <p>Detailed curriculum information is not available at this time.</p>
-                                    <p>Course includes {displayValue(courseData.lessons)} lessons over {displayValue(courseData.duration)}.</p>
+                                    <p>Course details coming soon</p>
                                 </div>
                             )}
                         </section>
@@ -352,13 +353,13 @@ const CourseDetail = () => {
                             )}
                         </section>
 
-                        <section className="course-section">
+                        {/* <section className="course-section">
                             <h3>Instructor</h3>
                             <div className="instructor-info">
                                 <h4>{displayValue(courseData.instructor)}</h4>
                                 <p>{displayValue(courseData.instructorBio, "Instructor bio not available.")}</p>
                             </div>
-                        </section>
+                        </section> */}
 
                         <section className="course-section">
                             <h3>Course Information</h3>
@@ -389,7 +390,7 @@ const CourseDetail = () => {
                             </div>
                         </section>
 
-                        <section className="course-section">
+                        {/* <section className="course-section">
                             <h3>Course Materials</h3>
                             <div className="course-materials">
                                 {courseData.downloadUrl ? (
@@ -411,7 +412,7 @@ const CourseDetail = () => {
                                     Detailed course information, curriculum, and requirements
                                 </p>
                             </div>
-                        </section>
+                        </section> */}
                     </div>
                 </div>
             </div>

@@ -79,7 +79,7 @@ const Dashboard = () => {
                       className="btn"
                       onClick={() => navigate(`/courses/${course.id}`)}
                     >
-                      {course.progress === 0 ? 'Start Learning' : 'Continue Learning'}
+                      {course.progress === 0 ? 'Course Material' : 'Course Material'}
                     </button>
                   </div>
                   <div className="enrollment-info">
@@ -136,14 +136,14 @@ const Dashboard = () => {
                 Contact Support
               </button>
             </div>
-            <div className="action-card">
+            {/* <div className="action-card">
               <div className="action-icon">📄</div>
               <h4>Certificates</h4>
               <p>View and download your course certificates</p>
               <button className="btn btn-secondary" disabled>
                 Coming Soon
               </button>
-            </div>
+            </div> */}
           </div>
         </section>
       </div>
