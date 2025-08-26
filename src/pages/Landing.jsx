@@ -2,10 +2,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "./../styles/landing.css";
+import { useRecentReviews } from "../hooks/useRecentReviews";
+import ReviewList from "../components/ReviewList";
 
 const Landing = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { reviews: recentReviews, loading: recentLoading, error: recentError } = useRecentReviews({ limit: 6 });
 
   const handleEnrollClick = () => {
     navigate('/courses');
@@ -182,6 +185,17 @@ const Landing = () => {
             Register Here
           </button>
         )}
+      </section>
+
+      {/* Student Reviews Section */}
+      <section className="reviews-section">
+        <h2>What Students Say</h2>
+        <ReviewList
+          reviews={recentReviews}
+          loading={recentLoading}
+          error={recentError}
+          showCourseTitle
+        />
       </section>
     </div>
   );

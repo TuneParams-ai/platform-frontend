@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
@@ -8,6 +8,9 @@ import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import "../styles/course-detail.css";
 import "../styles/course-image.css";
 import "../styles/paypal-checkout.css";
+import { useReviews } from "../hooks/useReviews";
+import ReviewForm from "../components/ReviewForm";
+import ReviewList from "../components/ReviewList";
 
 const CourseDetail = () => {
     const { courseId } = useParams();
@@ -29,6 +32,14 @@ const CourseDetail = () => {
 
     // Find the course data based on courseId (now supports alphanumeric IDs)
     const courseData = findCourseById(courseId);
+
+    // Reviews
+    const { reviews, loading: reviewsLoading, error: reviewsError } = useReviews(courseId, { limit: 20 });
+    const avgRating = useMemo(() => {
+        if (!reviews?.length) return null;
+        const sum = reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
+        return Math.round((sum / reviews.length) * 10) / 10;
+    }, [reviews]);
 
     // All useCallback hooks must be at the top level, before any conditional returns
     const handlePaymentSuccess = useCallback(async (paymentDetails) => {
@@ -335,6 +346,8 @@ const CourseDetail = () => {
                                 </div>
                             )}
                         </section>
+
+                        {/* Student Reviews moved to sidebar */}
                     </div>
 
                     <div className="course-sidebar">
@@ -387,6 +400,35 @@ const CourseDetail = () => {
                                             day: 'numeric'
                                         }) : "N/A"}
                                 </div>
+                            </div>
+                        </section>
+
+                        <section className="course-section">
+                            <h3>Student Reviews</h3>
+                            <div className="course-reviews-summary">
+                                {reviewsLoading ? (
+                                    <p>Loading reviews...</p>
+                                ) : reviewsError ? (
+                                    <p className="course-detail-error-text">{reviewsError}</p>
+                                ) : (
+                                    <p>
+                                        {avgRating ? `⭐ ${avgRating} / 5` : 'No ratings yet'}
+                                        {reviews?.length ? ` · ${reviews.length} review${reviews.length > 1 ? 's' : ''}` : ''}
+                                    </p>
+                                )}
+                            </div>
+                            <ReviewForm
+                                courseId={courseData.id}
+                                courseTitle={courseData.title}
+                                onSubmitted={() => { }}
+                            />
+                            <div className="course-reviews-list">
+                                <ReviewList
+                                    reviews={reviews}
+                                    loading={reviewsLoading}
+                                    error={reviewsError}
+                                    currentUserId={user?.uid}
+                                />
                             </div>
                         </section>
 

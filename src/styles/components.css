@@ -166,6 +166,229 @@
     border-bottom: 1px solid rgba(29, 126, 153, 0.1);
 }
 
+/* Reviews */
+.review-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: #fff;
+    margin-bottom: 12px;
+}
+
+.review-card {
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: rgba(29, 126, 153, 0.06);
+    margin-bottom: 12px;
+}
+
+.review-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.review-user {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.review-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(29, 126, 153, 0.15);
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-username {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.review-verified {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #34d399;
+    border-radius: 9999px;
+    padding: 2px 8px;
+    font-size: 12px;
+}
+
+.review-verified {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 9999px;
+    padding: 2px 8px;
+    font-size: 12px;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.review-stars {
+    color: #f59e0b;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.review-course-chip {
+    display: inline-block;
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.review-course-chip {
+    display: inline-block;
+    background: rgba(29, 126, 153, 0.2);
+    color: var(--text-color);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    margin-bottom: 6px;
+    border: 1px solid rgba(29, 126, 153, 0.3);
+}
+
+.review-comment {
+    margin: 6px 0 4px;
+    white-space: pre-wrap;
+}
+
+.review-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.reviews-loading,
+.reviews-error,
+.reviews-empty {
+    color: #6b7280;
+}
+
+.review-form {
+    border: 1px dashed #e5e7eb;
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.review-form {
+    border: 1px dashed rgba(29, 126, 153, 0.3);
+    background: rgba(29, 126, 153, 0.08);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.review-form h4 {
+    margin: 0 0 8px;
+}
+
+.star-input {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.star-input .star {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #d1d5db;
+}
+
+.star-input .star {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.star-input .star.active {
+    color: #f59e0b;
+}
+
+.review-textarea {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 8px;
+    resize: vertical;
+    margin-bottom: 8px;
+}
+
+.review-textarea {
+    width: 100%;
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-color);
+    border-radius: 8px;
+    padding: 10px;
+    resize: vertical;
+    margin-bottom: 8px;
+}
+
+.review-form-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.review-error {
+    color: #b91c1c;
+    margin-bottom: 8px;
+}
+
+.review-form-login {
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.reviews-section {
+    padding: 32px 0;
+}
+
+.course-reviews-summary {
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.course-reviews-list {
+    margin-top: 8px;
+}
+
 .card-title {
     color: var(--text-color);
     font-size: 1.3rem;
