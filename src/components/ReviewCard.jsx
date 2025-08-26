@@ -15,7 +15,7 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, onEdit, 
     const dateText = createdAt?.toDate ? createdAt.toDate().toLocaleDateString() : '';
 
     return (
-        <div className="review-card">
+        <div className="review-card" id={`review-${review.id}`}>
             <div className="review-card-header">
                 <div className="review-user">
                     <div className="review-avatar" aria-hidden>👤</div>

@@ -2,13 +2,12 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "./../styles/landing.css";
-import { useRecentReviews } from "../hooks/useRecentReviews";
-import ReviewList from "../components/ReviewList";
+import HomeReviews from "../components/HomeReviews";
 
 const Landing = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { reviews: recentReviews, loading: recentLoading, error: recentError } = useRecentReviews({ limit: 6 });
+  // HomeReviews handles its own data
 
   const handleEnrollClick = () => {
     navigate('/courses');
@@ -67,6 +66,9 @@ const Landing = () => {
           </p>
         </div>
       </section>
+
+      {/* Student Reviews Carousel */}
+      <HomeReviews />
 
       {/* What You'll Learn Section */}
       <section className="curriculum-section">
@@ -187,16 +189,6 @@ const Landing = () => {
         )}
       </section>
 
-      {/* Student Reviews Section */}
-      <section className="reviews-section">
-        <h2>What Students Say</h2>
-        <ReviewList
-          reviews={recentReviews}
-          loading={recentLoading}
-          error={recentError}
-          showCourseTitle
-        />
-      </section>
     </div>
   );
 };
