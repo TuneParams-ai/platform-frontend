@@ -28,7 +28,7 @@ const HomeReviews = () => {
                                         <div className="review-avatar" aria-hidden>👤</div>
                                         <div>
                                             <div className="review-username">
-                                                {r.userName || 'User'}
+                                                <span>{r.userName || 'User'}</span>
                                                 {r.verified && <span className="review-verified">Verified</span>}
                                             </div>
                                             <div className="review-date">

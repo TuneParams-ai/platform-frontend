@@ -243,18 +243,69 @@
     gap: 40px;
     background: transparent;
     margin-top: 0;
+    min-width: 0;
+    /* Prevent grid items from overflowing */
+    overflow: hidden;
+    /* Prevent content from breaking layout */
 }
 
 .course-main {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    min-width: 0;
+    /* Prevent overflow */
+    overflow: hidden;
+    /* Contain content */
 }
 
 .course-sidebar {
     display: flex;
     flex-direction: column;
     gap: 25px;
+    min-width: 0;
+    /* Ensure sidebar can shrink */
+    overflow: hidden;
+    /* Prevent sidebar content from overflowing */
+    max-width: 100%;
+    /* Ensure sidebar doesn't exceed container */
+}
+
+/* Reviews in course detail sidebar */
+.course-sidebar .review-card {
+    max-width: 100%;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.course-sidebar .review-comment {
+    max-height: 120px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.course-reviews-list {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+/* Ensure review form fits in sidebar */
+.course-sidebar .review-form {
+    max-width: 100%;
+}
+
+.course-sidebar .review-textarea {
+    max-width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 80px;
+    max-height: 150px;
 }
 
 .course-section {
@@ -644,6 +695,31 @@
 
     .course-section {
         padding: 20px;
+    }
+
+    /* Ensure reviews fit well on mobile */
+    .course-sidebar .review-card {
+        min-height: auto;
+        aspect-ratio: auto;
+    }
+
+    .course-sidebar .review-comment {
+        max-height: 100px;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
+    }
+
+    /* Ensure review header doesn't overflow on mobile */
+    .course-sidebar .review-card-header {
+        gap: 8px;
+    }
+
+    .course-sidebar .review-username span {
+        max-width: 120px;
+    }
+
+    .course-sidebar .review-stars {
+        font-size: 14px;
     }
 
     .back-btn {

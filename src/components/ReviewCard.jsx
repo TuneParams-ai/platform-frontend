@@ -21,7 +21,7 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, onEdit, 
                     <div className="review-avatar" aria-hidden>👤</div>
                     <div>
                         <div className="review-username">
-                            {userName || 'User'}
+                            <span>{userName || 'User'}</span>
                             {verified && <span className="review-verified">Verified</span>}
                         </div>
                         {dateText && <div className="review-date">{dateText}</div>}
