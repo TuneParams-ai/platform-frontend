@@ -79,11 +79,6 @@ service cloud.firestore {
       allow delete: if isOwner() || isAdmin();
     }
 
-    // All other collections require authentication
-    match /{document=**} {
-      allow read, write: if request.auth != null;
-    }
-    
     // Email tracking collection - restricted access
     match /emails_sent/{emailId} {
       // Only admins can read all email records
@@ -100,23 +95,9 @@ service cloud.firestore {
       );
     }
     
-    // Alternative: More specific rules (uncomment when ready for production)
-    /*
-    // Payments collection - only the user who made the payment can read it
-    match /payments/{paymentId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow write: if request.auth != null && request.auth.uid == request.resource.data.userId;
-    }
-    
-    // Enrollments collection - only the enrolled user can read/write
-    match /enrollments/{enrollmentId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
-    }
-    
-    // Test collection - allow all authenticated users for testing
-    match /test_collection/{document} {
+    // All other collections require authentication
+    match /{document=**} {
       allow read, write: if request.auth != null;
     }
-    */
   }
 }

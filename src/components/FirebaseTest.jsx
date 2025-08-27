@@ -1,49 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { signOut } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { db } from '../config/firebase';
+import { collection, getDocs, query, limit } from 'firebase/firestore';
 
 const FirebaseTest = () => {
-    const [testEmail, setTestEmail] = useState('test@example.com');
-    const [testPassword, setTestPassword] = useState('password123');
     const [results, setResults] = useState([]);
-    const { registerWithEmail } = useAuth();
+    const [reviews, setReviews] = useState([]);
+    const { user } = useAuth();
 
     const addResult = (message, type = 'info') => {
         const timestamp = new Date().toLocaleTimeString();
         setResults(prev => [...prev, { timestamp, message, type }]);
     };
 
-    const testEmailVerification = async () => {
-        addResult('Starting Firebase email verification test...', 'info');
+    const testReviewsAccess = async () => {
+        addResult('Starting Firebase reviews access test...', 'info');
+        addResult(`User status: ${user ? 'Logged in as ' + user.email : 'Not logged in'}`, 'info');
 
         try {
-            // First, try to sign out any existing user
-            if (auth.currentUser) {
-                await signOut(auth);
-                addResult('🔄 Signed out existing user', 'info');
+            if (!db) {
+                throw new Error('Firestore not initialized');
             }
 
-            const result = await registerWithEmail(testEmail, testPassword, 'Test', 'User');
+            addResult('✅ Firestore connected', 'success');
 
-            if (result.success) {
-                addResult('✅ Registration successful!', 'success');
-                if (result.requiresVerification) {
-                    addResult('✅ Email verification sent!', 'success');
-                    addResult(`📧 Check ${testEmail} for verification email`, 'info');
-                    addResult('⚠️ User should NOT be logged in until verified', 'info');
-                }
-            } else {
-                addResult(`❌ Registration failed: ${result.error}`, 'error');
-            }
+            // Test reading reviews collection
+            const reviewsRef = collection(db, 'course_reviews');
+            const q = query(reviewsRef, limit(5));
+
+            addResult('🔍 Querying course_reviews collection...', 'info');
+            const snapshot = await getDocs(q);
+
+            addResult(`✅ Query successful! Found ${snapshot.docs.length} reviews`, 'success');
+
+            const reviewData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            setReviews(reviewData);
+
+            reviewData.forEach((review, index) => {
+                addResult(`📝 Review ${index + 1}: ${review.userName || 'Anonymous'} - ${review.rating}/5 stars`, 'info');
+            });
+
         } catch (error) {
-            addResult(`❌ Test failed: ${error.message}`, 'error');
+            addResult(`❌ Firebase test failed: ${error.message}`, 'error');
+            console.error('Firebase test error:', error);
         }
     };
 
     const clearResults = () => {
         setResults([]);
+        setReviews([]);
     };
+
+    // Test on component mount
+    useEffect(() => {
+        testReviewsAccess();
+    }, [user]);
 
     return (
         <div style={{
@@ -54,43 +69,11 @@ const FirebaseTest = () => {
             borderRadius: '8px',
             backgroundColor: '#f9f9f9'
         }}>
-            <h3>🧪 Firebase Email Verification Test</h3>
-
-            <div style={{ marginBottom: '15px' }}>
-                <label>Test Email:</label>
-                <input
-                    type="email"
-                    value={testEmail}
-                    onChange={(e) => setTestEmail(e.target.value)}
-                    style={{
-                        width: '100%',
-                        padding: '8px',
-                        margin: '5px 0',
-                        borderRadius: '4px',
-                        border: '1px solid #ccc'
-                    }}
-                />
-            </div>
-
-            <div style={{ marginBottom: '15px' }}>
-                <label>Test Password:</label>
-                <input
-                    type="password"
-                    value={testPassword}
-                    onChange={(e) => setTestPassword(e.target.value)}
-                    style={{
-                        width: '100%',
-                        padding: '8px',
-                        margin: '5px 0',
-                        borderRadius: '4px',
-                        border: '1px solid #ccc'
-                    }}
-                />
-            </div>
+            <h3>🧪 Firebase Reviews Access Test</h3>
 
             <div style={{ marginBottom: '15px' }}>
                 <button
-                    onClick={testEmailVerification}
+                    onClick={testReviewsAccess}
                     style={{
                         backgroundColor: '#007bff',
                         color: 'white',
@@ -101,7 +84,7 @@ const FirebaseTest = () => {
                         marginRight: '10px'
                     }}
                 >
-                    🧪 Test Email Verification
+                    🧪 Test Reviews Access
                 </button>
 
                 <button
@@ -129,9 +112,9 @@ const FirebaseTest = () => {
                 maxHeight: '300px',
                 overflowY: 'auto'
             }}>
-                <div>🔧 Firebase Test Console:</div>
+                <div>🔧 Firebase Reviews Test Console:</div>
                 {results.length === 0 && (
-                    <div style={{ color: '#888' }}>No tests run yet...</div>
+                    <div style={{ color: '#888' }}>Running tests...</div>
                 )}
                 {results.map((result, index) => (
                     <div
@@ -147,14 +130,27 @@ const FirebaseTest = () => {
                 ))}
             </div>
 
+            {reviews.length > 0 && (
+                <div style={{ marginTop: '15px', padding: '10px', backgroundColor: '#e8f5e8', borderRadius: '4px' }}>
+                    <strong>Reviews Found ({reviews.length}):</strong>
+                    <ul>
+                        {reviews.map(review => (
+                            <li key={review.id} style={{ margin: '5px 0' }}>
+                                <strong>{review.userName || 'Anonymous'}</strong> - {review.rating}/5 stars
+                                {review.courseTitle && ` (${review.courseTitle})`}
+                                <br />
+                                <em style={{ color: '#666', fontSize: '12px' }}>
+                                    {review.comment ? review.comment.substring(0, 100) + '...' : 'No comment'}
+                                </em>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             <div style={{ marginTop: '15px', fontSize: '12px', color: '#666' }}>
-                <strong>Instructions:</strong>
-                <ol>
-                    <li>Enter a test email address (use a real email you can access)</li>
-                    <li>Click "Test Email Verification"</li>
-                    <li>Check your email inbox for the verification email</li>
-                    <li>If no email arrives, check the console logs and Firebase settings</li>
-                </ol>
+                <strong>Purpose:</strong> This test checks if Firebase can read reviews when logged in vs logged out.
+                The reviews should be readable regardless of authentication status based on Firestore rules.
             </div>
         </div>
     );

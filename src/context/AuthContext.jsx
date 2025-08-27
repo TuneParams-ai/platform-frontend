@@ -348,6 +348,12 @@ const AuthProvider = ({ children }) => {
 
   // Listen for authentication state changes
   useEffect(() => {
+    if (!isFirebaseConfigured) {
+      // If Firebase is not configured, set loading to false and allow app to continue
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         // Only set user if email is verified, except for Google sign-in
@@ -397,7 +403,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

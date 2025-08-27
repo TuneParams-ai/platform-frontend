@@ -9,10 +9,7 @@ import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import "../styles/course-detail.css";
 import "../styles/course-image.css";
 import "../styles/paypal-checkout.css";
-import { useReviews } from "../hooks/useReviews";
-import ReviewForm from "../components/ReviewForm";
-import ReviewList from "../components/ReviewList";
-import { deleteReviewByIdAsAdmin } from "../services/reviewService";
+import ReviewsSection from "../components/ReviewsSection";
 
 const CourseDetail = () => {
     const { courseId } = useParams();
@@ -38,12 +35,7 @@ const CourseDetail = () => {
     const courseData = findCourseById(courseId);
 
     // Reviews
-    const { reviews, loading: reviewsLoading, error: reviewsError } = useReviews(courseId, { limit: 20 });
-    const avgRating = useMemo(() => {
-        if (!reviews?.length) return null;
-        const sum = reviews.reduce((acc, r) => acc + (Number(r.rating) || 0), 0);
-        return Math.round((sum / reviews.length) * 10) / 10;
-    }, [reviews]);
+    // Note: Reviews handling moved to ReviewsSection component
 
     // All useCallback hooks must be at the top level, before any conditional returns
     const handlePaymentSuccess = useCallback(async (paymentDetails) => {
@@ -93,29 +85,7 @@ const CourseDetail = () => {
         navigate('/courses');
     }, [navigate]);
 
-    const handleAdminDeleteReview = useCallback(async (review) => {
-        if (!isAdminUser) {
-            alert('You do not have permission to delete reviews.');
-            return;
-        }
-
-        if (!window.confirm(`Are you sure you want to delete ${review.userName}'s review? This action cannot be undone.`)) {
-            return;
-        }
-
-        try {
-            const result = await deleteReviewByIdAsAdmin(review.id);
-            if (result.success) {
-                alert('Review deleted successfully');
-                // The useReviews hook should automatically update due to Firestore real-time listeners
-            } else {
-                alert(`Failed to delete review: ${result.error}`);
-            }
-        } catch (error) {
-            console.error('Error deleting review:', error);
-            alert('Failed to delete review. Please try again.');
-        }
-    }, [isAdminUser]);
+    // Reviews handling moved to ReviewsSection component
 
     // Helper function to display value or N/A
     const displayValue = (value, defaultValue = "N/A") => {
@@ -419,36 +389,10 @@ const CourseDetail = () => {
                             </div>
                         </section>
 
-                        <section className="course-section">
-                            <h3>Student Reviews</h3>
-                            <div className="course-reviews-summary">
-                                {reviewsLoading ? (
-                                    <p>Loading reviews...</p>
-                                ) : reviewsError ? (
-                                    <p className="course-detail-error-text">{reviewsError}</p>
-                                ) : (
-                                    <p>
-                                        {avgRating ? `⭐ ${avgRating} / 5` : 'No ratings yet'}
-                                        {reviews?.length ? ` · ${reviews.length} review${reviews.length > 1 ? 's' : ''}` : ''}
-                                    </p>
-                                )}
-                            </div>
-                            <ReviewForm
-                                courseId={courseData.id}
-                                courseTitle={courseData.title}
-                                onSubmitted={() => { }}
-                            />
-                            <div className="course-reviews-list">
-                                <ReviewList
-                                    reviews={reviews}
-                                    loading={reviewsLoading}
-                                    error={reviewsError}
-                                    currentUserId={user?.uid}
-                                    isCurrentUserAdmin={isAdminUser}
-                                    onAdminDelete={handleAdminDeleteReview}
-                                />
-                            </div>
-                        </section>
+                        <ReviewsSection
+                            courseId={courseData.id}
+                            courseTitle={courseData.title}
+                        />
 
                         {/* <section className="course-section">
                             <h3>Course Materials</h3>

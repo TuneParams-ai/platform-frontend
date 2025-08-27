@@ -14,7 +14,7 @@ import {
     limit as qLimit,
     deleteDoc,
 } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { db, auth } from '../config/firebase';
 import { checkCourseAccess } from './paymentService';
 
 const REVIEWS_COLLECTION = 'course_reviews';
@@ -75,6 +75,10 @@ export const addOrUpdateReview = async ({
 export const getCourseReviews = async (courseId, { limit = 20 } = {}) => {
     try {
         if (!db) throw new Error('Firestore not initialized');
+
+        console.log('Fetching reviews for course:', courseId);
+        console.log('Current auth state:', auth?.currentUser ? 'Authenticated' : 'Not authenticated');
+
         const q = query(
             collection(db, REVIEWS_COLLECTION),
             where('courseId', '==', courseId),
@@ -83,6 +87,8 @@ export const getCourseReviews = async (courseId, { limit = 20 } = {}) => {
         );
         const snap = await getDocs(q);
         const reviews = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+        console.log('Reviews fetched successfully:', reviews.length, 'reviews');
         return { success: true, reviews };
     } catch (error) {
         console.error('Error fetching course reviews:', error);
@@ -147,32 +153,84 @@ export const deleteReviewByIdAsAdmin = async (reviewId) => {
 
 // Optional: real-time subscription helpers
 export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}) => {
-    if (!db) return () => { };
-    const q = query(
-        collection(db, REVIEWS_COLLECTION),
-        where('courseId', '==', courseId),
-        orderBy('createdAt', 'desc'),
-        qLimit(limit)
-    );
-    return onSnapshot(
-        q,
-        (snap) => {
-            const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-            callback({ reviews: items, error: null });
-        },
-        (err) => callback({ reviews: [], error: err.message })
-    );
+    if (!db) {
+        console.warn('Firestore not initialized, returning empty subscription');
+        callback({ reviews: [], error: 'Firestore not initialized' });
+        return () => { };
+    }
+
+    console.log('Setting up reviews subscription for course:', courseId);
+    console.log('Current auth state:', auth?.currentUser ? 'Authenticated' : 'Not authenticated');
+
+    try {
+        const q = query(
+            collection(db, REVIEWS_COLLECTION),
+            where('courseId', '==', courseId),
+            orderBy('createdAt', 'desc'),
+            qLimit(limit)
+        );
+
+        return onSnapshot(
+            q,
+            (snap) => {
+                const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                console.log('Reviews subscription update:', items.length, 'reviews received');
+                callback({ reviews: items, error: null });
+            },
+            (err) => {
+                console.error('Reviews subscription error:', err);
+                // Provide more detailed error information
+                let errorMessage = err.message;
+                if (err.code === 'permission-denied') {
+                    errorMessage = 'Permission denied accessing reviews. This might be a Firebase configuration issue.';
+                } else if (err.code === 'unavailable') {
+                    errorMessage = 'Firebase service temporarily unavailable. Please try again.';
+                }
+                callback({ reviews: [], error: errorMessage })
+            }
+        );
+    } catch (error) {
+        console.error('Error setting up reviews subscription:', error);
+        callback({ reviews: [], error: error.message });
+        return () => { };
+    }
 };
 
 export const subscribeToRecentReviews = (callback, { limit = 6 } = {}) => {
-    if (!db) return () => { };
-    const q = query(collection(db, REVIEWS_COLLECTION), orderBy('createdAt', 'desc'), qLimit(limit));
-    return onSnapshot(
-        q,
-        (snap) => {
-            const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-            callback({ reviews: items, error: null });
-        },
-        (err) => callback({ reviews: [], error: err.message })
-    );
+    if (!db) {
+        console.warn('Firestore not initialized, returning empty subscription');
+        callback({ reviews: [], error: 'Firestore not initialized' });
+        return () => { };
+    }
+
+    console.log('Setting up recent reviews subscription');
+    console.log('Current auth state:', auth?.currentUser ? 'Authenticated' : 'Not authenticated');
+
+    try {
+        const q = query(collection(db, REVIEWS_COLLECTION), orderBy('createdAt', 'desc'), qLimit(limit));
+
+        return onSnapshot(
+            q,
+            (snap) => {
+                const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                console.log('Recent reviews subscription update:', items.length, 'reviews received');
+                callback({ reviews: items, error: null });
+            },
+            (err) => {
+                console.error('Recent reviews subscription error:', err);
+                // Provide more detailed error information
+                let errorMessage = err.message;
+                if (err.code === 'permission-denied') {
+                    errorMessage = 'Permission denied accessing reviews. This might be a Firebase configuration issue.';
+                } else if (err.code === 'unavailable') {
+                    errorMessage = 'Firebase service temporarily unavailable. Please try again.';
+                }
+                callback({ reviews: [], error: errorMessage })
+            }
+        );
+    } catch (error) {
+        console.error('Error setting up recent reviews subscription:', error);
+        callback({ reviews: [], error: error.message });
+        return () => { };
+    }
 };
