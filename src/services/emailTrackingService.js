@@ -38,7 +38,8 @@ export const recordEmailSent = async (emailData) => {
             enrollmentId,
             emailServiceResponse,
             success,
-            error
+            error,
+            rawTextContent
         } = emailData;
 
         const emailRecord = {
@@ -67,6 +68,9 @@ export const recordEmailSent = async (emailData) => {
             // Status
             status: success ? 'sent' : 'failed',
             errorMessage: error || null,
+
+            // Raw email content for auditing and debugging
+            rawTextContent: rawTextContent || null,
 
             // Timestamps
             sentAt: serverTimestamp(),
@@ -162,6 +166,70 @@ export const getEmailsByRecipient = async (email, limitCount = 50) => {
 
     } catch (error) {
         console.error('Error getting emails by recipient:', error);
+        return { success: false, error: error.message, emails: [] };
+    }
+};
+
+/**
+ * Search emails across multiple fields (recipient email, name, course title, payment ID, etc.)
+ * @param {string} searchTerm - Search term
+ * @param {number} limitCount - Number of emails to retrieve (default: 100)
+ * @returns {Promise<Object>} Success/error response with emails
+ */
+export const searchEmails = async (searchTerm, limitCount = 100) => {
+    try {
+        if (!db) {
+            return { success: false, error: 'Firestore not initialized' };
+        }
+
+        if (!searchTerm || !searchTerm.trim()) {
+            return { success: false, error: 'Search term is required', emails: [] };
+        }
+
+        const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+
+        // Get all emails and filter client-side since Firestore doesn't support 
+        // full-text search across multiple fields
+        const emailsQuery = query(
+            collection(db, 'emails_sent'),
+            orderBy('sentAt', 'desc'),
+            limit(1000) // Get a reasonable number to search through
+        );
+
+        const querySnapshot = await getDocs(emailsQuery);
+        const allEmails = [];
+
+        querySnapshot.forEach((doc) => {
+            allEmails.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Client-side filtering across multiple fields
+        const filteredEmails = allEmails.filter(email => {
+            const searchableFields = [
+                email.recipientEmail,
+                email.recipientName,
+                email.courseTitle,
+                email.paymentId,
+                email.orderId,
+                email.subject,
+                email.emailType
+            ];
+
+            return searchableFields.some(field =>
+                field && field.toLowerCase().includes(normalizedSearchTerm)
+            );
+        });
+
+        // Limit results
+        const limitedResults = filteredEmails.slice(0, limitCount);
+
+        return { success: true, emails: limitedResults };
+
+    } catch (error) {
+        console.error('Error searching emails:', error);
         return { success: false, error: error.message, emails: [] };
     }
 };
@@ -343,8 +411,70 @@ export const recordEnrollmentEmail = async (enrollmentData, emailResult, userId)
         enrollmentId: enrollmentData.enrollmentId,
         emailServiceResponse: emailResult.messageId,
         success: emailResult.success,
-        error: emailResult.error
+        error: emailResult.error,
+        rawTextContent: emailResult.rawTextContent
     };
 
     return await recordEmailSent(emailTrackingData);
+};
+
+/**
+ * Get all emails with optional filters and pagination
+ * @param {Object} options - Query options
+ * @returns {Promise<Object>} Success/error response with emails
+ */
+export const getAllEmails = async (options = {}) => {
+    try {
+        if (!db) {
+            return { success: false, error: 'Firestore not initialized' };
+        }
+
+        const {
+            limitCount = 100,
+            orderByField = 'sentAt',
+            orderDirection = 'desc',
+            filters = {}
+        } = options;
+
+        // Build query constraints
+        const constraints = [orderBy(orderByField, orderDirection)];
+
+        // Add filters
+        if (filters.status) {
+            constraints.push(where('status', '==', filters.status));
+        }
+        if (filters.emailType) {
+            constraints.push(where('emailType', '==', filters.emailType));
+        }
+        if (filters.courseId) {
+            constraints.push(where('courseId', '==', filters.courseId));
+        }
+        if (filters.recipientEmail) {
+            constraints.push(where('recipientEmail', '==', filters.recipientEmail));
+        }
+
+        // Add limit
+        constraints.push(limit(limitCount));
+
+        const emailsQuery = query(
+            collection(db, 'emails_sent'),
+            ...constraints
+        );
+
+        const querySnapshot = await getDocs(emailsQuery);
+        const emails = [];
+
+        querySnapshot.forEach((doc) => {
+            emails.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        return { success: true, emails };
+
+    } catch (error) {
+        console.error('Error getting all emails:', error);
+        return { success: false, error: error.message, emails: [] };
+    }
 };

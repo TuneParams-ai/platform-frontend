@@ -285,7 +285,8 @@ export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
         return {
             success: true,
             messageId: response.text,
-            emailContent
+            emailContent,
+            rawTextContent: emailContent.textContent
         };
 
     } catch (error) {
