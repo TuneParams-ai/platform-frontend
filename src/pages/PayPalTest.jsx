@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import PayPalCheckout from '../components/PayPalCheckout';
 import PaymentSuccessModal from '../components/PaymentSuccessModal';
+import EmailSetupGuide from '../components/EmailSetupGuide';
 import '../styles/paypal-checkout.css';
 import '../styles/paypal-test.css';
 
@@ -29,6 +30,8 @@ const PayPalTest = () => {
             <h1 className="paypal-test-title">PayPal Integration Test</h1>
             <p>This is a test page to verify PayPal integration is working correctly.</p>
 
+            <EmailSetupGuide />
+
             <div className="test-course-info">
                 <h3 className="test-course-title">Test Course: React Development Fundamentals</h3>
                 <p>Price: $99</p>
@@ -48,12 +51,10 @@ const PayPalTest = () => {
                 isOpen={showSuccessModal}
                 onClose={() => setShowSuccessModal(false)}
                 paymentData={paymentData}
+                enrollmentResult={{ emailSent: false }} // Test data
                 onGoToDashboard={() => {
                     setShowSuccessModal(false);
                     alert('Would redirect to dashboard');
-                }}
-                onDownloadReceipt={() => {
-                    alert('Would download receipt');
                 }}
             />
 

@@ -5,8 +5,7 @@ import { useAuth } from './useAuth';
 import {
     checkCourseAccess,
     getUserEnrollments,
-    recordPayment,
-    enrollUserInCourse,
+    processCompleteEnrollment,
     updateCourseProgress
 } from '../services/paymentService';
 
@@ -81,7 +80,7 @@ export const useCourseAccess = (courseId = null) => {
         }
     }, [user]);
 
-    // Process payment and enroll user
+    // Process payment and enroll user with email confirmation
     const processEnrollment = useCallback(async (paymentData) => {
         if (!user) {
             throw new Error('User must be logged in to enroll');
@@ -91,33 +90,18 @@ export const useCourseAccess = (courseId = null) => {
         setError(null);
 
         try {
-            // Record the payment
-            const paymentResult = await recordPayment(paymentData, user.uid);
+            // Use the complete enrollment process that includes email
+            const result = await processCompleteEnrollment(paymentData, user.uid);
 
-            if (!paymentResult.success) {
-                throw new Error(`Payment recording failed: ${paymentResult.error}`);
-            }
-
-            // Enroll user in the course
-            const enrollmentResult = await enrollUserInCourse(
-                user.uid,
-                paymentData.courseId,
-                paymentData
-            );
-
-            if (!enrollmentResult.success) {
-                throw new Error(`Enrollment failed: ${enrollmentResult.error}`);
+            if (!result.success) {
+                throw new Error(result.error);
             }
 
             // Refresh access status
             await checkAccess(paymentData.courseId);
             await loadEnrollments();
 
-            return {
-                success: true,
-                paymentRecordId: paymentResult.paymentRecordId,
-                enrollmentId: enrollmentResult.enrollmentId
-            };
+            return result;
 
         } catch (err) {
             setError(err.message);

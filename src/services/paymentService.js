@@ -14,6 +14,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { getUserProfile } from './userService';
+import { sendEnrollmentConfirmationEmail } from './emailService';
+import { recordEnrollmentEmail } from './emailTrackingService';
 
 /**
  * Records a successful payment in Firestore
@@ -232,6 +234,90 @@ export const getUserPayments = async (userId) => {
     } catch (error) {
         console.error('Error getting user payments:', error);
         return { success: false, error: error.message, payments: [] };
+    }
+};
+
+/**
+ * Complete enrollment process with payment recording, course enrollment, and email confirmation
+ * @param {Object} paymentData - Payment details from PayPal
+ * @param {string} userId - Firebase user ID
+ * @returns {Promise<Object>} Complete enrollment result
+ */
+export const processCompleteEnrollment = async (paymentData, userId) => {
+    try {
+        console.log('Starting complete enrollment process...', { paymentData, userId });
+
+        // Step 1: Record the payment
+        const paymentResult = await recordPayment(paymentData, userId);
+        if (!paymentResult.success) {
+            throw new Error(`Payment recording failed: ${paymentResult.error}`);
+        }
+
+        // Step 2: Enroll user in the course
+        const enrollmentResult = await enrollUserInCourse(userId, paymentData.courseId, paymentData);
+        if (!enrollmentResult.success) {
+            throw new Error(`Enrollment failed: ${enrollmentResult.error}`);
+        }
+
+        // Step 3: Prepare enrollment data for email
+        const enrollmentDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const enrollmentEmailData = {
+            userName: paymentData.payerName,
+            userEmail: paymentData.payerEmail,
+            courseTitle: paymentData.courseTitle,
+            courseId: paymentData.courseId,
+            amount: paymentData.amount,
+            paymentId: paymentData.paymentID,
+            orderId: paymentData.orderID,
+            enrollmentId: enrollmentResult.enrollmentId,
+            enrollmentDate: enrollmentDate
+        };
+
+        // Step 4: Send enrollment confirmation email
+        const emailResult = await sendEnrollmentConfirmationEmail(enrollmentEmailData);
+
+        // Step 5: Record email tracking in Firestore
+        let emailTrackingResult = null;
+        try {
+            emailTrackingResult = await recordEnrollmentEmail(enrollmentEmailData, emailResult, userId);
+            if (emailTrackingResult.success) {
+                console.log('Email tracking recorded with ID:', emailTrackingResult.emailRecordId);
+            } else {
+                console.error('Failed to record email tracking:', emailTrackingResult.error);
+            }
+        } catch (trackingError) {
+            console.error('Error recording email tracking:', trackingError);
+        }
+
+        // Log email result but don't fail the enrollment if email fails
+        if (emailResult.success) {
+            console.log('Enrollment confirmation email sent successfully');
+        } else if (emailResult.skipped) {
+            console.log('Email service not configured, skipping email');
+        } else {
+            console.error('Failed to send enrollment confirmation email:', emailResult.error);
+        }
+
+        return {
+            success: true,
+            paymentRecordId: paymentResult.paymentRecordId,
+            enrollmentId: enrollmentResult.enrollmentId,
+            emailSent: emailResult.success,
+            emailError: emailResult.success ? null : emailResult.error,
+            emailTrackingId: emailTrackingResult?.emailRecordId || null,
+            enrollmentData: enrollmentEmailData
+        };
+
+    } catch (error) {
+        console.error('Error in complete enrollment process:', error);
+        return { success: false, error: error.message };
     }
 };
 

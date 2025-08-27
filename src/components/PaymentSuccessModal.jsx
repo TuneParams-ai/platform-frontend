@@ -7,7 +7,7 @@ const PaymentSuccessModal = ({
     onClose,
     paymentData,
     onGoToDashboard,
-    onDownloadReceipt
+    enrollmentResult
 }) => {
     if (!isOpen) return null;
 
@@ -63,7 +63,14 @@ const PaymentSuccessModal = ({
                 <div className="next-steps">
                     <h3>What's Next?</h3>
                     <ul>
-                        <li>📧 A confirmation email has been sent to {paymentData?.payerEmail}</li>
+                        <li>
+                            📧 A confirmation email has been sent to {paymentData?.payerEmail}
+                            {enrollmentResult?.emailSent === false && (
+                                <span style={{ color: '#f57c00', marginLeft: '8px' }}>
+                                    (Email service unavailable)
+                                </span>
+                            )}
+                        </li>
                         <li>📚 You now have access to all course materials</li>
                         <li>🎯 You can start learning immediately</li>
                         <li>💬 Join our course community for support</li>
@@ -71,12 +78,6 @@ const PaymentSuccessModal = ({
                 </div>
 
                 <div className="modal-actions">
-                    <button
-                        className="btn btn-secondary"
-                        onClick={onDownloadReceipt}
-                    >
-                        📄 Download Receipt
-                    </button>
                     <button
                         className="btn"
                         onClick={onGoToDashboard}

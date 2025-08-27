@@ -21,6 +21,7 @@ const CourseDetail = () => {
     const { isAdminUser } = useUserRole();
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
+    const [enrollmentResult, setEnrollmentResult] = useState(null);
     const [showPayPal, setShowPayPal] = useState(false);
 
     // Use the course access hook
@@ -54,12 +55,14 @@ const CourseDetail = () => {
 
             if (result.success) {
                 setPaymentData(paymentDetails);
+                setEnrollmentResult(result);
                 setShowSuccessModal(true);
                 setShowPayPal(false);
 
                 console.log('Enrollment processed successfully:', {
                     paymentRecordId: result.paymentRecordId,
-                    enrollmentId: result.enrollmentId
+                    enrollmentId: result.enrollmentId,
+                    emailSent: result.emailSent
                 });
             }
         } catch (error) {
@@ -85,20 +88,6 @@ const CourseDetail = () => {
         setShowSuccessModal(false);
         navigate('/dashboard'); // You might need to create this route
     }, [navigate]);
-
-    const handleDownloadReceipt = useCallback(() => {
-        // Generate and download receipt
-        const receiptData = {
-            ...paymentData,
-            companyName: 'TuneParams.ai',
-            companyAddress: 'Your Company Address',
-            receiptNumber: `RCP-${Date.now()}`
-        };
-
-        console.log('Download receipt:', receiptData);
-        // Here you would generate and download a PDF receipt
-        alert('Receipt download functionality will be implemented soon!');
-    }, [paymentData]);
 
     const handleGoBack = useCallback(() => {
         navigate('/courses');
@@ -492,8 +481,8 @@ const CourseDetail = () => {
                 isOpen={showSuccessModal}
                 onClose={() => setShowSuccessModal(false)}
                 paymentData={paymentData}
+                enrollmentResult={enrollmentResult}
                 onGoToDashboard={handleGoToDashboard}
-                onDownloadReceipt={handleDownloadReceipt}
             />
         </>
     );

@@ -84,6 +84,22 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
     
+    // Email tracking collection - restricted access
+    match /emails_sent/{emailId} {
+      // Only admins can read all email records
+      allow read: if request.auth != null && (
+        request.auth.token.admin == true || 
+        isAdminViaRoles(request.auth.uid)
+      );
+      // System can write email records (for tracking)
+      allow create: if request.auth != null;
+      // Only admins can update/delete email records
+      allow update, delete: if request.auth != null && (
+        request.auth.token.admin == true || 
+        isAdminViaRoles(request.auth.uid)
+      );
+    }
+    
     // Alternative: More specific rules (uncomment when ready for production)
     /*
     // Payments collection - only the user who made the payment can read it
