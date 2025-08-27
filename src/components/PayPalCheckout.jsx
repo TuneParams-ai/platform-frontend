@@ -82,6 +82,11 @@ const PayPalCheckout = ({
 
                         // Call the success handler with payment details
                         if (onSuccess) {
+                            // Format payer name properly (PayPal returns an object)
+                            const payerName = order.payer.name
+                                ? `${order.payer.name.given_name || ''} ${order.payer.name.surname || ''}`.trim()
+                                : 'Student';
+
                             onSuccess({
                                 orderID: order.id,
                                 payerID: order.payer.payer_id,
@@ -90,7 +95,7 @@ const PayPalCheckout = ({
                                 courseTitle,
                                 amount: coursePrice,
                                 payerEmail: order.payer.email_address,
-                                payerName: order.payer.name,
+                                payerName: payerName,
                                 transactionStatus: order.status,
                                 timestamp: new Date().toISOString()
                             });

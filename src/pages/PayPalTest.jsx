@@ -2,18 +2,42 @@ import React, { useState, useCallback } from 'react';
 import PayPalCheckout from '../components/PayPalCheckout';
 import PaymentSuccessModal from '../components/PaymentSuccessModal';
 import EmailSetupGuide from '../components/EmailSetupGuide';
+import { processCompleteEnrollment } from '../services/paymentService';
+import { useAuth } from '../hooks/useAuth';
 import '../styles/paypal-checkout.css';
 import '../styles/paypal-test.css';
 
 const PayPalTest = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
+    const [enrollmentResult, setEnrollmentResult] = useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const { user } = useAuth();
 
-    const handlePaymentSuccess = useCallback((paymentDetails) => {
+    const handlePaymentSuccess = useCallback(async (paymentDetails) => {
         console.log('Test Payment Successful:', paymentDetails);
         setPaymentData(paymentDetails);
-        setShowSuccessModal(true);
-    }, []);
+        setIsProcessing(true);
+
+        try {
+            // Process the complete enrollment (payment + enrollment + email)
+            const result = await processCompleteEnrollment(paymentDetails, user?.uid || 'test-user');
+            console.log('Complete enrollment result:', result);
+
+            setEnrollmentResult(result);
+            setShowSuccessModal(true);
+        } catch (error) {
+            console.error('Error processing enrollment:', error);
+            setEnrollmentResult({
+                success: false,
+                error: error.message,
+                emailSent: false
+            });
+            setShowSuccessModal(true);
+        } finally {
+            setIsProcessing(false);
+        }
+    }, [user]);
 
     const handlePaymentError = useCallback((error) => {
         console.error('Test Payment Error:', error);
@@ -51,12 +75,36 @@ const PayPalTest = () => {
                 isOpen={showSuccessModal}
                 onClose={() => setShowSuccessModal(false)}
                 paymentData={paymentData}
-                enrollmentResult={{ emailSent: false }} // Test data
+                enrollmentResult={enrollmentResult || { emailSent: false }}
                 onGoToDashboard={() => {
                     setShowSuccessModal(false);
                     alert('Would redirect to dashboard');
                 }}
             />
+
+            {isProcessing && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 9999
+                }}>
+                    <div style={{
+                        background: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        textAlign: 'center'
+                    }}>
+                        <div>Processing enrollment and sending email...</div>
+                    </div>
+                </div>
+            )}
 
             <div className="test-instructions">
                 <h4>Testing Instructions:</h4>

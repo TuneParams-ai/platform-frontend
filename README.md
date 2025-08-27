@@ -4,6 +4,74 @@
 
 This is the frontend application for TuneParams.ai educational platform, built with React and designed with a modern dark theme.
 
+## Features
+
+### 🎓 Course Management
+- Browse available AI/ML courses
+- Course details with curriculum information
+- Real-time seat availability tracking
+- Course reviews and ratings
+
+### 💳 Payment & Enrollment
+- PayPal integration for secure payments
+- Automatic course enrollment after payment
+- **Email confirmation system** with enrollment receipts
+- Downloadable payment receipts (HTML format)
+
+### 📧 Email Notifications
+The platform includes a comprehensive email notification system for enrollment confirmations:
+
+- **Automated enrollment emails** sent after successful payment
+- **Professional email templates** with company branding
+- **Detailed payment receipts** included in emails
+- **Course welcome information** and next steps
+- **Fallback handling** if email service is unavailable
+- **Complete email tracking** stored in Firestore for admin oversight
+
+### 📊 Email Tracking & Analytics
+- **Admin email dashboard** with comprehensive analytics
+- **Email delivery tracking** with success/failure rates
+- **Search and filter emails** by recipient, course, or type
+- **Email statistics** including course performance metrics
+- **Audit trail** for all emails sent through the platform
+
+### 🔐 User Authentication
+- Firebase Authentication integration
+- Role-based access control (Admin/Student)
+- Protected routes and course access
+
+### 👤 User Dashboard
+- Personal course enrollment tracking
+- Progress monitoring
+- Payment history
+
+### 🛡️ Admin Features
+- Enrollment management
+- Payment tracking
+- **Email tracking and analytics dashboard**
+- User role management
+- Review moderation
+
+## Email Service Setup
+
+The platform uses EmailJS for sending enrollment confirmation emails. See [EMAIL_SETUP.md](./EMAIL_SETUP.md) for detailed setup instructions.
+
+### Quick Setup:
+1. Create an account at [EmailJS.com](https://www.emailjs.com/)
+2. Configure your email service (Gmail recommended)
+3. Create an email template using the provided configuration
+4. Add your EmailJS credentials to `.env` file
+5. Test the functionality on `/paypal-test` page
+
+### Environment Variables for Email:
+```bash
+REACT_APP_EMAILJS_SERVICE_ID=your_service_id
+REACT_APP_EMAILJS_TEMPLATE_ID=your_template_id
+REACT_APP_EMAILJS_PUBLIC_KEY=your_public_key
+REACT_APP_SUPPORT_EMAIL=support@tuneparams.ai
+REACT_APP_WEBSITE_URL=https://www.tuneparams.ai
+```
+
 ## Deployment
 
 This app is configured for GitHub Pages deployment with support for client-side routing.

@@ -37,7 +37,21 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
         enrollmentDate
     } = enrollmentData;
 
-    const firstName = userName ? userName.split(' ')[0] : 'Student';
+    // Safely extract first name - handle various data types
+    let firstName = 'Student';
+    if (userName) {
+        if (typeof userName === 'string') {
+            firstName = userName.split(' ')[0];
+        } else if (typeof userName === 'object' && userName.given_name) {
+            // PayPal sometimes returns name as object
+            firstName = userName.given_name;
+        } else if (typeof userName === 'object' && userName.firstName) {
+            firstName = userName.firstName;
+        }
+    }
+
+    console.log('Email Debug - userName type:', typeof userName, 'value:', userName);
+    console.log('Email Debug - firstName extracted:', firstName);
 
     const subject = `🎉 Welcome to ${courseTitle}! Your AI learning journey starts now`;
 
@@ -173,9 +187,20 @@ This email was sent to ${userEmail} regarding your course enrollment.
  */
 export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
     try {
+        // Debug: Log environment variables
+        console.log('EmailJS Debug Info:');
+        console.log('SERVICE_ID:', EMAILJS_SERVICE_ID);
+        console.log('TEMPLATE_ID:', EMAILJS_TEMPLATE_ID);
+        console.log('PUBLIC_KEY:', EMAILJS_PUBLIC_KEY);
+
         // Check if EmailJS is configured
         if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
             console.warn('EmailJS not configured. Email will not be sent.');
+            console.warn('Missing values:', {
+                serviceId: !EMAILJS_SERVICE_ID,
+                templateId: !EMAILJS_TEMPLATE_ID,
+                publicKey: !EMAILJS_PUBLIC_KEY
+            });
             return {
                 success: false,
                 error: 'Email service not configured',
