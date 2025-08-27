@@ -71,7 +71,7 @@ const HomeReviews = () => {
                                             <div>
                                                 <div className="review-username">
                                                     <span>{r.userName || 'User'}</span>
-                                                    {r.verified && <span className="review-verified">Verified</span>}
+                                                    {r.verified && <span className="review-verified" title="Verified User">✓</span>}
                                                 </div>
                                                 <div className="review-date">
                                                     {r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString() : ''}
