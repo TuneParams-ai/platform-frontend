@@ -187,27 +187,6 @@ const Navbar = () => {
                     >
                       🏛️ Admin Panel
                     </Link>
-                    <Link
-                      to="/firebase-test"
-                      onClick={closeMenu}
-                      className="admin-menu-link"
-                    >
-                      🔥 Firebase Test
-                    </Link>
-                    <Link
-                      to="/firestore-test"
-                      onClick={closeMenu}
-                      className="admin-menu-link"
-                    >
-                      🗃️ Firestore Test
-                    </Link>
-                    <Link
-                      to="/paypal-test"
-                      onClick={closeMenu}
-                      className="admin-menu-link"
-                    >
-                      💳 PayPal Test
-                    </Link>
                     <div className="admin-menu-separator"></div>
                   </>
                 )}

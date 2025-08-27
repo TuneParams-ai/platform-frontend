@@ -269,11 +269,10 @@ const AdminRoleManager = () => {
 
             <div className="admin-setup-note">
                 <strong>⚠️ Quick Setup:</strong><br />
-                To make yourself an admin immediately, use the Firestore Test page:<br />
-                1. Go to <code>/firestore-test</code><br />
-                2. Sign in with your account<br />
-                3. Click "Test Payment Service" (this will create your user record)<br />
-                4. Then manually add your role in Firestore console or use the script below
+                To make yourself an admin immediately:<br />
+                1. Ensure you have an account and have logged in at least once<br />
+                2. Use the Firestore console to manually add your role<br />
+                3. Or run the setup script below to create your admin role
             </div>
         </div>
     );

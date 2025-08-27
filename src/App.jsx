@@ -11,7 +11,6 @@ import CourseDetail from "./pages/CourseDetail";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import AdminDashboard from "./pages/AdminDashboard";
-import PayPalTest from "./pages/PayPalTest";
 import Forums from "./pages/Forums";
 import ThreadDetail from "./pages/ThreadDetail";
 import Navbar from "./components/Navbar";
@@ -52,11 +51,6 @@ function App() {
         <Route path="/admin/dashboard" element={
           <ProtectedRoute requiredRole="admin">
             <AdminDashboard />
-          </ProtectedRoute>
-        } />
-        <Route path="/paypal-test" element={
-          <ProtectedRoute requiredRole="admin">
-            <PayPalTest />
           </ProtectedRoute>
         } />
       </Routes>

@@ -56,9 +56,6 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
         }
     }
 
-    console.log('Email Debug - userName type:', typeof userName, 'value:', userName);
-    console.log('Email Debug - firstName extracted:', firstName);
-
     const subject = `🎉 Welcome to ${courseTitle}! Your AI learning journey starts now`;
 
     const htmlContent = `
@@ -231,12 +228,6 @@ This email was sent to ${userEmail} regarding your course enrollment.
  */
 export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
     try {
-        // Debug: Log environment variables
-        console.log('EmailJS Debug Info:');
-        console.log('SERVICE_ID:', EMAILJS_SERVICE_ID);
-        console.log('TEMPLATE_ID:', EMAILJS_TEMPLATE_ID);
-        console.log('PUBLIC_KEY:', EMAILJS_PUBLIC_KEY);
-
         // Check if EmailJS is configured
         if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
             console.warn('EmailJS not configured. Email will not be sent.');

@@ -76,9 +76,6 @@ export const getCourseReviews = async (courseId, { limit = 20 } = {}) => {
     try {
         if (!db) throw new Error('Firestore not initialized');
 
-        console.log('Fetching reviews for course:', courseId);
-        console.log('Current auth state:', auth?.currentUser ? 'Authenticated' : 'Not authenticated');
-
         const q = query(
             collection(db, REVIEWS_COLLECTION),
             where('courseId', '==', courseId),
@@ -88,7 +85,6 @@ export const getCourseReviews = async (courseId, { limit = 20 } = {}) => {
         const snap = await getDocs(q);
         const reviews = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
-        console.log('Reviews fetched successfully:', reviews.length, 'reviews');
         return { success: true, reviews };
     } catch (error) {
         console.error('Error fetching course reviews:', error);
@@ -159,9 +155,6 @@ export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}
         return () => { };
     }
 
-    console.log('Setting up reviews subscription for course:', courseId);
-    console.log('Current auth state:', auth?.currentUser ? 'Authenticated' : 'Not authenticated');
-
     try {
         const q = query(
             collection(db, REVIEWS_COLLECTION),
@@ -174,7 +167,6 @@ export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}
             q,
             (snap) => {
                 const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-                console.log('Reviews subscription update:', items.length, 'reviews received');
                 callback({ reviews: items, error: null });
             },
             (err) => {
@@ -203,9 +195,6 @@ export const subscribeToRecentReviews = (callback, { limit = 6 } = {}) => {
         return () => { };
     }
 
-    console.log('Setting up recent reviews subscription');
-    console.log('Current auth state:', auth?.currentUser ? 'Authenticated' : 'Not authenticated');
-
     try {
         const q = query(collection(db, REVIEWS_COLLECTION), orderBy('createdAt', 'desc'), qLimit(limit));
 
@@ -213,7 +202,6 @@ export const subscribeToRecentReviews = (callback, { limit = 6 } = {}) => {
             q,
             (snap) => {
                 const items = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-                console.log('Recent reviews subscription update:', items.length, 'reviews received');
                 callback({ reviews: items, error: null });
             },
             (err) => {

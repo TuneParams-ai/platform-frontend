@@ -15,12 +15,6 @@ const firebaseConfig = {
     appId: process.env.REACT_APP_FIREBASE_APP_ID?.trim()
 };
 
-// Debug: Simple logging to confirm environment variables are loaded
-console.log('Firebase Environment Variables Loaded:', {
-    allFirebaseVars: Object.keys(process.env).filter(key => key.startsWith('REACT_APP_FIREBASE')).length,
-    usingSource: process.env.REACT_APP_FIREBASE_API_KEY ? 'Environment Variables (.env.local)' : 'NOT LOADED - Check .env.local file'
-});
-
 // Check if all required environment variables are present
 const requiredEnvVars = [
     'REACT_APP_FIREBASE_API_KEY',
@@ -63,9 +57,7 @@ try {
     });
 
     isFirebaseConfigured = true;
-    console.log('✅ Firebase initialized successfully using environment variables');
-    console.log('Auth domain configured:', firebaseConfig.authDomain);
-    console.log('Firestore database connected:', firebaseConfig.projectId);
+    console.log('✅ Firebase initialized successfully');
 
 } catch (error) {
     console.error('Firebase initialization error:', error);

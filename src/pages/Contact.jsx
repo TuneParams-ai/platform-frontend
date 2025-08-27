@@ -129,13 +129,10 @@ function Contact() {
         try {
             // Use environment variable for Formspree form ID
             const FORMSPREE_FORM_ID = process.env.REACT_APP_FORMSPREE_FORM_ID;
-            console.log('Form ID:', FORMSPREE_FORM_ID); // Debug log
 
             if (!FORMSPREE_FORM_ID) {
                 throw new Error('Contact form not configured');
             }
-
-            console.log('Submitting form to Formspree...'); // Debug log
 
             const response = await fetch(`https://formspree.io/f/${FORMSPREE_FORM_ID}`, {
                 method: 'POST',
@@ -151,8 +148,6 @@ function Contact() {
                     _subject: `New contact form submission from ${formData.name}`,
                 }),
             });
-
-            console.log('Response status:', response.status); // Debug log
 
             if (response.ok) {
                 setSubmitStatus('success');

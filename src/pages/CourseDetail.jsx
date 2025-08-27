@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useUserRole } from "../hooks/useUserRole";
@@ -39,8 +39,6 @@ const CourseDetail = () => {
 
     // All useCallback hooks must be at the top level, before any conditional returns
     const handlePaymentSuccess = useCallback(async (paymentDetails) => {
-        console.log('Payment successful:', paymentDetails);
-
         try {
             // Process the enrollment using our payment service
             const result = await processEnrollment(paymentDetails);
@@ -50,12 +48,6 @@ const CourseDetail = () => {
                 setEnrollmentResult(result);
                 setShowSuccessModal(true);
                 setShowPayPal(false);
-
-                console.log('Enrollment processed successfully:', {
-                    paymentRecordId: result.paymentRecordId,
-                    enrollmentId: result.enrollmentId,
-                    emailSent: result.emailSent
-                });
             }
         } catch (error) {
             console.error('Enrollment processing failed:', error);
@@ -71,7 +63,6 @@ const CourseDetail = () => {
     }, []);
 
     const handlePaymentCancel = useCallback((data) => {
-        console.log('Payment cancelled:', data);
         setShowPayPal(false);
         // Optionally show a message to the user
     }, []);

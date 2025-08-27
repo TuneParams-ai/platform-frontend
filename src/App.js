@@ -18,12 +18,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
-import PayPalTest from "./pages/PayPalTest";
 import AdminDashboard from "./pages/AdminDashboard";
 import Forums from "./pages/Forums";
 import ThreadDetail from "./pages/ThreadDetail";
-import FirebaseTest from "./components/FirebaseTest";
-import FirestoreTest from "./components/FirestoreTest";
 
 import "./styles/root.css"; // global styles
 import "./styles/components.css"; // unified component styles
@@ -54,9 +51,6 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/firebase-test" element={<FirebaseTest />} />
-              <Route path="/firestore-test" element={<FirestoreTest />} />
-              <Route path="/paypal-test" element={<PayPalTest />} />
               <Route path="/admin/dashboard" element={
                 <ProtectedRoute>
                   <AdminDashboard />
