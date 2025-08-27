@@ -259,7 +259,11 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
             throw new Error(`Enrollment failed: ${enrollmentResult.error}`);
         }
 
-        // Step 3: Prepare enrollment data for email
+        // Step 3: Get logged-in user profile for email
+        const userProfile = await getUserProfile(userId);
+        const userData = userProfile.success ? userProfile.userData : null;
+
+        // Step 4: Prepare enrollment data for email
         const enrollmentDate = new Date().toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
@@ -269,21 +273,31 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
         });
 
         const enrollmentEmailData = {
-            userName: paymentData.payerName,
-            userEmail: paymentData.payerEmail,
+            // Use logged-in user's details instead of payer details
+            userName: userData?.displayName || userData?.email?.split('@')[0] || 'Student',
+            userEmail: userData?.email || paymentData.payerEmail, // Fallback to payer email if needed
             courseTitle: paymentData.courseTitle,
             courseId: paymentData.courseId,
             amount: paymentData.amount,
             paymentId: paymentData.paymentID,
             orderId: paymentData.orderID,
             enrollmentId: enrollmentResult.enrollmentId,
-            enrollmentDate: enrollmentDate
+            enrollmentDate: enrollmentDate,
+            // Add payment method details
+            paymentMethod: 'PayPal',
+            payerName: paymentData.payerName, // Keep payer name for payment reconciliation
+            payerEmail: paymentData.payerEmail,
+            transactionStatus: paymentData.transactionStatus,
+            // Add any available payment source details
+            paymentSource: paymentData.paymentSource || null,
+            fundingSource: paymentData.fundingSource || null
         };
 
-        // Step 4: Send enrollment confirmation email
+        // Step 5: Send enrollment confirmation email
+        // Step 5: Send enrollment confirmation email
         const emailResult = await sendEnrollmentConfirmationEmail(enrollmentEmailData);
 
-        // Step 5: Record email tracking in Firestore
+        // Step 6: Record email tracking in Firestore
         let emailTrackingResult = null;
         try {
             emailTrackingResult = await recordEnrollmentEmail(enrollmentEmailData, emailResult, userId);

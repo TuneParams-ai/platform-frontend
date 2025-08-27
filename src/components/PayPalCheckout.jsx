@@ -87,6 +87,10 @@ const PayPalCheckout = ({
                                 ? `${order.payer.name.given_name || ''} ${order.payer.name.surname || ''}`.trim()
                                 : 'Student';
 
+                            // Extract payment source information
+                            const paymentSource = order.purchase_units[0].payments.captures[0].payment_source || {};
+                            const fundingSource = order.purchase_units[0].payments.captures[0].funding_source || null;
+
                             onSuccess({
                                 orderID: order.id,
                                 payerID: order.payer.payer_id,
@@ -97,7 +101,12 @@ const PayPalCheckout = ({
                                 payerEmail: order.payer.email_address,
                                 payerName: payerName,
                                 transactionStatus: order.status,
-                                timestamp: new Date().toISOString()
+                                timestamp: new Date().toISOString(),
+                                // Add payment method details
+                                paymentSource: paymentSource,
+                                fundingSource: fundingSource,
+                                // Add payer address if available
+                                payerAddress: order.payer.address || null
                             });
                         }
                     } catch (error) {

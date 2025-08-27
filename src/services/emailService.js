@@ -8,7 +8,7 @@ const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
 const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
 // Company information
-const COMPANY_NAME = process.env.REACT_APP_COMPANY_NAME || 'TuneParams.ai';
+const COMPANY_NAME = process.env.REACT_APP_COMPANY_NAME || 'TuneParams AI Learning Platform';
 const SUPPORT_EMAIL = process.env.REACT_APP_SUPPORT_EMAIL || 'support@tuneparams.ai';
 const WEBSITE_URL = process.env.REACT_APP_WEBSITE_URL || 'https://www.tuneparams.ai';
 
@@ -34,7 +34,13 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
         amount,
         paymentId,
         orderId,
-        enrollmentDate
+        enrollmentDate,
+        paymentMethod,
+        payerName,
+        payerEmail,
+        transactionStatus,
+        // paymentSource, // Contains detailed payment source info but not used in basic email
+        fundingSource
     } = enrollmentData;
 
     // Safely extract first name - handle various data types
@@ -81,6 +87,14 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
                             <td style="padding: 8px 0; color: #333;">$${amount}</td>
                         </tr>
                         <tr>
+                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Payment Method:</td>
+                            <td style="padding: 8px 0; color: #333;">${paymentMethod || 'PayPal'}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Transaction Status:</td>
+                            <td style="padding: 8px 0; color: #333; text-transform: capitalize;">${transactionStatus || 'Completed'}</td>
+                        </tr>
+                        <tr>
                             <td style="padding: 8px 0; color: #666; font-weight: bold;">Payment ID:</td>
                             <td style="padding: 8px 0; color: #333; font-family: monospace; font-size: 14px;">${paymentId}</td>
                         </tr>
@@ -92,6 +106,24 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
                             <td style="padding: 8px 0; color: #666; font-weight: bold;">Enrollment Date:</td>
                             <td style="padding: 8px 0; color: #333;">${enrollmentDate}</td>
                         </tr>
+                        ${payerName && payerName !== userName ? `
+                        <tr>
+                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Payer Name:</td>
+                            <td style="padding: 8px 0; color: #333;">${payerName}</td>
+                        </tr>
+                        ` : ''}
+                        ${payerEmail && payerEmail !== userEmail ? `
+                        <tr>
+                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Payment Email:</td>
+                            <td style="padding: 8px 0; color: #333;">${payerEmail}</td>
+                        </tr>
+                        ` : ''}
+                        ${fundingSource ? `
+                        <tr>
+                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Funding Source:</td>
+                            <td style="padding: 8px 0; color: #333; text-transform: capitalize;">${fundingSource}</td>
+                        </tr>
+                        ` : ''}
                     </table>
                 </div>
 
@@ -135,6 +167,18 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
 Hi ${firstName},
 
 Thank you for registering for our AI Training Course — we're excited to have you on board! 🚀
+
+ENROLLMENT DETAILS:
+- Course: ${courseTitle}
+- Amount Paid: $${amount}
+- Payment Method: ${paymentMethod || 'PayPal'}
+- Transaction Status: ${transactionStatus || 'Completed'}
+- Payment ID: ${paymentId}
+- Order ID: ${orderId}
+- Enrollment Date: ${enrollmentDate}
+${payerName && payerName !== userName ? `- Payer Name: ${payerName}` : ''}
+${payerEmail && payerEmail !== userEmail ? `- Payment Email: ${payerEmail}` : ''}
+${fundingSource ? `- Funding Source: ${fundingSource}` : ''}
 
 Here's what you can expect:
 
@@ -218,7 +262,7 @@ export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
         const templateParams = {
             to_email: emailContent.recipientEmail,
             to_name: emailContent.recipientName,
-            from_name: COMPANY_NAME,
+            from_name: `${COMPANY_NAME} Team`,
             subject: emailContent.subject,
             html_content: emailContent.htmlContent,
             text_content: emailContent.textContent,
@@ -229,7 +273,13 @@ export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
             order_id: enrollmentData.orderId,
             enrollment_date: enrollmentData.enrollmentDate,
             website_url: WEBSITE_URL,
-            support_email: SUPPORT_EMAIL
+            support_email: SUPPORT_EMAIL,
+            // Additional payment details
+            payment_method: enrollmentData.paymentMethod || 'PayPal',
+            payer_name: enrollmentData.payerName || '',
+            payer_email: enrollmentData.payerEmail || '',
+            transaction_status: enrollmentData.transactionStatus || 'Completed',
+            funding_source: enrollmentData.fundingSource || ''
         };
 
         // Send email using EmailJS
