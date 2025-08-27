@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useUserRole } from "../hooks/useUserRole";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import PayPalCheckout from "../components/PayPalCheckout";
@@ -15,7 +14,6 @@ const CourseDetail = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { isAdminUser } = useUserRole();
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
     const [enrollmentResult, setEnrollmentResult] = useState(null);

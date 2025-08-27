@@ -14,7 +14,7 @@ import {
     limit as qLimit,
     deleteDoc,
 } from 'firebase/firestore';
-import { db, auth } from '../config/firebase';
+import { db } from '../config/firebase';
 import { checkCourseAccess } from './paymentService';
 
 const REVIEWS_COLLECTION = 'course_reviews';
