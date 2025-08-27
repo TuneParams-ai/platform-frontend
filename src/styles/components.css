@@ -173,11 +173,11 @@
     padding: 12px 14px;
     background: rgba(29, 126, 153, 0.06);
     margin-bottom: 12px;
-    min-height: 120px;
-    max-height: 180px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
 .review-card-header {
@@ -226,12 +226,17 @@
 }
 
 .review-verified {
-    background: rgba(16, 185, 129, 0.12);
+    background: rgba(16, 185, 129, 0.15);
     color: #10b981;
     border: 1px solid rgba(16, 185, 129, 0.4);
-    border-radius: 9999px;
-    padding: 2px 8px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 12px;
+    font-weight: bold;
     flex-shrink: 0;
 }
 
@@ -274,13 +279,62 @@
 .review-comment {
     margin: 6px 0 4px;
     white-space: pre-wrap;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
-    -webkit-box-orient: vertical;
-    flex: 1;
     word-wrap: break-word;
+    line-height: 1.5;
+    transition: all 0.3s ease;
+}
+
+.review-comment.expanded {
+    overflow: visible;
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+}
+
+.review-comment-section {
+    flex: 1;
+    min-height: 0;
+}
+
+.review-expand-btn {
+    background: none;
+    border: none;
+    color: rgba(29, 126, 153, 0.8);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 0;
+    margin-top: 8px;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.review-expand-btn:hover {
+    color: rgba(29, 126, 153, 1);
+}
+
+/* Admin delete button in corner */
+.review-admin-delete-corner {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.review-admin-delete-corner:hover {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    transform: scale(1.1);
 }
 
 .review-actions {
@@ -735,8 +789,21 @@
     }
 
     .review-verified {
-        font-size: 10px;
-        padding: 1px 6px;
+        width: 18px;
+        height: 18px;
+        font-size: 11px;
+    }
+
+    .review-admin-delete-corner {
+        width: 24px;
+        height: 24px;
+        top: 6px;
+        right: 6px;
+        font-size: 11px;
+    }
+
+    .review-expand-btn {
+        font-size: 13px;
     }
 }
 

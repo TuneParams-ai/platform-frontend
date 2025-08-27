@@ -280,19 +280,80 @@
 }
 
 .course-sidebar .review-comment {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    transition: all 0.3s ease;
+}
+
+.course-sidebar .review-comment:not(.expanded) {
     max-height: 120px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 5;
     line-clamp: 5;
     -webkit-box-orient: vertical;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+}
+
+.course-sidebar .review-comment.expanded {
+    max-height: none;
+    overflow: visible;
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
 }
 
 .course-reviews-list {
     max-width: 100%;
     overflow: hidden;
+}
+
+/* Course detail review expand button */
+.course-sidebar .review-expand-btn {
+    background: none;
+    border: none;
+    color: rgba(29, 126, 153, 0.8);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 0;
+    margin-top: 8px;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.course-sidebar .review-expand-btn:hover {
+    color: rgba(29, 126, 153, 1);
+}
+
+/* Course detail admin delete button */
+.course-sidebar .review-admin-delete-corner {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.course-sidebar .review-admin-delete-corner:hover {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.5);
+    transform: scale(1.1);
+}
+
+/* Course detail verified badge */
+.course-sidebar .review-verified {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
 }
 
 /* Ensure review form fits in sidebar */
@@ -703,10 +764,22 @@
         aspect-ratio: auto;
     }
 
-    .course-sidebar .review-comment {
+    .course-sidebar .review-comment:not(.expanded) {
         max-height: 100px;
         -webkit-line-clamp: 4;
         line-clamp: 4;
+    }
+
+    .course-sidebar .review-expand-btn {
+        font-size: 12px;
+    }
+
+    .course-sidebar .review-admin-delete-corner {
+        width: 20px;
+        height: 20px;
+        top: 4px;
+        right: 4px;
+        font-size: 10px;
     }
 
     /* Ensure review header doesn't overflow on mobile */
