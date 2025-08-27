@@ -2,6 +2,13 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper function to check if user is admin via user_roles collection
+    function isAdminViaRoles(userId) {
+      return exists(/databases/$(database)/documents/user_roles/$(userId)) &&
+             get(/databases/$(database)/documents/user_roles/$(userId)).data.role == 'admin' &&
+             get(/databases/$(database)/documents/user_roles/$(userId)).data.isActive == true;
+    }
+    
     // Helper function to check if only viewCount is being updated
     function onlyViewCountChanged() {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount']);
@@ -16,25 +23,30 @@ service cloud.firestore {
     match /forum_threads/{threadId} {
       allow read: if true;  // Public read access
       allow create: if request.auth != null && request.auth.uid == request.resource.data.authorId;
-      allow update: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true)
+      allow update: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true || isAdminViaRoles(request.auth.uid))
                     || onlyViewCountChanged()  // Allow view count updates for everyone
                     || (request.auth != null && onlyLikedByChanged());  // Allow likes for authenticated users
-      allow delete: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true);
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true || isAdminViaRoles(request.auth.uid));
     }
     
     match /forum_replies/{replyId} {
       allow read: if true;  // Public read access
       allow create: if request.auth != null && request.auth.uid == request.resource.data.authorId;
-      allow update: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true)
+      allow update: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true || isAdminViaRoles(request.auth.uid))
                     || (request.auth != null && onlyLikedByChanged());  // Allow likes for authenticated users
-      allow delete: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true);
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.authorId || request.auth.token.admin == true || isAdminViaRoles(request.auth.uid));
     }
     
     // Course reviews - public read, authenticated write with constraints
     match /course_reviews/{reviewId} {
       function isOwner() { return request.auth != null && request.auth.uid == resource.data.userId; }
       function isCreatingOwn() { return request.auth != null && request.auth.uid == request.resource.data.userId; }
-      function isAdmin() { return request.auth != null && request.auth.token.admin == true; }
+      function isAdmin() { 
+        return request.auth != null && (
+          request.auth.token.admin == true || 
+          isAdminViaRoles(request.auth.uid)
+        ); 
+      }
       function validRating() { return request.resource.data.rating >= 1 && request.resource.data.rating <= 5; }
       function validComment() { return request.resource.data.comment is string && request.resource.data.comment.size() > 0 && request.resource.data.comment.size() <= 2000; }
       function validIds() {

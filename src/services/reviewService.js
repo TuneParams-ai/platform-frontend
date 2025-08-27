@@ -132,6 +132,19 @@ export const deleteReview = async (courseId, userId) => {
     }
 };
 
+// Admin function to delete any review by review ID
+export const deleteReviewByIdAsAdmin = async (reviewId) => {
+    try {
+        if (!db) throw new Error('Firestore not initialized');
+        const ref = doc(db, REVIEWS_COLLECTION, reviewId);
+        await deleteDoc(ref);
+        return { success: true };
+    } catch (error) {
+        console.error('Error deleting review as admin:', error);
+        return { success: false, error: error.message };
+    }
+};
+
 // Optional: real-time subscription helpers
 export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}) => {
     if (!db) return () => { };

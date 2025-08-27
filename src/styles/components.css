@@ -497,16 +497,20 @@
     font-size: 2rem;
 }
 
-.home-reviews-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-    max-width: 1200px;
+/* Home Reviews Carousel */
+.home-reviews-container {
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
     position: relative;
-    box-sizing: border-box;
-    width: 100%;
+}
+
+.home-reviews-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    transition: all 0.6s ease-in-out;
+    position: relative;
 }
 
 .home-review-card {
@@ -516,18 +520,29 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    aspect-ratio: 2 / 1;
-    min-height: 200px;
-    max-height: 250px;
+    aspect-ratio: 2 / 1.2;
+    min-height: 250px;
+    max-height: 300px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     overflow: hidden;
     position: relative;
     z-index: 2;
-    margin: 8px;
     box-sizing: border-box;
-    width: calc(100% - 16px);
+    animation: fadeInSlide 0.6s ease-in-out;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .home-review-card:hover {
@@ -535,6 +550,36 @@
     box-shadow: 0 8px 24px rgba(29, 126, 153, 0.2);
     border-color: rgba(29, 126, 153, 0.4);
     background: rgba(29, 126, 153, 0.12);
+}
+
+/* Review Carousel Indicators */
+.home-reviews-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 32px;
+    padding: 16px 0;
+}
+
+.review-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(29, 126, 153, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.review-indicator:hover {
+    background: rgba(29, 126, 153, 0.6);
+    transform: scale(1.1);
+}
+
+.review-indicator.active {
+    background: rgba(29, 126, 153, 0.8);
+    transform: scale(1.2);
 }
 
 .home-review-header {
@@ -565,23 +610,114 @@
     align-self: flex-start;
 }
 
+.home-review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.home-admin-delete {
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    min-width: auto !important;
+    border-radius: 4px !important;
+    margin-left: auto;
+}
+
+/* Small delete buttons for reviews (similar to forum style) */
+.review-admin-delete-btn {
+    background: none;
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    min-width: auto;
+    margin-left: 8px;
+}
+
+.review-admin-delete-btn:hover {
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+.home-review-admin-delete-btn {
+    background: none;
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    min-width: auto;
+    margin-left: auto;
+}
+
+.home-review-admin-delete-btn:hover {
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: 1px solid #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
 .home-review-more:hover {
     color: var(--secondary-color);
 }
 
 /* Responsive adjustments */
+@media screen and (max-width: 1200px) {
+    .home-reviews-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+
+    .home-review-card {
+        min-height: 220px;
+        max-height: 280px;
+    }
+}
+
 @media screen and (max-width: 768px) {
+    .home-reviews-container {
+        padding: 0 16px;
+    }
+
     .home-reviews-row {
         grid-template-columns: 1fr;
-        gap: 24px;
-        padding: 0 16px;
+        gap: 20px;
     }
 
     .home-review-card {
         aspect-ratio: 3 / 2;
-        min-height: 180px;
+        min-height: 200px;
+        max-height: 250px;
         padding: 16px;
-        margin: 4px;
+    }
+
+    .home-reviews-indicators {
+        margin-top: 24px;
+        gap: 8px;
+    }
+
+    .review-indicator {
+        width: 10px;
+        height: 10px;
     }
 
     /* Ensure review headers work well on mobile */
@@ -607,6 +743,7 @@
 /* Tablet responsive adjustments */
 @media screen and (min-width: 769px) and (max-width: 1199px) {
     .home-reviews-row {
+        grid-template-columns: repeat(2, 1fr);
         gap: 28px;
         padding: 0 24px;
     }

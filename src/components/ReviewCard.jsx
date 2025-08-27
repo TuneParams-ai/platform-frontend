@@ -9,7 +9,7 @@ const Stars = ({ value = 0 }) => {
     );
 };
 
-const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, onEdit, onDelete }) => {
+const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin = false, onEdit, onDelete, onAdminDelete }) => {
     if (!review) return null;
     const { userName, rating, comment, verified, createdAt, courseTitle } = review;
     const dateText = createdAt?.toDate ? createdAt.toDate().toLocaleDateString() : '';
@@ -33,13 +33,22 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, onEdit, 
                 <div className="review-course-chip">{courseTitle}</div>
             )}
             <p className="review-comment">{comment}</p>
-            {isOwner && (
+            {(isOwner || isAdmin) && (
                 <div className="review-actions">
-                    {onEdit && (
+                    {isOwner && onEdit && (
                         <button className="btn btn-secondary btn-small" onClick={onEdit}>Edit</button>
                     )}
-                    {onDelete && (
+                    {isOwner && onDelete && (
                         <button className="btn btn-secondary btn-small" onClick={onDelete}>Delete</button>
+                    )}
+                    {isAdmin && !isOwner && onAdminDelete && (
+                        <button
+                            className="review-admin-delete-btn"
+                            onClick={onAdminDelete}
+                            title="Admin: Delete this review"
+                        >
+                            🗑️
+                        </button>
                     )}
                 </div>
             )}

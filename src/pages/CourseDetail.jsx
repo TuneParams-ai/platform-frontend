@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useUserRole } from "../hooks/useUserRole";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import PayPalCheckout from "../components/PayPalCheckout";
@@ -11,11 +12,13 @@ import "../styles/paypal-checkout.css";
 import { useReviews } from "../hooks/useReviews";
 import ReviewForm from "../components/ReviewForm";
 import ReviewList from "../components/ReviewList";
+import { deleteReviewByIdAsAdmin } from "../services/reviewService";
 
 const CourseDetail = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
+    const { isAdminUser } = useUserRole();
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
     const [showPayPal, setShowPayPal] = useState(false);
@@ -100,6 +103,30 @@ const CourseDetail = () => {
     const handleGoBack = useCallback(() => {
         navigate('/courses');
     }, [navigate]);
+
+    const handleAdminDeleteReview = useCallback(async (review) => {
+        if (!isAdminUser) {
+            alert('You do not have permission to delete reviews.');
+            return;
+        }
+
+        if (!window.confirm(`Are you sure you want to delete ${review.userName}'s review? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const result = await deleteReviewByIdAsAdmin(review.id);
+            if (result.success) {
+                alert('Review deleted successfully');
+                // The useReviews hook should automatically update due to Firestore real-time listeners
+            } else {
+                alert(`Failed to delete review: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('Error deleting review:', error);
+            alert('Failed to delete review. Please try again.');
+        }
+    }, [isAdminUser]);
 
     // Helper function to display value or N/A
     const displayValue = (value, defaultValue = "N/A") => {
@@ -428,6 +455,8 @@ const CourseDetail = () => {
                                     loading={reviewsLoading}
                                     error={reviewsError}
                                     currentUserId={user?.uid}
+                                    isCurrentUserAdmin={isAdminUser}
+                                    onAdminDelete={handleAdminDeleteReview}
                                 />
                             </div>
                         </section>

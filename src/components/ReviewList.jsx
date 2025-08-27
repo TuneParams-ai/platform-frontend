@@ -20,7 +20,7 @@ const formatIndexError = (error) => {
     return msg;
 };
 
-const ReviewList = ({ reviews = [], loading = false, error = null, showCourseTitle = false, currentUserId, onEdit, onDelete }) => {
+const ReviewList = ({ reviews = [], loading = false, error = null, showCourseTitle = false, currentUserId, isCurrentUserAdmin = false, onEdit, onDelete, onAdminDelete }) => {
     if (loading) return <div className="reviews-loading">Loading reviews...</div>;
     if (error) return <div className="reviews-error">{formatIndexError(error)}</div>;
     if (!reviews.length) return <div className="reviews-empty">No reviews yet.</div>;
@@ -33,8 +33,10 @@ const ReviewList = ({ reviews = [], loading = false, error = null, showCourseTit
                     review={r}
                     showCourseTitle={showCourseTitle}
                     isOwner={currentUserId && r.userId === currentUserId}
+                    isAdmin={isCurrentUserAdmin}
                     onEdit={onEdit ? () => onEdit(r) : undefined}
                     onDelete={onDelete ? () => onDelete(r) : undefined}
+                    onAdminDelete={onAdminDelete ? () => onAdminDelete(r) : undefined}
                 />)
             )}
         </div>
