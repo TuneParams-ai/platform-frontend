@@ -3,6 +3,8 @@
 /* User Menu Container */
 .user-menu-container {
     position: relative;
+    overflow: visible;
+    box-sizing: border-box;
 }
 
 /* User Profile Button */
@@ -16,9 +18,16 @@
     cursor: pointer;
     padding: 8px 12px;
     border-radius: 8px;
-    transition: background 0.3s ease;
+    transition: color 0.3s ease;
     font-size: 14px;
     white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.user-profile-button:hover {
+    color: #ef4444;
 }
 
 /* User Avatar */
@@ -46,6 +55,10 @@
 /* User Name */
 .user-name {
     font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
 }
 
 /* Dropdown Arrow */
@@ -63,8 +76,11 @@
     border-radius: 8px;
     padding: 8px;
     min-width: 200px;
+    max-width: 250px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     z-index: 1000;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* User Info Section */
@@ -72,23 +88,34 @@
     padding: 12px;
     border-bottom: 1px solid rgba(29, 126, 153, 0.2);
     margin-bottom: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .user-info-name {
     font-size: 14px;
     font-weight: bold;
     color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .user-info-email {
     font-size: 12px;
     color: var(--secondary-text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .user-info-role {
     font-size: 11px;
     color: var(--secondary-text-color);
     margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Admin Menu Links */
@@ -105,6 +132,10 @@
     text-decoration: none;
     cursor: pointer;
     transition: background 0.3s ease;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .admin-menu-link:hover {
@@ -129,9 +160,13 @@
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: color 0.3s ease;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .logout-button:hover {
-    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
 }

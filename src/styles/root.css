@@ -285,16 +285,8 @@ body.menu-open {
   position: relative;
 }
 
-.user-profile-button:hover {
-  background: rgba(29, 126, 153, 0.1) !important;
-}
-
-.user-dropdown a:hover {
-  background: rgba(29, 126, 153, 0.1) !important;
-}
-
 .user-dropdown button:hover {
-  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ff0000;
 }
 
 /* Tablet View (768px - 1024px) */
