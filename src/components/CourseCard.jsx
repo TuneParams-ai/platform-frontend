@@ -119,7 +119,7 @@ const CourseCard = ({ course, isEnrolled = false }) => {
               reviewCount={statsLoading ? 0 : stats.reviewCount}
               showReviewCount={!statsLoading && stats.hasReviews}
               size="small"
-              showNumeric={false}
+              showNumeric={true}
             />
           )}
         </div>

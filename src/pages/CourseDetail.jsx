@@ -6,6 +6,7 @@ import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from ".
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import PayPalCheckout from "../components/PayPalCheckout";
 import PaymentSuccessModal from "../components/PaymentSuccessModal";
+import StarRating from "../components/StarRating";
 import "../styles/course-detail.css";
 import "../styles/course-image.css";
 import "../styles/paypal-checkout.css";
@@ -172,12 +173,22 @@ const CourseDetail = () => {
                                     <div className="course-meta-detail">
                                         <span className="course-level-detail">{displayValue(courseData.level)}</span>
                                         <span className="course-duration-detail">⏱️ {displayValue(courseData.duration)}</span>
-                                        {/* <span className="course-rating-detail">
-                                            ⭐ {displayValue(courseData.rating)}/5
-                                        </span> */}
                                         <span className="course-enrollment-detail">
                                             👥 {comingSoon ? "Coming Soon" : `${currentEnrollments}/${displayValue(courseData.maxCapacity)} seats`}
                                         </span>
+                                        <div className="course-rating-detail">
+                                            {comingSoon ? (
+                                                <span>⭐ Coming Soon</span>
+                                            ) : (
+                                                <StarRating
+                                                    rating={statsLoading ? courseData.rating : (stats.hasReviews ? stats.averageRating : courseData.rating)}
+                                                    reviewCount={statsLoading ? 0 : stats.reviewCount}
+                                                    showReviewCount={!statsLoading && stats.hasReviews}
+                                                    size="small"
+                                                    showNumeric={true}
+                                                />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
