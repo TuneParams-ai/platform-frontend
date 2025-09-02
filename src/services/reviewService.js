@@ -22,6 +22,7 @@ const REVIEWS_COLLECTION = 'course_reviews';
 export const addOrUpdateReview = async ({
     userId,
     userName,
+    userPhotoURL,
     courseId,
     courseTitle,
     rating,
@@ -55,6 +56,7 @@ export const addOrUpdateReview = async ({
             {
                 userId,
                 userName,
+                userPhotoURL: userPhotoURL || '',
                 courseId,
                 courseTitle,
                 rating: r,

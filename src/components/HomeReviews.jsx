@@ -14,6 +14,11 @@ const HomeReviews = () => {
     const { reviews, loading, error } = useRecentReviews({ limit: 18 }); // Load more for rotation
     const { isAdminUser } = useUserRole();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [imageErrors, setImageErrors] = useState(new Set());
+
+    const handleImageError = (reviewId) => {
+        setImageErrors(prev => new Set([...prev, reviewId]));
+    };
 
     const handleAdminDelete = async (review) => {
         if (!window.confirm(`Are you sure you want to delete ${review.userName}'s review? This action cannot be undone.`)) {
@@ -63,11 +68,25 @@ const HomeReviews = () => {
                         {displayedReviews.map((r) => {
                             const needsMore = (r.comment || '').length > 220;
                             const href = `/courses/${r.courseId}#review-${r.id}`;
+                            const shouldShowImage = r.userPhotoURL && !imageErrors.has(r.id);
+
                             return (
                                 <article key={r.id} className="home-review-card" role="listitem">
                                     <div className="home-review-header">
                                         <div className="review-user">
-                                            <div className="review-avatar" aria-hidden>👤</div>
+                                            <div className="review-avatar" aria-hidden>
+                                                {shouldShowImage ? (
+                                                    <img
+                                                        src={r.userPhotoURL}
+                                                        alt={r.userName || 'User'}
+                                                        onError={() => handleImageError(r.id)}
+                                                    />
+                                                ) : (
+                                                    <div className="default-avatar">
+                                                        {(r.userName || 'User').charAt(0)?.toUpperCase()}
+                                                    </div>
+                                                )}
+                                            </div>
                                             <div>
                                                 <div className="review-username">
                                                     <span>{r.userName || 'User'}</span>

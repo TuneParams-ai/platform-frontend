@@ -12,10 +12,11 @@ const Stars = ({ value = 0 }) => {
 const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin = false, onEdit, onDelete, onAdminDelete }) => {
     // State for expanding long comments - must be called before any early returns
     const [isExpanded, setIsExpanded] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     if (!review) return null;
 
-    const { userName, rating, comment, verified, createdAt, courseTitle } = review;
+    const { userName, userPhotoURL, rating, comment, verified, createdAt, courseTitle } = review;
     const dateText = createdAt?.toDate ? createdAt.toDate().toLocaleDateString() : '';
 
     // Check if comment is long enough to need expansion
@@ -24,6 +25,12 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin 
     const displayComment = isLongComment && !isExpanded
         ? comment.slice(0, 300) + '...'
         : comment;
+
+    const handleImageError = () => {
+        setImageError(true);
+    };
+
+    const shouldShowImage = userPhotoURL && !imageError;
 
     return (
         <div className="review-card" id={`review-${review.id}`}>
@@ -40,7 +47,19 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin 
 
             <div className="review-card-header">
                 <div className="review-user">
-                    <div className="review-avatar" aria-hidden>👤</div>
+                    <div className="review-avatar" aria-hidden>
+                        {shouldShowImage ? (
+                            <img
+                                src={userPhotoURL}
+                                alt={userName || 'User'}
+                                onError={handleImageError}
+                            />
+                        ) : (
+                            <div className="default-avatar">
+                                {(userName || 'User').charAt(0)?.toUpperCase()}
+                            </div>
+                        )}
+                    </div>
                     <div>
                         <div className="review-username">
                             <span>{userName || 'User'}</span>

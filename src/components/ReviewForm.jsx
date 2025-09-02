@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { addOrUpdateReview, getUserReviewForCourse, deleteReview } from '../services/reviewService';
 import { useAuth } from '../hooks/useAuth';
+import { getUserProfile } from '../services/userService';
 
 const StarInput = ({ value = 0, onChange }) => {
     return (
@@ -59,7 +60,31 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
         }
         setLoading(true);
         setError(null);
-        const res = await addOrUpdateReview({ userId, userName, courseId, courseTitle, rating, comment });
+
+        // Try to get photoURL from auth context first, then from user profile in Firestore
+        let photoURL = user?.photoURL || user?.photoUrl || '';
+
+        // If no photoURL in auth context, try to get it from Firestore user profile
+        if (!photoURL && userId) {
+            try {
+                const userProfile = await getUserProfile(userId);
+                if (userProfile.success && userProfile.userData?.photoURL) {
+                    photoURL = userProfile.userData.photoURL;
+                }
+            } catch (error) {
+                console.warn('Could not fetch user profile for photoURL:', error);
+            }
+        }
+
+        const res = await addOrUpdateReview({
+            userId,
+            userName,
+            userPhotoURL: photoURL,
+            courseId,
+            courseTitle,
+            rating,
+            comment
+        });
         setLoading(false);
         if (!res.success) {
             setError(res.error || 'Failed to submit review');
