@@ -447,12 +447,49 @@
     gap: 15px;
 }
 
+.section-header {
+    margin-bottom: 12px;
+}
+
+.section-header h3 {
+    color: var(--text-color);
+    font-size: 1.1rem;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+}
+
 .week-header h3 {
     color: var(--text-color);
     font-size: 1.1rem;
     margin: 0;
     flex: 1;
     min-width: 0;
+}
+
+.topics-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.topic-item {
+    color: var(--secondary-text-color);
+    font-size: 0.95rem;
+    padding: 6px 12px;
+    background: rgba(29, 126, 153, 0.08);
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.topic-item:hover {
+    background: rgba(29, 126, 153, 0.15);
+    color: var(--text-color);
+    border-left: 3px solid var(--primary-color);
 }
 
 .lesson-count {

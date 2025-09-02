@@ -35,7 +35,7 @@ export const coursesData = [
     // },
     {
         id: "FAAI",
-        title: "Foundations to Frontiers of Artificial Intelligence",
+        title: "Foundations to Frontiers of AI",
         description: "This beginner-friendly course takes you from the mathematical foundations of AI to hands-on implementation of modern machine learning and generative AI models.",
         level: "Beginner level",
         duration: "14 weeks",
@@ -52,23 +52,74 @@ export const coursesData = [
         instructor: "NA",
         instructorBio: "NA",
         curriculum: [
-            { week: 1, title: "Introduction to Machine Learning; Math Concepts; Python Basics", lessons: 2 },
-            { week: 2, title: "Linear Regression – Theory & Implementation", lessons: 2 },
-            { week: 3, title: "Overfitting, Regularization, Model Selection", lessons: 3 },
-            { week: 4, title: "Logistic Regression & Classification Theory", lessons: 3 },
-            { week: 5, title: "Mini-Project: Regression & Classification", lessons: 2 },
-            { week: 6, title: "Neural Networks, MLPs, MNIST Lab", lessons: 3 },
-            { week: 7, title: "CNNs – Concepts, Architectures, Labs", lessons: 3 },
-            { week: 8, title: "Applications: Transfer Learning, Autoencoders, Segmentation", lessons: 3 },
-            { week: 9, title: "Final Project Development", lessons: 2 },
-            { week: 10, title: "Final Presentations and Review", lessons: 1 }
+            {
+                section: "Foundations",
+                topics: [
+                    "Introduction to Machine Learning",
+                    "Vectors and Matrices for ML",
+                    "Basic Python for Machine Learning"
+                ]
+            },
+            {
+                section: "Classical Machine Learning",
+                topics: [
+                    "Linear Regression",
+                    "Closed-Form Solution for Linear Regression",
+                    "Polynomial Regression",
+                    "Loss Functions",
+                    "Optimization Methods",
+                    "Hyperparameter Tuning: Overfitting, Regularization, Model Selection",
+                    "Logistic Regression & Classification",
+                    "Mini Project: Regression and Classification"
+                ]
+            },
+            {
+                section: "Neural Networks",
+                topics: [
+                    "Introduction to Neural Networks (MLPs)",
+                    "Convolutional Neural Networks (CNNs)",
+                    "Applications of CNNs",
+                    "Project: Application of CNNs"
+                ]
+            },
+            {
+                section: "Natural Language Processing",
+                topics: [
+                    "Introduction to NLP and Transformers",
+                    "Recurrent Neural Networks (RNNs)",
+                    "Limitations of RNNs",
+                    "Attention Mechanism",
+                    "Self-Attention",
+                    "Transformer Architecture"
+                ]
+            },
+            {
+                section: "Large Language Models (LLMs)",
+                topics: [
+                    "LLM Pre-Training",
+                    "Continual Pre-Training",
+                    "Supervised Fine-Tuning",
+                    "Alignment of LLMs",
+                    "LLM Inference",
+                    "Introduction to Hugging Face"
+                ]
+            },
+            {
+                section: "Advanced Topics",
+                topics: [
+                    "Distributed Computing for LLMs",
+                    "Prompt Engineering",
+                    "Retrieval-Augmented Generation (RAG)",
+                    "Agentic AI"
+                ]
+            }
         ],
         prerequisites: ["High school mathematics", "Basic programming knowledge"],
         outcomes: [
-            "Understand core AI and ML principles",
-            "Implement supervised and unsupervised models",
-            "Evaluate model performance and avoid overfitting",
-            "Apply ML to real-world datasets and tasks"
+            "Master the fundamentals of machine learning — from training simple models to hyperparameter tuning and optimization — through clear, step-by-step coding exercises.",
+            "Deepen your knowledge of deep learning by building and experimenting with neural networks, CNNs, RNNs, and transformers.",
+            "Gain expertise in Large Language Models (LLMs) — understand how they are trained, fine-tuned, and applied in real-world scenarios.",
+            "Learn by doing with hands-on coding assignments and exciting projects that bring AI concepts to life."
         ],
         downloadUrl: "/data/sample-course-info.pdf"
     },
@@ -76,27 +127,103 @@ export const coursesData = [
     {
         id: "AdvAI",
         title: "Advanced Artificial Intelligence",
-        description: "This course offers a deep dive into advanced AI concepts such as reinforcement learning, and other cutting-edge research topics. Perfect for experienced practitioners.",
+        description: "This advanced course dives deep into cutting-edge AI research and applications, covering reinforcement learning, advanced deep learning architectures, AI safety, and emerging technologies that are shaping the future of artificial intelligence.",
         level: "Advanced",
-        duration: "Coming Soon",
-        lessons: "TBD",
-        students: 1,
-        maxCapacity: 1,
-        nextBatchDate: null,
+        duration: "12 weeks",
+        lessons: 20,
+        students: 0,
+        maxCapacity: 20,
+        nextBatchDate: "2026-02-1",
         rating: "N/A",
-        price: "TBD",
-        originalPrice: null,
+        price: 499,
+        originalPrice: 1299,
         icon: "🚀",
         image: "/data/AdvAI/AdvAI_thumbnail.png",
         category: "Artificial Intelligence",
         instructor: "TBD",
-        instructorBio: "Course curriculum and instructor details are being finalized. Stay tuned for updates!",
-        curriculum: [],
+        instructorBio: "Course will be taught by industry experts and researchers with extensive experience in advanced AI systems.",
+        curriculum: [
+            {
+                section: "Reinforcement Learning",
+                topics: [
+                    "Markov Decision Processes (MDPs)",
+                    "Q-Learning and Deep Q-Networks (DQN)",
+                    "Policy Gradient Methods",
+                    "Actor-Critic Algorithms",
+                    "Multi-Agent Reinforcement Learning",
+                    "Hierarchical Reinforcement Learning"
+                ]
+            },
+            {
+                section: "Advanced Deep Learning Architectures",
+                topics: [
+                    "Graph Neural Networks (GNNs)",
+                    "Attention Mechanisms and Vision Transformers",
+                    "Generative Adversarial Networks (GANs)",
+                    "Variational Autoencoders (VAEs)",
+                    "Diffusion Models",
+                    "Neural Architecture Search (NAS)"
+                ]
+            },
+            {
+                section: "Advanced NLP and Language Models",
+                topics: [
+                    "Advanced Transformer Architectures",
+                    "Multimodal Language Models",
+                    "In-Context Learning and Few-Shot Learning",
+                    "Constitutional AI and RLHF",
+                    "Tool-Using Language Models",
+                    "Reasoning and Chain-of-Thought"
+                ]
+            },
+            {
+                section: "Computer Vision and Multimodal AI",
+                topics: [
+                    "Object Detection and Segmentation",
+                    "3D Computer Vision",
+                    "Neural Radiance Fields (NeRF)",
+                    "Vision-Language Models",
+                    "Video Understanding",
+                    "Medical Image Analysis"
+                ]
+            },
+            {
+                section: "AI Safety and Alignment",
+                topics: [
+                    "AI Safety Fundamentals",
+                    "Interpretability and Explainable AI",
+                    "Robustness and Adversarial Examples",
+                    "AI Alignment Techniques",
+                    "Value Learning and Preference Modeling",
+                    "AI Governance and Ethics"
+                ]
+            },
+            {
+                section: "Emerging AI Technologies",
+                topics: [
+                    "Neuromorphic Computing",
+                    "Quantum Machine Learning",
+                    "AI for Scientific Discovery",
+                    "Federated Learning",
+                    "Edge AI and Model Compression",
+                    "AI Systems Engineering"
+                ]
+            }
+        ],
         prerequisites: [
-            "Details will be available soon"
+            "Completion of Foundations to Frontiers of AI or equivalent",
+            "Strong programming skills in Python",
+            "Solid understanding of linear algebra and calculus",
+            "Experience with deep learning frameworks (PyTorch/TensorFlow)",
+            "Familiarity with machine learning concepts and neural networks"
         ],
         outcomes: [
-            "Course learning outcomes will be published once the curriculum is finalized"
+            "Master advanced reinforcement learning algorithms and apply them to complex decision-making problems.",
+            "Design and implement state-of-the-art deep learning architectures for various domains including vision, NLP, and multimodal tasks.",
+            "Understand and apply AI safety principles to build robust and aligned AI systems.",
+            "Explore cutting-edge research areas and emerging technologies in artificial intelligence.",
+            "Develop expertise in advanced topics like GANs, diffusion models, and neural architecture search.",
+            "Build real-world applications using advanced AI techniques and contribute to open-source AI projects."
         ],
         downloadUrl: null,
         comingSoon: true

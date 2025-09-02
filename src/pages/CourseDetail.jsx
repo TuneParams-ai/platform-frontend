@@ -304,13 +304,18 @@ const CourseDetail = () => {
                             <h2>Course Content</h2>
                             {courseData.curriculum && courseData.curriculum.length > 0 ? (
                                 <div className="curriculum-list">
-                                    {courseData.curriculum.map((week, index) => (
+                                    {courseData.curriculum.map((section, index) => (
                                         <div key={index} className="curriculum-item">
-                                            <div className="week-header">
-                                                {/* Add Week here */}
-                                                <h3>{week.week}: {week.title}</h3>
-                                                {/* <span className="lesson-count">{week.lessons} lessons</span> */}
+                                            <div className="section-header">
+                                                <h3>{section.section}</h3>
                                             </div>
+                                            {section.topics && section.topics.length > 0 && (
+                                                <ul className="topics-list">
+                                                    {section.topics.map((topic, topicIndex) => (
+                                                        <li key={topicIndex} className="topic-item">{topic}</li>
+                                                    ))}
+                                                </ul>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
