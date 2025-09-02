@@ -6,6 +6,8 @@ import {
     getNextAvailableBatch,
     formatBatchDateRange,
     getBatchStatusText,
+    getBatchDisplayName,
+    getBatchShortName,
     isBatchNearlyFull,
     isBatchFull,
     getBatchAvailableSeats
@@ -62,8 +64,8 @@ const BatchInfo = ({ course, enrollmentCount = 0, showDetailed = false, selected
                         <div key={batch.batchNumber} className={`batch-detail ${batch.status}`}>
                             <div className="batch-summary">
                                 <div className="batch-title">
-                                    <span className={`batch-number batch-${batch.batchNumber}`}>
-                                        Batch {batch.batchNumber}
+                                    <span className={`batch-number batch-${batch.batchNumber}`} title={`Batch ${batch.batchNumber}`}>
+                                        {getBatchShortName(batch)}
                                     </span>
                                     <span className={`batch-status-text ${batch.status}`}>
                                         {getBatchStatusText(batch)}
@@ -123,8 +125,8 @@ const BatchInfo = ({ course, enrollmentCount = 0, showDetailed = false, selected
         <div className="batch-info">
             <div className={`batch-status ${displayBatch.status} ${isFull ? 'full' : isNearlyFull ? 'nearly-full' : ''}`}>
                 <div className="batch-main">
-                    <span className={`batch-number batch-${displayBatch.batchNumber}`}>
-                        Batch {displayBatch.batchNumber}
+                    <span className={`batch-number batch-${displayBatch.batchNumber}`} title={`Batch ${displayBatch.batchNumber}`}>
+                        {getBatchShortName(displayBatch)}
                     </span>
                     <span className={`batch-status-text ${displayBatch.status}`}>
                         {getBatchStatusText(displayBatch)}

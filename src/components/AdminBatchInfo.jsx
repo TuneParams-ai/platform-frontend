@@ -7,7 +7,9 @@ import {
     getUpcomingBatches,
     getActiveBatches,
     formatBatchDateRange,
-    getBatchStatusText
+    getBatchStatusText,
+    getBatchDisplayName,
+    getBatchShortName
 } from '../data/coursesData';
 
 const AdminBatchInfo = ({ course, className = '' }) => {
@@ -94,7 +96,9 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                     <h4>🎯 Auto-Enrollment Target</h4>
                     <div className="batch-card highlight">
                         <div className="batch-card-header">
-                            <span className="batch-number">Batch {nextAvailableBatch.batchNumber}</span>
+                            <span className="batch-number" title={`Batch ${nextAvailableBatch.batchNumber}`}>
+                                {getBatchDisplayName(nextAvailableBatch)}
+                            </span>
                             <span className={`batch-status batch-status-${nextAvailableBatch.status}`}>
                                 {getBatchStatusText(nextAvailableBatch)}
                             </span>
@@ -134,7 +138,9 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                         return (
                             <div key={batch.batchNumber} className="batch-card">
                                 <div className="batch-card-header">
-                                    <span className="batch-number">Batch {batch.batchNumber}</span>
+                                    <span className="batch-number" title={`Batch ${batch.batchNumber}`}>
+                                        {getBatchShortName(batch)}
+                                    </span>
                                     <span className={`batch-status batch-status-${batch.status}`}>
                                         {getBatchStatusText(batch)}
                                     </span>

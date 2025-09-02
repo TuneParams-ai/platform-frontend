@@ -54,9 +54,10 @@ export const coursesData = [
         batches: [
             {
                 batchNumber: 1,
-                startDate: "2025-10-1",
-                endDate: "2026-01-15",
-                status: "upcoming", // upcoming, active, completed
+                batchName: "Alpha",
+                startDate: "2025-06-01",
+                endDate: "2025-08-15",
+                status: "completed", // upcoming, active, completed
                 maxCapacity: 30,
                 enrollmentCount: 0,
                 classLinks: {
@@ -67,9 +68,10 @@ export const coursesData = [
             },
             {
                 batchNumber: 2,
-                startDate: "2026-02-1",
-                endDate: "2026-05-15",
-                status: "upcoming",
+                batchName: "Beta",
+                startDate: "2025-10-1",
+                endDate: "2026-01-15",
+                status: "active",
                 maxCapacity: 30,
                 enrollmentCount: 0,
                 classLinks: {
@@ -173,6 +175,7 @@ export const coursesData = [
         batches: [
             {
                 batchNumber: 1,
+                batchName: "Elite AI Masters 2026",
                 startDate: "2026-02-1",
                 endDate: "2026-04-30",
                 status: "upcoming",
@@ -403,4 +406,30 @@ export const formatBatchDateRange = (batch) => {
         year: 'numeric'
     });
     return `${startDate} - ${endDate}`;
+};
+
+// Get batch display name (custom name or fallback to "Batch {number}")
+export const getBatchDisplayName = (batch) => {
+    if (batch.batchName && batch.batchName.trim()) {
+        return batch.batchName;
+    }
+    return `Batch ${batch.batchNumber}`;
+};
+
+// Get short batch display name for compact spaces
+export const getBatchShortName = (batch) => {
+    if (batch.batchName && batch.batchName.trim()) {
+        // If custom name is long, show first few words + batch number
+        const words = batch.batchName.split(' ');
+        if (batch.batchName.length > 20) {
+            return `${words.slice(0, 2).join(' ')} (${batch.batchNumber})`;
+        }
+        return batch.batchName;
+    }
+    return `Batch ${batch.batchNumber}`;
+};
+
+// Get batch identifier for URLs and technical use
+export const getBatchIdentifier = (batch) => {
+    return `batch${batch.batchNumber}`;
 };

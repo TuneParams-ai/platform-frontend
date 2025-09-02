@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { findCourseById, getBatchByNumber, getBatchShortName } from '../data/coursesData';
 
 const AdminEnrollments = () => {
     const [enrollments, setEnrollments] = useState([]);
@@ -54,10 +55,25 @@ const AdminEnrollments = () => {
     filteredEnrollments.forEach(enrollment => {
         const key = `${enrollment.courseId}_batch${enrollment.batchNumber || 'legacy'}`;
         if (!batchSummary[key]) {
+            // Get custom batch name if available
+            let batchDisplayName = enrollment.batchNumber || 'Legacy';
+            if (enrollment.batchNumber) {
+                const course = findCourseById(enrollment.courseId);
+                if (course) {
+                    const batch = getBatchByNumber(course, enrollment.batchNumber);
+                    if (batch) {
+                        batchDisplayName = getBatchShortName(batch);
+                    } else {
+                        batchDisplayName = `Batch ${enrollment.batchNumber}`;
+                    }
+                }
+            }
+
             batchSummary[key] = {
                 courseId: enrollment.courseId,
                 courseTitle: enrollment.courseTitle,
                 batchNumber: enrollment.batchNumber || 'Legacy',
+                batchDisplayName: batchDisplayName,
                 count: 0,
                 totalRevenue: 0
             };
@@ -140,8 +156,8 @@ const AdminEnrollments = () => {
                                     <tr key={index}>
                                         <td>{summary.courseTitle || summary.courseId}</td>
                                         <td>
-                                            <span className={`batch-badge batch-${summary.batchNumber}`}>
-                                                {summary.batchNumber}
+                                            <span className={`batch-badge batch-${summary.batchNumber}`} title={`Batch ${summary.batchNumber}`}>
+                                                {summary.batchDisplayName}
                                             </span>
                                         </td>
                                         <td>{summary.count}</td>
@@ -184,7 +200,17 @@ const AdminEnrollments = () => {
                                 </td>
                                 <td>
                                     <span className={`batch-badge batch-${enrollment.batchNumber || 'legacy'}`}>
-                                        {enrollment.batchNumber ? `Batch ${enrollment.batchNumber}` : 'Legacy'}
+                                        {(() => {
+                                            if (!enrollment.batchNumber) return 'Legacy';
+                                            const course = findCourseById(enrollment.courseId);
+                                            if (course) {
+                                                const batch = getBatchByNumber(course, enrollment.batchNumber);
+                                                if (batch) {
+                                                    return getBatchShortName(batch);
+                                                }
+                                            }
+                                            return `Batch ${enrollment.batchNumber}`;
+                                        })()}
                                     </span>
                                 </td>
                                 <td className="user-id">
