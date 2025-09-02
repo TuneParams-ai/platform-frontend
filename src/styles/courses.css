@@ -51,8 +51,8 @@
     position: relative;
     overflow: hidden;
     min-height: 480px;
-    width: 450px;
-    max-width: 350px;
+    width: 400px;
+    max-width: 400px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -305,8 +305,22 @@
 }
 
 /* Responsive Design */
-/* Tablet View (768px - 1024px) */
-@media (max-width: 1024px) and (min-width: 769px) {
+/* Medium screens that need single column (770px - 840px) */
+@media (max-width: 840px) and (min-width: 770px) {
+    .courses-grid {
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .course-card {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+}
+
+/* Tablet View (841px - 1024px) */
+@media (max-width: 1024px) and (min-width: 841px) {
     .courses-page-container {
         padding: 35px 25px;
     }
@@ -316,12 +330,13 @@
     }
 
     .courses-grid {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 25px;
     }
 
     .course-card {
         padding: 22px;
+        width: 380px;
+        max-width: 380px;
     }
 
     .course-image {
@@ -341,7 +356,7 @@
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 769px) {
     .courses-page-container {
         padding: 30px 10px;
     }
