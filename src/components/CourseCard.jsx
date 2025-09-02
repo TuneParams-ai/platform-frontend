@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { useCourseStats, getDisplayRating, formatEnrollmentCount } from "../hooks/useCourseStats";
-import { isCourseNearlyFull, isCourseFull, isComingSoon } from "../data/coursesData";
+import { useCourseStats } from "../hooks/useCourseStats";
+import { isComingSoon } from "../data/coursesData";
 import StarRating from "./StarRating";
 import "../styles/course-image.css";
 
@@ -46,17 +46,8 @@ const CourseCard = ({ course, isEnrolled = false }) => {
   const currentEnrollments = statsLoading ? course.students || 0 : stats.enrollmentCount;
   const maxCapacity = course.maxCapacity || 0;
 
-  // Calculate course status based on dynamic enrollment data
-  const courseWithDynamicStats = {
-    ...course,
-    students: currentEnrollments,
-    rating: statsLoading ? course.rating : (stats.hasReviews ? stats.averageRating : course.rating)
-  };
-
   const nearlyFull = !comingSoon && maxCapacity > 0 && (currentEnrollments / maxCapacity) >= 0.8;
-  const full = !comingSoon && maxCapacity > 0 && currentEnrollments >= maxCapacity;
-
-  // Helper function to display values with "Coming Soon" fallback
+  const full = !comingSoon && maxCapacity > 0 && currentEnrollments >= maxCapacity;  // Helper function to display values with "Coming Soon" fallback
   const displayValue = (value, fallback = "TBD") => {
     if (comingSoon && (value === "TBD" || value === "N/A" || value === null || value === 0)) {
       return "Coming Soon";

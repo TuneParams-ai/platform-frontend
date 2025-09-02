@@ -40,10 +40,8 @@ export const coursesData = [
         level: "Beginner level",
         duration: "14 weeks",
         lessons: 25,
-        students: 8,
         maxCapacity: 30,
         nextBatchDate: "2025-10-1",
-        rating: 5,
         price: 299,
         originalPrice: 899,
         icon: "🤖",
@@ -131,10 +129,8 @@ export const coursesData = [
         level: "Advanced",
         duration: "12 weeks",
         lessons: 20,
-        students: 0,
         maxCapacity: 20,
         nextBatchDate: "2026-02-1",
-        rating: "N/A",
         price: 499,
         originalPrice: 1299,
         icon: "🚀",
@@ -242,15 +238,15 @@ export const getCategories = () => {
 };
 
 // Helper function to check if a course is nearly full (80% or more capacity)
-export const isCourseNearlyFull = (course, dynamicEnrollmentCount = null) => {
-    const students = dynamicEnrollmentCount !== null ? dynamicEnrollmentCount : course.students;
+export const isCourseNearlyFull = (course, dynamicEnrollmentCount = 0) => {
+    const students = dynamicEnrollmentCount;
     if (!students || !course.maxCapacity) return false;
     return (students / course.maxCapacity) >= 0.8;
 };
 
 // Helper function to check if a course is full
-export const isCourseFull = (course, dynamicEnrollmentCount = null) => {
-    const students = dynamicEnrollmentCount !== null ? dynamicEnrollmentCount : course.students;
+export const isCourseFull = (course, dynamicEnrollmentCount = 0) => {
+    const students = dynamicEnrollmentCount;
     if (!students || !course.maxCapacity) return false;
     return students >= course.maxCapacity;
 };
@@ -261,8 +257,8 @@ export const isComingSoon = (course) => {
 };
 
 // Helper function to get available seats count
-export const getAvailableSeats = (course, dynamicEnrollmentCount = null) => {
-    const students = dynamicEnrollmentCount !== null ? dynamicEnrollmentCount : course.students;
-    if (!students || !course.maxCapacity) return "N/A";
+export const getAvailableSeats = (course, dynamicEnrollmentCount = 0) => {
+    const students = dynamicEnrollmentCount;
+    if (!course.maxCapacity) return "N/A";
     return course.maxCapacity - students;
 };

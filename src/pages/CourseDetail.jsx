@@ -89,10 +89,8 @@ const CourseDetail = () => {
         return value ? value : defaultValue;
     };
 
-    // Get current enrollment count and rating from dynamic stats
+    // Get current enrollment count from dynamic stats
     const currentEnrollments = statsLoading ? (courseData.students || 0) : stats.enrollmentCount;
-    const currentRating = statsLoading ? courseData.rating : (stats.hasReviews ? stats.averageRating : courseData.rating);
-    const reviewCount = statsLoading ? 0 : stats.reviewCount;
     const comingSoon = isComingSoon(courseData);
 
     // If course not found, show course not found message
