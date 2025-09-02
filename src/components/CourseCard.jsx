@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useCourseStats, getDisplayRating, formatEnrollmentCount } from "../hooks/useCourseStats";
 import { isCourseNearlyFull, isCourseFull, isComingSoon } from "../data/coursesData";
+import StarRating from "./StarRating";
 import "../styles/course-image.css";
 
 const CourseCard = ({ course, isEnrolled = false }) => {
@@ -9,6 +11,9 @@ const CourseCard = ({ course, isEnrolled = false }) => {
   const { user } = useAuth();
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Get dynamic course statistics
+  const { stats, loading: statsLoading } = useCourseStats(course.id, false);
 
   const handleEnroll = (e) => {
     e.stopPropagation(); // Prevent card click when clicking enroll
@@ -35,9 +40,21 @@ const CourseCard = ({ course, isEnrolled = false }) => {
     setImageLoaded(true);
   };
 
-  const nearlyFull = isCourseNearlyFull(course);
-  const full = isCourseFull(course);
   const comingSoon = isComingSoon(course);
+
+  // Use dynamic stats for course capacity calculations
+  const currentEnrollments = statsLoading ? course.students || 0 : stats.enrollmentCount;
+  const maxCapacity = course.maxCapacity || 0;
+
+  // Calculate course status based on dynamic enrollment data
+  const courseWithDynamicStats = {
+    ...course,
+    students: currentEnrollments,
+    rating: statsLoading ? course.rating : (stats.hasReviews ? stats.averageRating : course.rating)
+  };
+
+  const nearlyFull = !comingSoon && maxCapacity > 0 && (currentEnrollments / maxCapacity) >= 0.8;
+  const full = !comingSoon && maxCapacity > 0 && currentEnrollments >= maxCapacity;
 
   // Helper function to display values with "Coming Soon" fallback
   const displayValue = (value, fallback = "TBD") => {
@@ -91,9 +108,21 @@ const CourseCard = ({ course, isEnrolled = false }) => {
       <div className="course-stats">
         <span className="course-stat">📚 {displayValue(course.lessons)} lessons</span>
         <span className="course-stat">
-          👥 {comingSoon ? "Coming Soon" : `${course.students}/${course.maxCapacity} seats`}
+          👥 {comingSoon ? "Coming Soon" :
+            statsLoading ? `${course.students || 0}/${course.maxCapacity || 0} seats` :
+              `${currentEnrollments}/${maxCapacity} seats`}
         </span>
-        <span className="course-stat">⭐ {displayValue(course.rating)}/5</span>
+        <div className="course-stat course-rating-stat">
+          {comingSoon ? "Coming Soon" : (
+            <StarRating
+              rating={statsLoading ? course.rating : (stats.hasReviews ? stats.averageRating : course.rating)}
+              reviewCount={statsLoading ? 0 : stats.reviewCount}
+              showReviewCount={!statsLoading && stats.hasReviews}
+              size="small"
+              showNumeric={false}
+            />
+          )}
+        </div>
       </div>
       <div className="course-price">
         {course.originalPrice && !comingSoon && (

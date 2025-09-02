@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { useCourseStats } from "../hooks/useCourseStats";
 import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import PayPalCheckout from "../components/PayPalCheckout";
@@ -28,6 +29,9 @@ const CourseDetail = () => {
         processEnrollment,
         clearError
     } = useCourseAccess(courseId);
+
+    // Get dynamic course statistics
+    const { stats, loading: statsLoading } = useCourseStats(courseId, true); // Use real-time updates
 
     // Find the course data based on courseId (now supports alphanumeric IDs)
     const courseData = findCourseById(courseId);
@@ -84,6 +88,12 @@ const CourseDetail = () => {
         return value ? value : defaultValue;
     };
 
+    // Get current enrollment count and rating from dynamic stats
+    const currentEnrollments = statsLoading ? (courseData.students || 0) : stats.enrollmentCount;
+    const currentRating = statsLoading ? courseData.rating : (stats.hasReviews ? stats.averageRating : courseData.rating);
+    const reviewCount = statsLoading ? 0 : stats.reviewCount;
+    const comingSoon = isComingSoon(courseData);
+
     // If course not found, show course not found message
     if (!courseData) {
         return (
@@ -134,9 +144,8 @@ const CourseDetail = () => {
         setShowPayPal(true);
     };
 
-    const courseFull = isCourseFull(courseData);
-    const availableSeats = getAvailableSeats(courseData);
-    const comingSoon = isComingSoon(courseData);
+    const courseFull = isCourseFull(courseData, currentEnrollments);
+    const availableSeats = getAvailableSeats(courseData, currentEnrollments);
 
     return (
         <>
@@ -167,7 +176,7 @@ const CourseDetail = () => {
                                             ⭐ {displayValue(courseData.rating)}/5
                                         </span> */}
                                         <span className="course-enrollment-detail">
-                                            👥 {displayValue(courseData.students)}/{displayValue(courseData.maxCapacity)} seats
+                                            👥 {comingSoon ? "Coming Soon" : `${currentEnrollments}/${displayValue(courseData.maxCapacity)} seats`}
                                         </span>
                                     </div>
                                 </div>
@@ -370,7 +379,7 @@ const CourseDetail = () => {
                                     <strong>Total Lessons:</strong> {displayValue(courseData.lessons)}
                                 </div>
                                 <div className="info-item">
-                                    <strong>Available Seats:</strong> {displayValue(courseData.students)}/{displayValue(courseData.maxCapacity)}
+                                    <strong>Available Seats:</strong> {comingSoon ? "Coming Soon" : `${currentEnrollments}/${displayValue(courseData.maxCapacity)}`}
                                 </div>
                                 <div className="info-item">
                                     <strong>Next Batch:</strong> {courseData.nextBatchDate ?

@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import CourseCard from "../components/CourseCard";
 import { coursesData, getCategories } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
+import { useMultipleCourseStats } from "../hooks/useCourseStats";
 import "../styles/courses.css";
 
 const Courses = () => {
@@ -11,6 +12,10 @@ const Courses = () => {
 
   // Get enrollment data to show enrollment status (only if user is logged in)
   const { allEnrollments } = useCourseAccess();
+
+  // Get dynamic course statistics for all courses
+  const courseIds = coursesData.map(course => course.id);
+  const { courseStats, loading: statsLoading } = useMultipleCourseStats(courseIds);
 
   // Get filter categories dynamically
   const filterCategories = getCategories();

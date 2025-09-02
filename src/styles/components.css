@@ -1,6 +1,82 @@
 /* components.css - Unified reusable component styles */
 
 /* =========================
+   STAR RATING COMPONENT
+   ========================= */
+
+.star-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+}
+
+.star-rating.small {
+    font-size: 0.8rem;
+}
+
+.star-rating.medium {
+    font-size: 1rem;
+}
+
+.star-rating.large {
+    font-size: 1.2rem;
+}
+
+.stars-container {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.star {
+    color: #ddd;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+
+.star.filled {
+    color: #ffc107;
+}
+
+.star.half {
+    color: #ffc107;
+}
+
+.star.small {
+    font-size: 0.8rem;
+}
+
+.star.medium {
+    font-size: 1rem;
+}
+
+.star.large {
+    font-size: 1.2rem;
+}
+
+.rating-numeric {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.9em;
+}
+
+.review-count {
+    color: var(--secondary-text-color);
+    font-size: 0.85em;
+}
+
+.no-rating {
+    opacity: 0.7;
+}
+
+.no-rating-text {
+    color: var(--secondary-text-color);
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+/* =========================
    BUTTON COMPONENTS
    ========================= */
 

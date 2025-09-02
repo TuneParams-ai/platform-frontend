@@ -242,15 +242,17 @@ export const getCategories = () => {
 };
 
 // Helper function to check if a course is nearly full (80% or more capacity)
-export const isCourseNearlyFull = (course) => {
-    if (!course.students || !course.maxCapacity) return false;
-    return (course.students / course.maxCapacity) >= 0.8;
+export const isCourseNearlyFull = (course, dynamicEnrollmentCount = null) => {
+    const students = dynamicEnrollmentCount !== null ? dynamicEnrollmentCount : course.students;
+    if (!students || !course.maxCapacity) return false;
+    return (students / course.maxCapacity) >= 0.8;
 };
 
 // Helper function to check if a course is full
-export const isCourseFull = (course) => {
-    if (!course.students || !course.maxCapacity) return false;
-    return course.students >= course.maxCapacity;
+export const isCourseFull = (course, dynamicEnrollmentCount = null) => {
+    const students = dynamicEnrollmentCount !== null ? dynamicEnrollmentCount : course.students;
+    if (!students || !course.maxCapacity) return false;
+    return students >= course.maxCapacity;
 };
 
 // Helper function to check if a course is coming soon
@@ -259,7 +261,8 @@ export const isComingSoon = (course) => {
 };
 
 // Helper function to get available seats count
-export const getAvailableSeats = (course) => {
-    if (!course.students || !course.maxCapacity) return "N/A";
-    return course.maxCapacity - course.students;
+export const getAvailableSeats = (course, dynamicEnrollmentCount = null) => {
+    const students = dynamicEnrollmentCount !== null ? dynamicEnrollmentCount : course.students;
+    if (!students || !course.maxCapacity) return "N/A";
+    return course.maxCapacity - students;
 };
