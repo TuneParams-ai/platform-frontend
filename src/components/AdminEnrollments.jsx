@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { findCourseById, getBatchByNumber, getBatchShortName } from '../data/coursesData';
+import ManualEnrollmentModal from './ManualEnrollmentModal';
 
 const AdminEnrollments = () => {
     const [enrollments, setEnrollments] = useState([]);
@@ -11,6 +12,7 @@ const AdminEnrollments = () => {
     const [error, setError] = useState(null);
     const [selectedBatch, setSelectedBatch] = useState('all');
     const [selectedCourse, setSelectedCourse] = useState('all');
+    const [showManualEnrollmentModal, setShowManualEnrollmentModal] = useState(false);
 
     const loadEnrollments = async () => {
         setLoading(true);
@@ -38,6 +40,13 @@ const AdminEnrollments = () => {
     useEffect(() => {
         loadEnrollments();
     }, []);
+
+    // Handle successful manual enrollment
+    const handleManualEnrollmentSuccess = (result) => {
+        // Reload enrollments to show the new enrollment
+        loadEnrollments();
+        console.log('Manual enrollment successful:', result);
+    };
 
     // Filter enrollments based on selected filters
     const filteredEnrollments = enrollments.filter(enrollment => {
@@ -86,29 +95,46 @@ const AdminEnrollments = () => {
         <div>
             <div className="admin-section-header">
                 <h2>Course Enrollments ({filteredEnrollments.length})</h2>
-                <button
-                    onClick={loadEnrollments}
-                    className="admin-refresh-button"
-                    disabled={loading}
-                >
-                    {loading ? 'Loading...' : '🔄 Refresh'}
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                        onClick={() => setShowManualEnrollmentModal(true)}
+                        className="admin-add-button"
+                        style={{
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '14px',
+                            fontWeight: '600'
+                        }}
+                    >
+                        ➕ Manual Enroll
+                    </button>
+                    <button
+                        onClick={loadEnrollments}
+                        className="admin-refresh-button"
+                        disabled={loading}
+                    >
+                        {loading ? 'Loading...' : '🔄 Refresh'}
+                    </button>
+                </div>
             </div>
 
             {error && <p className="admin-error">Error: {error}</p>}
 
             {/* Filters */}
-            <div className="admin-filters" style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+            <div className="admin-filters">
                 <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                     <div>
-                        <label htmlFor="course-filter" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                        <label htmlFor="course-filter">
                             Filter by Course:
                         </label>
                         <select
                             id="course-filter"
                             value={selectedCourse}
                             onChange={(e) => setSelectedCourse(e.target.value)}
-                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
                         >
                             <option value="all">All Courses</option>
                             {uniqueCourses.map(courseId => (
@@ -117,14 +143,13 @@ const AdminEnrollments = () => {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="batch-filter" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
+                        <label htmlFor="batch-filter">
                             Filter by Batch:
                         </label>
                         <select
                             id="batch-filter"
                             value={selectedBatch}
                             onChange={(e) => setSelectedBatch(e.target.value)}
-                            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
                         >
                             <option value="all">All Batches</option>
                             {uniqueBatches.map(batchNumber => (
@@ -222,7 +247,7 @@ const AdminEnrollments = () => {
                                             style={{
                                                 width: '60px',
                                                 height: '8px',
-                                                backgroundColor: '#e0e0e0',
+                                                backgroundColor: 'rgba(29, 126, 153, 0.2)',
                                                 borderRadius: '4px',
                                                 overflow: 'hidden'
                                             }}
@@ -273,32 +298,35 @@ const AdminEnrollments = () => {
                 }
                 
                 .batch-1 {
-                    background-color: #e3f2fd;
-                    color: #1976d2;
+                    background-color: rgba(59, 130, 246, 0.2);
+                    color: #60a5fa;
+                    border: 1px solid rgba(59, 130, 246, 0.3);
                 }
                 
                 .batch-2 {
-                    background-color: #f3e5f5;
-                    color: #7b1fa2;
+                    background-color: rgba(168, 85, 247, 0.2);
+                    color: #c084fc;
+                    border: 1px solid rgba(168, 85, 247, 0.3);
                 }
                 
                 .batch-3 {
-                    background-color: #e8f5e8;
-                    color: #388e3c;
+                    background-color: rgba(34, 197, 94, 0.2);
+                    color: #4ade80;
+                    border: 1px solid rgba(34, 197, 94, 0.3);
                 }
                 
                 .batch-legacy {
-                    background-color: #fafafa;
-                    color: #616161;
-                    border: 1px solid #e0e0e0;
+                    background-color: rgba(107, 114, 128, 0.2);
+                    color: var(--secondary-text-color);
+                    border: 1px solid rgba(107, 114, 128, 0.3);
                 }
                 
                 .admin-filters {
-                    border: 1px solid #e0e0e0;
+                    border: 1px solid rgba(29, 126, 153, 0.2);
                 }
                 
                 .batch-summary {
-                    border-top: 2px solid #e0e0e0;
+                    border-top: 2px solid var(--primary-color);
                     padding-top: 20px;
                 }
                 
@@ -307,6 +335,13 @@ const AdminEnrollments = () => {
                     color: #333;
                 }
             `}</style>
+
+            {/* Manual Enrollment Modal */}
+            <ManualEnrollmentModal
+                isOpen={showManualEnrollmentModal}
+                onClose={() => setShowManualEnrollmentModal(false)}
+                onSuccess={handleManualEnrollmentSuccess}
+            />
         </div>
     );
 };

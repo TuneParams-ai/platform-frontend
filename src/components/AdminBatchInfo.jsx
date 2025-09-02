@@ -178,12 +178,12 @@ const AdminBatchInfo = ({ course, className = '' }) => {
 
             <style jsx>{`
                 .admin-batch-info {
-                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-                    border: 2px solid #007bff;
+                    background: rgba(29, 126, 153, 0.1);
+                    border: 2px solid var(--primary-color);
                     border-radius: 12px;
                     padding: 20px;
                     margin: 20px 0;
-                    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
+                    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.2);
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
                 }
 
@@ -193,12 +193,12 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                     align-items: center;
                     margin-bottom: 20px;
                     padding-bottom: 15px;
-                    border-bottom: 2px solid #dee2e6;
+                    border-bottom: 2px solid rgba(29, 126, 153, 0.3);
                 }
 
                 .admin-batch-header h3 {
                     margin: 0;
-                    color: #007bff;
+                    color: var(--primary-color);
                     font-size: 18px;
                 }
 
@@ -208,7 +208,7 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                 }
 
                 .batch-count {
-                    background: #007bff;
+                    background: var(--primary-color);
                     color: white;
                     padding: 4px 10px;
                     border-radius: 15px;
@@ -218,18 +218,18 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                 }
 
                 .admin-batch-error {
-                    background: #f8d7da;
-                    color: #721c24;
+                    background: rgba(255, 107, 107, 0.1);
+                    color: #ff6b6b;
                     padding: 12px;
                     border-radius: 6px;
                     margin-bottom: 15px;
-                    border: 1px solid #f5c6cb;
+                    border: 1px solid rgba(255, 107, 107, 0.3);
                 }
 
                 .admin-batch-loading {
                     text-align: center;
                     padding: 20px;
-                    color: #6c757d;
+                    color: var(--secondary-text-color);
                 }
 
                 .next-enrollment-batch {
@@ -249,21 +249,21 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                 }
 
                 .batch-card {
-                    background: white;
-                    border: 1px solid #dee2e6;
+                    background: rgba(29, 126, 153, 0.1);
+                    border: 1px solid rgba(29, 126, 153, 0.3);
                     border-radius: 8px;
                     padding: 15px;
                     transition: all 0.3s ease;
                 }
 
                 .batch-card:hover {
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    box-shadow: 0 4px 8px rgba(29, 126, 153, 0.2);
                     transform: translateY(-2px);
                 }
 
                 .batch-card.highlight {
-                    border: 2px solid #28a745;
-                    background: linear-gradient(135deg, #ffffff 0%, #f8fff9 100%);
+                    border: 2px solid #4ade80;
+                    background: rgba(74, 222, 128, 0.1);
                 }
 
                 .batch-card-header {
@@ -288,23 +288,23 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                 }
 
                 .batch-status-upcoming {
-                    background: #cce5ff;
-                    color: #0066cc;
+                    background: rgba(59, 130, 246, 0.2);
+                    color: #60a5fa;
                 }
 
                 .batch-status-active {
-                    background: #d4edda;
-                    color: #155724;
+                    background: rgba(34, 197, 94, 0.2);
+                    color: #4ade80;
                 }
 
                 .batch-status-completed {
-                    background: #f8d7da;
-                    color: #721c24;
+                    background: rgba(255, 107, 107, 0.2);
+                    color: #ff6b6b;
                 }
 
                 .batch-card-details {
                     font-size: 13px;
-                    color: #6c757d;
+                    color: var(--secondary-text-color);
                 }
 
                 .batch-dates {
@@ -326,7 +326,7 @@ const AdminBatchInfo = ({ course, className = '' }) => {
 
                 .capacity-bar {
                     height: 6px;
-                    background: #e9ecef;
+                    background: rgba(29, 126, 153, 0.2);
                     border-radius: 3px;
                     overflow: hidden;
                     margin-bottom: 10px;
@@ -334,7 +334,7 @@ const AdminBatchInfo = ({ course, className = '' }) => {
 
                 .capacity-fill {
                     height: 100%;
-                    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+                    background: linear-gradient(90deg, #4ade80 0%, var(--primary-color) 100%);
                     transition: width 0.3s ease;
                 }
 
@@ -348,7 +348,7 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                 }
 
                 .link-indicator {
-                    background: #e9ecef;
+                    background: rgba(29, 126, 153, 0.2);
                     padding: 2px 6px;
                     border-radius: 8px;
                     font-size: 10px;

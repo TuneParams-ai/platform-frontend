@@ -507,3 +507,100 @@ export const updateCourseProgress = async (userId, courseId, progress, batchNumb
         return { success: false, error: error.message };
     }
 };
+
+/**
+ * Manually enroll a user in a course (admin function)
+ * @param {string} userId - Firebase user ID
+ * @param {string} courseId - Course identifier
+ * @param {string} adminUserId - Admin user ID performing the enrollment
+ * @param {number} batchNumber - Optional specific batch number (defaults to next available)
+ * @param {string} notes - Optional notes about the manual enrollment
+ * @returns {Promise<Object>} Success/error response
+ */
+export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumber = null, notes = '') => {
+    try {
+        if (!db) {
+            throw new Error('Firestore not initialized');
+        }
+
+        // Get course data to determine batch
+        const course = findCourseById(courseId);
+        if (!course) {
+            throw new Error(`Course not found: ${courseId}`);
+        }
+
+        // Determine target batch
+        let targetBatch;
+        if (batchNumber) {
+            targetBatch = course.batches?.find(b => b.batchNumber === batchNumber);
+            if (!targetBatch) {
+                throw new Error(`Batch ${batchNumber} not found for course ${courseId}`);
+            }
+        } else {
+            targetBatch = getNextAvailableBatch(course);
+            if (!targetBatch) {
+                throw new Error('No available batches for enrollment');
+            }
+        }
+
+        // Check if user is already enrolled in this batch
+        const existingEnrollmentId = `${userId}_${courseId}_batch${targetBatch.batchNumber}`;
+        const existingEnrollmentRef = doc(db, 'enrollments', existingEnrollmentId);
+        const existingEnrollmentDoc = await getDoc(existingEnrollmentRef);
+
+        if (existingEnrollmentDoc.exists()) {
+            throw new Error(`User is already enrolled in ${course.title} - Batch ${targetBatch.batchNumber}`);
+        }
+
+        const enrollment = {
+            userId: userId,
+            courseId: courseId,
+            courseTitle: course.title,
+
+            // Batch information
+            batchNumber: targetBatch.batchNumber,
+            batchStartDate: targetBatch.startDate,
+            batchEndDate: targetBatch.endDate,
+            batchStatus: targetBatch.status,
+
+            // Enrollment status
+            status: 'enrolled',
+            progress: 0,
+
+            // Manual enrollment details
+            enrollmentType: 'manual',
+            manualEnrollmentBy: adminUserId,
+            manualEnrollmentNotes: notes,
+            amountPaid: 0, // No payment for manual enrollment
+
+            // Timestamps
+            enrolledAt: serverTimestamp(),
+            lastAccessed: null,
+            completedAt: null,
+
+            // Metadata
+            paymentMethod: 'manual',
+            enrollmentSource: 'admin_manual'
+        };
+
+        // Create enrollment record
+        await setDoc(existingEnrollmentRef, enrollment);
+
+        console.log('Manual enrollment created:', existingEnrollmentId);
+        return {
+            success: true,
+            enrollmentId: existingEnrollmentId,
+            batchNumber: targetBatch.batchNumber,
+            batchInfo: {
+                startDate: targetBatch.startDate,
+                endDate: targetBatch.endDate,
+                status: targetBatch.status,
+                batchName: targetBatch.batchName
+            }
+        };
+
+    } catch (error) {
+        console.error('Error in manual enrollment:', error);
+        return { success: false, error: error.message };
+    }
+};
