@@ -16,6 +16,7 @@ import { db } from '../config/firebase';
 import { getUserProfile } from './userService';
 import { sendEnrollmentConfirmationEmail } from './emailService';
 import { recordEnrollmentEmail } from './emailTrackingService';
+import { findCourseById, getNextAvailableBatch } from '../data/coursesData';
 
 /**
  * Records a successful payment in Firestore
@@ -78,6 +79,7 @@ export const recordPayment = async (paymentData, userId) => {
 
 /**
  * Enrolls a user in a course after successful payment
+ * Automatically assigns user to the next available batch
  * @param {string} userId - Firebase user ID
  * @param {string} courseId - Course identifier
  * @param {Object} paymentData - Payment details
@@ -89,10 +91,28 @@ export const enrollUserInCourse = async (userId, courseId, paymentData) => {
             throw new Error('Firestore not initialized');
         }
 
+        // Get course data to determine next available batch
+        const course = findCourseById(courseId);
+        if (!course) {
+            throw new Error(`Course not found: ${courseId}`);
+        }
+
+        // Automatically determine the next available batch
+        const nextBatch = getNextAvailableBatch(course);
+        if (!nextBatch) {
+            throw new Error('No available batches for enrollment');
+        }
+
         const enrollment = {
             userId: userId,
             courseId: courseId,
-            courseTitle: paymentData.courseTitle,
+            courseTitle: paymentData.courseTitle || course.title,
+
+            // Batch information - automatically assigned
+            batchNumber: nextBatch.batchNumber,
+            batchStartDate: nextBatch.startDate,
+            batchEndDate: nextBatch.endDate,
+            batchStatus: nextBatch.status,
 
             // Enrollment status
             status: 'enrolled',
@@ -113,14 +133,23 @@ export const enrollUserInCourse = async (userId, courseId, paymentData) => {
             enrollmentSource: 'web_purchase'
         };
 
-        // Use a combination of userId and courseId as document ID to prevent duplicates
-        const enrollmentId = `${userId}_${courseId}`;
+        // Use a combination of userId, courseId, and batchNumber as document ID to prevent duplicates
+        const enrollmentId = `${userId}_${courseId}_batch${nextBatch.batchNumber}`;
         const enrollmentRef = doc(db, 'enrollments', enrollmentId);
 
         await setDoc(enrollmentRef, enrollment);
 
-        console.log('User enrolled in course:', enrollmentId);
-        return { success: true, enrollmentId: enrollmentId };
+        console.log('User enrolled in course:', enrollmentId, 'Batch:', nextBatch.batchNumber);
+        return {
+            success: true,
+            enrollmentId: enrollmentId,
+            batchNumber: nextBatch.batchNumber,
+            batchInfo: {
+                startDate: nextBatch.startDate,
+                endDate: nextBatch.endDate,
+                status: nextBatch.status
+            }
+        };
 
     } catch (error) {
         console.error('Error enrolling user in course:', error);
@@ -132,36 +161,89 @@ export const enrollUserInCourse = async (userId, courseId, paymentData) => {
  * Checks if a user has access to a specific course
  * @param {string} userId - Firebase user ID
  * @param {string} courseId - Course identifier
+ * @param {number} batchNumber - Optional batch number to check specific batch access
  * @returns {Promise<Object>} Access status and enrollment details
  */
-export const checkCourseAccess = async (userId, courseId) => {
+export const checkCourseAccess = async (userId, courseId, batchNumber = null) => {
     try {
         if (!db) {
             return { hasAccess: false, error: 'Firestore not initialized' };
         }
 
-        const enrollmentId = `${userId}_${courseId}`;
-        const enrollmentRef = doc(db, 'enrollments', enrollmentId);
-        const enrollmentDoc = await getDoc(enrollmentRef);
+        // If batch number is specified, check specific batch enrollment
+        if (batchNumber) {
+            const enrollmentId = `${userId}_${courseId}_batch${batchNumber}`;
+            const enrollmentRef = doc(db, 'enrollments', enrollmentId);
+            const enrollmentDoc = await getDoc(enrollmentRef);
 
-        if (enrollmentDoc.exists()) {
-            const enrollment = enrollmentDoc.data();
+            if (enrollmentDoc.exists()) {
+                const enrollment = enrollmentDoc.data();
 
-            // Update last accessed timestamp
-            await updateDoc(enrollmentRef, {
+                // Update last accessed timestamp
+                await updateDoc(enrollmentRef, {
+                    lastAccessed: serverTimestamp()
+                });
+
+                return {
+                    hasAccess: true,
+                    enrollment: {
+                        ...enrollment,
+                        id: enrollmentDoc.id
+                    }
+                };
+            } else {
+                return { hasAccess: false, enrollment: null };
+            }
+        }
+
+        // Check for any enrollment in this course (any batch)
+        const enrollmentsQuery = query(
+            collection(db, 'enrollments'),
+            where('userId', '==', userId),
+            where('courseId', '==', courseId),
+            where('status', '==', 'enrolled')
+        );
+
+        const querySnapshot = await getDocs(enrollmentsQuery);
+
+        if (querySnapshot.empty) {
+            return { hasAccess: false, enrollment: null };
+        }
+
+        // Get the most recent enrollment (in case of multiple batches)
+        let latestEnrollment = null;
+        let latestEnrollmentDoc = null;
+
+        querySnapshot.forEach((doc) => {
+            const enrollment = doc.data();
+            if (!latestEnrollment ||
+                (enrollment.enrolledAt && (!latestEnrollment.enrolledAt ||
+                    enrollment.enrolledAt.toDate() > latestEnrollment.enrolledAt.toDate()))) {
+                latestEnrollment = enrollment;
+                latestEnrollmentDoc = doc;
+            }
+        });
+
+        if (latestEnrollment && latestEnrollmentDoc) {
+            // Update last accessed timestamp for the latest enrollment
+            await updateDoc(latestEnrollmentDoc.ref, {
                 lastAccessed: serverTimestamp()
             });
 
             return {
                 hasAccess: true,
                 enrollment: {
-                    ...enrollment,
-                    id: enrollmentDoc.id
-                }
+                    ...latestEnrollment,
+                    id: latestEnrollmentDoc.id
+                },
+                allEnrollments: querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }))
             };
-        } else {
-            return { hasAccess: false, enrollment: null };
         }
+
+        return { hasAccess: false, enrollment: null };
 
     } catch (error) {
         console.error('Error checking course access:', error);
@@ -239,6 +321,7 @@ export const getUserPayments = async (userId) => {
 
 /**
  * Complete enrollment process with payment recording, course enrollment, and email confirmation
+ * Automatically assigns user to the next available batch
  * @param {Object} paymentData - Payment details from PayPal
  * @param {string} userId - Firebase user ID
  * @returns {Promise<Object>} Complete enrollment result
@@ -253,7 +336,7 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
             throw new Error(`Payment recording failed: ${paymentResult.error}`);
         }
 
-        // Step 2: Enroll user in the course
+        // Step 2: Enroll user in the course (batch automatically determined)
         const enrollmentResult = await enrollUserInCourse(userId, paymentData.courseId, paymentData);
         if (!enrollmentResult.success) {
             throw new Error(`Enrollment failed: ${enrollmentResult.error}`);
@@ -283,6 +366,11 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
             orderId: paymentData.orderID,
             enrollmentId: enrollmentResult.enrollmentId,
             enrollmentDate: enrollmentDate,
+            // Add batch information (automatically assigned)
+            batchNumber: enrollmentResult.batchNumber,
+            batchStartDate: enrollmentResult.batchInfo?.startDate,
+            batchEndDate: enrollmentResult.batchInfo?.endDate,
+            batchStatus: enrollmentResult.batchInfo?.status,
             // Add payment method details
             paymentMethod: 'PayPal',
             payerName: paymentData.payerName, // Keep payer name for payment reconciliation
@@ -293,7 +381,6 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
             fundingSource: paymentData.fundingSource || null
         };
 
-        // Step 5: Send enrollment confirmation email
         // Step 5: Send enrollment confirmation email
         const emailResult = await sendEnrollmentConfirmationEmail(enrollmentEmailData);
 
@@ -323,6 +410,8 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
             success: true,
             paymentRecordId: paymentResult.paymentRecordId,
             enrollmentId: enrollmentResult.enrollmentId,
+            batchNumber: enrollmentResult.batchNumber,
+            batchInfo: enrollmentResult.batchInfo,
             emailSent: emailResult.success,
             emailError: emailResult.success ? null : emailResult.error,
             emailTrackingId: emailTrackingResult?.emailRecordId || null,
@@ -340,16 +429,62 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
  * @param {string} userId - Firebase user ID
  * @param {string} courseId - Course identifier
  * @param {number} progress - Progress percentage (0-100)
+ * @param {number} batchNumber - Optional batch number to update specific batch progress
  * @returns {Promise<Object>} Success/error response
  */
-export const updateCourseProgress = async (userId, courseId, progress) => {
+export const updateCourseProgress = async (userId, courseId, progress, batchNumber = null) => {
     try {
         if (!db) {
             throw new Error('Firestore not initialized');
         }
 
-        const enrollmentId = `${userId}_${courseId}`;
-        const enrollmentRef = doc(db, 'enrollments', enrollmentId);
+        let enrollmentRef;
+
+        if (batchNumber) {
+            // Update specific batch enrollment
+            const enrollmentId = `${userId}_${courseId}_batch${batchNumber}`;
+            enrollmentRef = doc(db, 'enrollments', enrollmentId);
+
+            // Verify the enrollment exists
+            const enrollmentDoc = await getDoc(enrollmentRef);
+            if (!enrollmentDoc.exists()) {
+                throw new Error(`No enrollment found for batch ${batchNumber}`);
+            }
+        } else {
+            // Find the most recent active enrollment for this course
+            const enrollmentsQuery = query(
+                collection(db, 'enrollments'),
+                where('userId', '==', userId),
+                where('courseId', '==', courseId),
+                where('status', 'in', ['enrolled', 'active'])
+            );
+
+            const querySnapshot = await getDocs(enrollmentsQuery);
+
+            if (querySnapshot.empty) {
+                throw new Error('No active enrollment found for this course');
+            }
+
+            // Get the most recent enrollment
+            let latestEnrollmentDoc = null;
+            let latestEnrollmentDate = null;
+
+            querySnapshot.forEach((doc) => {
+                const enrollment = doc.data();
+                const enrollmentDate = enrollment.enrolledAt?.toDate();
+
+                if (!latestEnrollmentDate || (enrollmentDate && enrollmentDate > latestEnrollmentDate)) {
+                    latestEnrollmentDate = enrollmentDate;
+                    latestEnrollmentDoc = doc;
+                }
+            });
+
+            if (!latestEnrollmentDoc) {
+                throw new Error('Could not determine latest enrollment');
+            }
+
+            enrollmentRef = latestEnrollmentDoc.ref;
+        }
 
         const updateData = {
             progress: Math.min(Math.max(progress, 0), 100), // Ensure progress is between 0-100
@@ -365,7 +500,7 @@ export const updateCourseProgress = async (userId, courseId, progress) => {
 
         await updateDoc(enrollmentRef, updateData);
 
-        return { success: true };
+        return { success: true, enrollmentId: enrollmentRef.id };
 
     } catch (error) {
         console.error('Error updating course progress:', error);

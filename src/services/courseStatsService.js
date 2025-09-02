@@ -8,23 +8,38 @@ import {
     onSnapshot
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { findCourseById } from '../data/coursesData';
 
 /**
  * Get enrollment count for a specific course
  * @param {string} courseId - Course identifier
+ * @param {number} batchNumber - Optional batch number to get specific batch count
  * @returns {Promise<Object>} Enrollment count and success status
  */
-export const getCourseEnrollmentCount = async (courseId) => {
+export const getCourseEnrollmentCount = async (courseId, batchNumber = null) => {
     try {
         if (!db) {
             throw new Error('Firestore not initialized');
         }
 
-        const enrollmentsQuery = query(
-            collection(db, 'enrollments'),
-            where('courseId', '==', courseId),
-            where('status', '==', 'enrolled')
-        );
+        let enrollmentsQuery;
+
+        if (batchNumber) {
+            // Get count for specific batch
+            enrollmentsQuery = query(
+                collection(db, 'enrollments'),
+                where('courseId', '==', courseId),
+                where('batchNumber', '==', batchNumber),
+                where('status', '==', 'enrolled')
+            );
+        } else {
+            // Get count for all batches of the course
+            enrollmentsQuery = query(
+                collection(db, 'enrollments'),
+                where('courseId', '==', courseId),
+                where('status', '==', 'enrolled')
+            );
+        }
 
         const querySnapshot = await getDocs(enrollmentsQuery);
         const enrollmentCount = querySnapshot.size;
@@ -86,6 +101,91 @@ export const getCourseRatingStats = async (courseId) => {
             averageRating: 0,
             reviewCount: 0,
             hasReviews: false
+        };
+    }
+};
+
+/**
+ * Get enrollment counts for all batches of a course
+ * @param {string} courseId - Course identifier
+ * @returns {Promise<Object>} Batch-wise enrollment counts
+ */
+export const getCourseBatchCounts = async (courseId) => {
+    try {
+        if (!db) {
+            throw new Error('Firestore not initialized');
+        }
+
+        const course = findCourseById(courseId);
+        if (!course || !course.batches) {
+            return { success: false, error: 'Course not found or no batches defined', batchCounts: {} };
+        }
+
+        const batchCounts = {};
+
+        // Get enrollment counts for each batch
+        for (const batch of course.batches) {
+            const result = await getCourseEnrollmentCount(courseId, batch.batchNumber);
+            batchCounts[batch.batchNumber] = {
+                batchNumber: batch.batchNumber,
+                count: result.success ? result.count : 0,
+                maxCapacity: batch.maxCapacity,
+                status: batch.status,
+                startDate: batch.startDate,
+                endDate: batch.endDate,
+                error: result.success ? null : result.error
+            };
+        }
+
+        return { success: true, batchCounts };
+
+    } catch (error) {
+        console.error('Error getting course batch counts:', error);
+        return { success: false, error: error.message, batchCounts: {} };
+    }
+};
+
+/**
+ * Get combined course statistics with batch information
+ * @param {string} courseId - Course identifier
+ * @returns {Promise<Object>} Combined statistics including batch data
+ */
+export const getCourseStatsWithBatches = async (courseId) => {
+    try {
+        const [enrollmentResult, ratingResult, batchResult] = await Promise.all([
+            getCourseEnrollmentCount(courseId), // Total enrollment across all batches
+            getCourseRatingStats(courseId),
+            getCourseBatchCounts(courseId)
+        ]);
+
+        return {
+            success: true,
+            stats: {
+                totalEnrollmentCount: enrollmentResult.success ? enrollmentResult.count : 0,
+                averageRating: ratingResult.success ? ratingResult.averageRating : 0,
+                reviewCount: ratingResult.success ? ratingResult.reviewCount : 0,
+                hasReviews: ratingResult.success ? ratingResult.hasReviews : false,
+                batchCounts: batchResult.success ? batchResult.batchCounts : {}
+            },
+            errors: {
+                enrollment: enrollmentResult.success ? null : enrollmentResult.error,
+                rating: ratingResult.success ? null : ratingResult.error,
+                batches: batchResult.success ? null : batchResult.error
+            }
+        };
+
+    } catch (error) {
+        console.error('Error getting combined course stats with batches:', error);
+        return {
+            success: false,
+            error: error.message,
+            stats: {
+                totalEnrollmentCount: 0,
+                averageRating: 0,
+                reviewCount: 0,
+                hasReviews: false,
+                batchCounts: {}
+            }
         };
     }
 };

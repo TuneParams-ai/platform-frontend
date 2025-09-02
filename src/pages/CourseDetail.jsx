@@ -2,11 +2,12 @@ import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useCourseStats } from "../hooks/useCourseStats";
-import { findCourseById, isCourseFull, getAvailableSeats, isComingSoon } from "../data/coursesData";
+import { findCourseById, isComingSoon, getNextAvailableBatch } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import PayPalCheckout from "../components/PayPalCheckout";
 import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import StarRating from "../components/StarRating";
+import AdminBatchInfo from "../components/AdminBatchInfo";
 import "../styles/course-detail.css";
 import "../styles/course-image.css";
 import "../styles/paypal-checkout.css";
@@ -128,8 +129,11 @@ const CourseDetail = () => {
             alert("This course is still in planning phase. Please check back for updates!");
             return;
         }
-        if (isCourseFull(courseData)) {
-            alert("This course is currently full. Please check back for the next batch or contact us to join the waitlist.");
+
+        // Check if there are any available batches for enrollment
+        const nextBatch = getNextAvailableBatch(courseData);
+        if (!nextBatch) {
+            alert("No available batches for enrollment at this time. Please check back later or contact us for more information.");
             return;
         }
 
@@ -143,8 +147,8 @@ const CourseDetail = () => {
         setShowPayPal(true);
     };
 
-    const courseFull = isCourseFull(courseData, currentEnrollments);
-    const availableSeats = getAvailableSeats(courseData, currentEnrollments);
+    const nextBatch = getNextAvailableBatch(courseData);
+    const noBatchesAvailable = !nextBatch;
 
     return (
         <>
@@ -248,11 +252,11 @@ const CourseDetail = () => {
                                         ) : (
                                             // User doesn't have access - show enrollment button
                                             <button
-                                                className={`btn enroll-btn-detail ${courseFull ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
+                                                className={`btn enroll-btn-detail ${noBatchesAvailable ? 'full' : ''} ${comingSoon ? 'coming-soon' : ''}`}
                                                 onClick={handleEnroll}
-                                                disabled={courseFull || comingSoon}
+                                                disabled={noBatchesAvailable || comingSoon}
                                             >
-                                                {comingSoon ? "Coming Soon" : (courseFull ? "Course Full - Join Waitlist" : user ? "Enroll Now" : "Login to Enroll")}
+                                                {comingSoon ? "Coming Soon" : (noBatchesAvailable ? "No Available Batches" : user ? "Enroll Now" : "Login to Enroll")}
                                             </button>
                                         )}
                                     </>
@@ -274,28 +278,36 @@ const CourseDetail = () => {
                                             onSuccess={handlePaymentSuccess}
                                             onError={handlePaymentError}
                                             onCancel={handlePaymentCancel}
-                                            disabled={courseFull || comingSoon || !courseData.price}
+                                            disabled={noBatchesAvailable || comingSoon || !courseData.price}
                                         />
                                     </div>
                                 )}
 
-                                {!courseFull && !comingSoon && availableSeats !== "N/A" && availableSeats <= 5 && (
-                                    <div className="seats-warning">
-                                        ⚠️ Only {availableSeats} seats remaining!
-                                    </div>
+                                {!noBatchesAvailable && !comingSoon && nextBatch && nextBatch.maxCapacity && (
+                                    (() => {
+                                        const batchAvailableSeats = nextBatch.maxCapacity - (nextBatch.enrollmentCount || 0);
+                                        return batchAvailableSeats <= 5 && batchAvailableSeats > 0 && (
+                                            <div className="seats-warning">
+                                                ⚠️ Only {batchAvailableSeats} seats remaining in next batch!
+                                            </div>
+                                        );
+                                    })()
                                 )}
-                                {courseData.nextBatchDate && !comingSoon && (
-                                    <div className="next-batch-info">
-                                        <span className="next-batch-label">Next Batch Starts:</span>
-                                        <span className="next-batch-date">
-                                            {new Date(courseData.nextBatchDate).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric'
-                                            })}
-                                        </span>
-                                    </div>
-                                )}
+                                {(() => {
+                                    const nextBatch = getNextAvailableBatch(courseData);
+                                    return nextBatch && !comingSoon && (
+                                        <div className="next-batch-info">
+                                            <span className="next-batch-label">Next Batch Starts:</span>
+                                            <span className="next-batch-date">
+                                                {new Date(nextBatch.startDate).toLocaleDateString('en-US', {
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric'
+                                                })}
+                                            </span>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </div>
                     </div>
@@ -391,12 +403,15 @@ const CourseDetail = () => {
                                     <strong>Available Seats:</strong> {comingSoon ? "Coming Soon" : `${currentEnrollments}/${displayValue(courseData.maxCapacity)}`}
                                 </div>
                                 <div className="info-item">
-                                    <strong>Next Batch:</strong> {courseData.nextBatchDate ?
-                                        new Date(courseData.nextBatchDate).toLocaleDateString('en-US', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric'
-                                        }) : "N/A"}
+                                    <strong>Next Batch:</strong> {(() => {
+                                        const nextBatch = getNextAvailableBatch(courseData);
+                                        return nextBatch ?
+                                            new Date(nextBatch.startDate).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'short',
+                                                day: 'numeric'
+                                            }) : "N/A";
+                                    })()}
                                 </div>
                             </div>
                         </section>
@@ -431,6 +446,9 @@ const CourseDetail = () => {
                         </section> */}
                     </div>
                 </div>
+
+                {/* Admin-only Batch Information */}
+                <AdminBatchInfo course={courseData} />
             </div>
 
             <PaymentSuccessModal

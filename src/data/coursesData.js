@@ -49,6 +49,36 @@ export const coursesData = [
         category: "Artificial Intelligence",
         instructor: "NA",
         instructorBio: "NA",
+        // Batch information
+        currentBatch: 1,
+        batches: [
+            {
+                batchNumber: 1,
+                startDate: "2025-10-1",
+                endDate: "2026-01-15",
+                status: "upcoming", // upcoming, active, completed
+                maxCapacity: 30,
+                enrollmentCount: 0,
+                classLinks: {
+                    zoom: "https://zoom.us/j/batch1-faai",
+                    discord: "https://discord.gg/batch1-faai",
+                    materials: "/batch1/materials"
+                }
+            },
+            {
+                batchNumber: 2,
+                startDate: "2026-02-1",
+                endDate: "2026-05-15",
+                status: "upcoming",
+                maxCapacity: 30,
+                enrollmentCount: 0,
+                classLinks: {
+                    zoom: "https://zoom.us/j/batch2-faai",
+                    discord: "https://discord.gg/batch2-faai",
+                    materials: "/batch2/materials"
+                }
+            }
+        ],
         curriculum: [
             {
                 section: "Foundations",
@@ -138,6 +168,23 @@ export const coursesData = [
         category: "Artificial Intelligence",
         instructor: "TBD",
         instructorBio: "Course will be taught by industry experts and researchers with extensive experience in advanced AI systems.",
+        // Batch information
+        currentBatch: 1,
+        batches: [
+            {
+                batchNumber: 1,
+                startDate: "2026-02-1",
+                endDate: "2026-04-30",
+                status: "upcoming",
+                maxCapacity: 20,
+                enrollmentCount: 0,
+                classLinks: {
+                    zoom: "https://zoom.us/j/batch1-advai",
+                    discord: "https://discord.gg/batch1-advai",
+                    materials: "/batch1/materials"
+                }
+            }
+        ],
         curriculum: [
             {
                 section: "Reinforcement Learning",
@@ -261,4 +308,99 @@ export const getAvailableSeats = (course, dynamicEnrollmentCount = 0) => {
     const students = dynamicEnrollmentCount;
     if (!course.maxCapacity) return "N/A";
     return course.maxCapacity - students;
+};
+
+// Batch-related helper functions
+
+// Get current active batch for a course
+export const getCurrentBatch = (course) => {
+    if (!course.batches || course.batches.length === 0) return null;
+    return course.batches.find(batch => batch.batchNumber === course.currentBatch);
+};
+
+// Get batch by batch number
+export const getBatchByNumber = (course, batchNumber) => {
+    if (!course.batches || course.batches.length === 0) return null;
+    return course.batches.find(batch => batch.batchNumber === batchNumber);
+};
+
+// Get all upcoming batches for a course
+export const getUpcomingBatches = (course) => {
+    if (!course.batches || course.batches.length === 0) return [];
+    return course.batches.filter(batch => batch.status === 'upcoming');
+};
+
+// Get active batches for a course
+export const getActiveBatches = (course) => {
+    if (!course.batches || course.batches.length === 0) return [];
+    return course.batches.filter(batch => batch.status === 'active');
+};
+
+// Check if a batch is nearly full (80% or more capacity)
+export const isBatchNearlyFull = (batch) => {
+    if (!batch.enrollmentCount || !batch.maxCapacity) return false;
+    return (batch.enrollmentCount / batch.maxCapacity) >= 0.8;
+};
+
+// Check if a batch is full
+export const isBatchFull = (batch) => {
+    if (!batch.enrollmentCount || !batch.maxCapacity) return false;
+    return batch.enrollmentCount >= batch.maxCapacity;
+};
+
+// Get available seats for a specific batch
+export const getBatchAvailableSeats = (batch) => {
+    if (!batch.maxCapacity) return "N/A";
+    return batch.maxCapacity - (batch.enrollmentCount || 0);
+};
+
+// Get next available batch for enrollment
+export const getNextAvailableBatch = (course) => {
+    if (!course.batches || course.batches.length === 0) return null;
+
+    // First, try to find upcoming batches that aren't full
+    const upcomingBatches = course.batches
+        .filter(batch => batch.status === 'upcoming' && !isBatchFull(batch))
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+    if (upcomingBatches.length > 0) {
+        return upcomingBatches[0];
+    }
+
+    // If no upcoming batches available, try active batches
+    const activeBatches = course.batches
+        .filter(batch => batch.status === 'active' && !isBatchFull(batch))
+        .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+    return activeBatches.length > 0 ? activeBatches[0] : null;
+};
+
+// Check if course has any available batches for enrollment
+export const hasAvailableBatches = (course) => {
+    return getNextAvailableBatch(course) !== null;
+};
+
+// Get batch status display text
+export const getBatchStatusText = (batch) => {
+    const statusMap = {
+        'upcoming': 'Starting Soon',
+        'active': 'In Progress',
+        'completed': 'Completed'
+    };
+    return statusMap[batch.status] || batch.status;
+};
+
+// Format batch date range for display
+export const formatBatchDateRange = (batch) => {
+    const startDate = new Date(batch.startDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+    });
+    const endDate = new Date(batch.endDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+    });
+    return `${startDate} - ${endDate}`;
 };
