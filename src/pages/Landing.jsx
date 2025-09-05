@@ -78,34 +78,28 @@ const Landing = () => {
         </p> */}
         <div className="curriculum-grid">
           <div className="curriculum-item">
-            <div className="curriculum-icon">🤖</div>
-            <h3>Introduction to Machine Learning</h3>
-            <p>Understand what ML is, types of learning, and why it's transforming the world.</p>
+            <h3>Introduction to AI</h3>
+            <p>Understand what AI is, types of AI, and why it's transforming the world.</p>
           </div>
           <div className="curriculum-item">
-            <div className="curriculum-icon">🔢</div>
-            <h3>Vectors and Matrices Basics</h3>
-            <p>Learn essential linear algebra concepts used throughout ML. No prior knowledge required.</p>
+            <h3>Math Foundations for AI</h3>
+            <p>Learn essential linear algebra concepts. No prior knowledge required.</p>
           </div>
           <div className="curriculum-item">
-            <div className="curriculum-icon">🐍</div>
-            <h3>Python for Machine Learning</h3>
-            <p>A crash course on Python, tailored for ML tasks.</p>
+            <h3>Python for AI</h3>
+            <p>A crash course on Python to build practical AI applications.</p>
           </div>
           <div className="curriculum-item">
-            <div className="curriculum-icon">📈</div>
-            <h3>Linear & Logistic Regression</h3>
-            <p>Your first ML algorithms—easy to understand, powerful in practice.</p>
-          </div>
-          <div className="curriculum-item">
-            <div className="curriculum-icon">🧠</div>
             <h3>Neural Networks</h3>
-            <p>Understand how modern deep learning models are structured and trained.</p>
+            <p>Understand foundations of today's AI applications using Neural Networks.</p>
           </div>
           <div className="curriculum-item">
-            <div className="curriculum-icon">👁️</div>
             <h3>Computer Vision & CNNs</h3>
-            <p>Learn how CNNs power breakthroughs in image recognition and autonomous driving.</p>
+            <p>Learn CNNs that power breakthroughs in image recognition and autonomous driving.</p>
+          </div>
+          <div className="curriculum-item">
+            <h3>NLP and LLMs</h3>
+            <p>Explore the world of Natural Language Processing and Large Language Models.</p>
           </div>
         </div>
       </section>
@@ -117,12 +111,12 @@ const Landing = () => {
           <div className="audience-item">
             <div className="audience-icon">🎓</div>
             <h3>Beginners</h3>
-            <p>Looking to enter the field of AI/ML</p>
+            <p>Looking to enter the field of AI</p>
           </div>
           <div className="audience-item">
             <div className="audience-icon">📚</div>
             <h3>Students</h3>
-            <p>High school students seeking an applied introduction to AI/ML</p>
+            <p>High school students seeking an applied introduction to AI</p>
           </div>
           <div className="audience-item">
             <div className="audience-icon">💼</div>
@@ -142,7 +136,7 @@ const Landing = () => {
           <div className="audience-item">
             <div className="audience-icon">🔍</div>
             <h3>Curious Minds</h3>
-            <p>Anyone curious about how AI and ML work behind the scenes</p>
+            <p>Anyone curious about how AI works behind the scenes</p>
           </div>
         </div>
       </section>

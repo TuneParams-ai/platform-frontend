@@ -177,15 +177,11 @@
   box-shadow: 0 8px 24px rgba(29, 126, 153, 0.3);
 }
 
-.curriculum-icon {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-}
-
 .curriculum-item h3 {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 12px;
+  margin-top: 0;
   color: var(--text-color);
 }
 
