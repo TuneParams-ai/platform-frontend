@@ -202,7 +202,7 @@ const AuthProvider = ({ children }) => {
 
       return {
         success: true,
-        message: 'Verification email sent! Please check your inbox and spam folder.'
+        message: 'Verification email sent! Please check your inbox and **SPAM** folder.'
       };
     } catch (error) {
       console.error('Send verification email error:', error);
@@ -235,7 +235,7 @@ const AuthProvider = ({ children }) => {
 
       return {
         success: true,
-        message: 'Verification email sent! Please check your inbox and spam folder.'
+        message: 'Verification email sent! Please check your inbox and **SPAM** folder.'
       };
     } catch (error) {
       console.error('Resend verification email error:', error);
@@ -274,7 +274,7 @@ const AuthProvider = ({ children }) => {
 
       return {
         success: true,
-        message: 'If an account with this email exists, password reset instructions will be sent. Please check your inbox and spam folder.'
+        message: 'If an account with this email exists, password reset instructions will be sent. Please check your inbox and **SPAM** folder.'
       };
     } catch (error) {
       console.error('Password reset error:', error);
