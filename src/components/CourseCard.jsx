@@ -98,11 +98,11 @@ const CourseCard = ({ course, isEnrolled = false }) => {
       </div>
       <div className="course-stats">
         <span className="course-stat">📚 {displayValue(course.lessons)} lessons</span>
-        <span className="course-stat">
+        {/* <span className="course-stat">
           👥 {comingSoon ? "Coming Soon" :
             statsLoading ? `${course.students || 0}/${course.maxCapacity || 0} seats` :
               `${currentEnrollments}/${maxCapacity} seats`}
-        </span>
+        </span> */}
         <div className="course-stat course-rating-stat">
           {comingSoon ? "Coming Soon" : (
             <StarRating

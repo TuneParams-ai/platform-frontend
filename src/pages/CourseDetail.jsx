@@ -175,9 +175,9 @@ const CourseDetail = () => {
                                     <div className="course-meta-detail">
                                         <span className="course-level-detail">{displayValue(courseData.level)}</span>
                                         <span className="course-duration-detail">⏱️ {displayValue(courseData.duration)}</span>
-                                        <span className="course-enrollment-detail">
+                                        {/* <span className="course-enrollment-detail">
                                             👥 {comingSoon ? "Coming Soon" : `${currentEnrollments}/${displayValue(courseData.maxCapacity)} seats`}
-                                        </span>
+                                        </span> */}
                                         <div className="course-rating-detail">
                                             {comingSoon ? (
                                                 <span>⭐ Coming Soon</span>
@@ -283,7 +283,7 @@ const CourseDetail = () => {
                                     </div>
                                 )}
 
-                                {!noBatchesAvailable && !comingSoon && nextBatch && nextBatch.maxCapacity && (
+                                {/* {!noBatchesAvailable && !comingSoon && nextBatch && nextBatch.maxCapacity && (
                                     (() => {
                                         const batchAvailableSeats = nextBatch.maxCapacity - (nextBatch.enrollmentCount || 0);
                                         return batchAvailableSeats <= 5 && batchAvailableSeats > 0 && (
@@ -292,7 +292,7 @@ const CourseDetail = () => {
                                             </div>
                                         );
                                     })()
-                                )}
+                                )} */}
                                 {(() => {
                                     const nextBatch = getNextAvailableBatch(courseData);
                                     return nextBatch && !comingSoon && (
