@@ -56,104 +56,104 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
         }
     }
 
-    const subject = `🎉 Welcome to ${courseTitle}! Your AI learning journey starts now`;
+    const subject = `Welcome to ${courseTitle}! Your AI learning journey starts now`;
 
     const htmlContent = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Welcome to ${COMPANY_NAME}!</h1>
-                <p style="color: #e3f2fd; margin: 10px 0 0 0; font-size: 16px;">Your AI learning journey starts now</p>
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000000;">
+            <div style="background: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to ${COMPANY_NAME}!</h1>
+                <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Your AI learning journey starts now</p>
             </div>
             
-            <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                <p style="font-size: 16px; color: #333; margin-bottom: 20px;">Hi ${firstName},</p>
+            <div style="background: #000000; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(29, 126, 153, 0.2);">
+                <p style="font-size: 16px; color: #ffffff; margin-bottom: 20px;">Hi ${firstName},</p>
                 
-                <p style="font-size: 16px; color: #333; line-height: 1.6;">
+                <p style="font-size: 16px; color: #ffffff; line-height: 1.6;">
                     Thank you for registering for our AI Training Course — we're excited to have you on board! 🚀
                 </p>
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
-                    <h3 style="color: #333; margin-top: 0;">📋 Enrollment Details</h3>
+                <div style="background: rgba(29, 126, 153, 0.1); padding: 20px; border-radius: 8px; margin: 25px 0; border: 1px solid rgba(29, 126, 153, 0.2);">
+                    <h3 style="color: #ffffff; margin-top: 0;">📋 Enrollment Details</h3>
                     <table style="width: 100%; border-collapse: collapse;">
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Course:</td>
-                            <td style="padding: 8px 0; color: #333;">${courseTitle}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Course:</td>
+                            <td style="padding: 8px 0; color: #ffffff;">${courseTitle}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Amount Paid:</td>
-                            <td style="padding: 8px 0; color: #333;">$${amount}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Amount Paid:</td>
+                            <td style="padding: 8px 0; color: #ffffff;">$${amount}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Payment Method:</td>
-                            <td style="padding: 8px 0; color: #333;">${paymentMethod || 'PayPal'}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Payment Method:</td>
+                            <td style="padding: 8px 0; color: #ffffff;">${paymentMethod || 'PayPal'}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Transaction Status:</td>
-                            <td style="padding: 8px 0; color: #333; text-transform: capitalize;">${transactionStatus || 'Completed'}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Transaction Status:</td>
+                            <td style="padding: 8px 0; color: #ffffff; text-transform: capitalize;">${transactionStatus || 'Completed'}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Payment ID:</td>
-                            <td style="padding: 8px 0; color: #333; font-family: monospace; font-size: 14px;">${paymentId}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Payment ID:</td>
+                            <td style="padding: 8px 0; color: #ffffff; font-family: monospace; font-size: 14px;">${paymentId}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Order ID:</td>
-                            <td style="padding: 8px 0; color: #333; font-family: monospace; font-size: 14px;">${orderId}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Order ID:</td>
+                            <td style="padding: 8px 0; color: #ffffff; font-family: monospace; font-size: 14px;">${orderId}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Enrollment Date:</td>
-                            <td style="padding: 8px 0; color: #333;">${enrollmentDate}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Enrollment Date:</td>
+                            <td style="padding: 8px 0; color: #ffffff;">${enrollmentDate}</td>
                         </tr>
                         ${payerName && payerName !== userName ? `
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Payer Name:</td>
-                            <td style="padding: 8px 0; color: #333;">${payerName}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Payer Name:</td>
+                            <td style="padding: 8px 0; color: #ffffff;">${payerName}</td>
                         </tr>
                         ` : ''}
                         ${payerEmail && payerEmail !== userEmail ? `
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Payment Email:</td>
-                            <td style="padding: 8px 0; color: #333;">${payerEmail}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Payment Email:</td>
+                            <td style="padding: 8px 0; color: #ffffff;">${payerEmail}</td>
                         </tr>
                         ` : ''}
                         ${fundingSource ? `
                         <tr>
-                            <td style="padding: 8px 0; color: #666; font-weight: bold;">Funding Source:</td>
-                            <td style="padding: 8px 0; color: #333; text-transform: capitalize;">${fundingSource}</td>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold;">Funding Source:</td>
+                            <td style="padding: 8px 0; color: #ffffff; text-transform: capitalize;">${fundingSource}</td>
                         </tr>
                         ` : ''}
                     </table>
                 </div>
 
-                <h3 style="color: #333; margin-top: 30px;">Here's what you can expect:</h3>
-                <ul style="color: #333; line-height: 1.8; padding-left: 20px;">
+                <h3 style="color: #ffffff; margin-top: 30px;">Here's what you can expect:</h3>
+                <ul style="color: #ffffff; line-height: 1.8; padding-left: 20px;">
                     <li><strong>Live lessons</strong> covering machine learning, deep learning, NLP, and large language models (LLMs).</li>
                     <li><strong>Hands-on coding exercises</strong> and assignments to strengthen your skills.</li>
                     <li><strong>Projects and labs</strong> that bring AI concepts to life with real-world applications.</li>
                     <li><strong>A supportive learning community</strong> to ask questions, share progress, and get feedback.</li>
                 </ul>
 
-                <h3 style="color: #333; margin-top: 30px;">Next Steps:</h3>
-                <ul style="color: #333; line-height: 1.8; padding-left: 20px;">
-                    <li>Log in to your account at <a href="${WEBSITE_URL}" style="color: #667eea; text-decoration: none;">${WEBSITE_URL}</a>.</li>
+                <h3 style="color: #ffffff; margin-top: 30px;">Next Steps:</h3>
+                <ul style="color: #ffffff; line-height: 1.8; padding-left: 20px;">
+                    <li>Log in to your account at <a href="${WEBSITE_URL}" style="color: #1D7E99; text-decoration: none;">${WEBSITE_URL}</a>.</li>
                     <li>Check out the course schedule and upcoming sessions on our website.</li>
                 </ul>
 
-                <p style="color: #333; line-height: 1.6; margin-top: 25px;">
+                <p style="color: #ffffff; line-height: 1.6; margin-top: 25px;">
                     We're thrilled to have you join our community of learners. If you have any questions, feel free to reply to this email or reach out at 
-                    <a href="mailto:${SUPPORT_EMAIL}" style="color: #667eea; text-decoration: none;">${SUPPORT_EMAIL}</a>.
+                    <a href="mailto:${SUPPORT_EMAIL}" style="color: #1D7E99; text-decoration: none;">${SUPPORT_EMAIL}</a>.
                 </p>
 
-                <p style="color: #333; line-height: 1.6; margin-top: 20px;">
-                    Let's make your AI journey an exciting and rewarding one! 🌟
+                <p style="color: #ffffff; line-height: 1.6; margin-top: 20px;">
+                    Let's make your AI journey an exciting and rewarding one!
                 </p>
 
-                <p style="color: #333; margin-top: 30px;">
+                <p style="color: #ffffff; margin-top: 30px;">
                     Best,<br>
                     <strong>TuneParams Team</strong>
                 </p>
             </div>
             
-            <div style="text-align: center; padding: 20px; color: #666; font-size: 14px;">
+            <div style="text-align: center; padding: 20px; color: #C3C7CA; font-size: 14px; background-color: #000000;">
                 <p>© 2025 ${COMPANY_NAME}. All rights reserved.</p>
                 <p>This email was sent to ${userEmail} regarding your course enrollment.</p>
             </div>
@@ -359,21 +359,22 @@ export const generateReceiptHTML = (receiptData) => {
     <meta charset="UTF-8">
     <title>Payment Receipt - ${receiptData.receiptNumber}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; color: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; color: #ffffff; background-color: #000000; }
         .receipt-container { max-width: 600px; margin: 0 auto; }
-        .header { text-align: center; border-bottom: 2px solid #667eea; padding-bottom: 20px; margin-bottom: 30px; }
-        .company-name { font-size: 24px; font-weight: bold; color: #667eea; margin: 0; }
-        .receipt-title { font-size: 18px; margin: 10px 0 0 0; }
+        .header { text-align: center; border-bottom: 2px solid #1D7E99; padding-bottom: 20px; margin-bottom: 30px; }
+        .company-name { font-size: 24px; font-weight: bold; color: #1D7E99; margin: 0; }
+        .receipt-title { font-size: 18px; margin: 10px 0 0 0; color: #ffffff; }
         .receipt-info { display: flex; justify-content: space-between; margin-bottom: 30px; }
         .receipt-info div { flex: 1; }
-        .label { font-weight: bold; color: #666; }
+        .label { font-weight: bold; color: #C3C7CA; }
         .items-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .items-table th, .items-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        .items-table th { background-color: #f8f9fa; font-weight: bold; }
+        .items-table th, .items-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(29, 126, 153, 0.3); }
+        .items-table th { background-color: rgba(29, 126, 153, 0.1); font-weight: bold; color: #ffffff; }
+        .items-table td { color: #ffffff; }
         .totals { text-align: right; margin-top: 20px; }
-        .total-line { margin: 5px 0; }
-        .total-final { font-size: 18px; font-weight: bold; color: #667eea; border-top: 2px solid #667eea; padding-top: 10px; }
-        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666; font-size: 14px; }
+        .total-line { margin: 5px 0; color: #ffffff; }
+        .total-final { font-size: 18px; font-weight: bold; color: #1D7E99; border-top: 2px solid #1D7E99; padding-top: 10px; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(29, 126, 153, 0.3); text-align: center; color: #C3C7CA; font-size: 14px; }
     </style>
 </head>
 <body>
