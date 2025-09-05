@@ -59,6 +59,10 @@ export const recordPayment = async (paymentData, userId) => {
             transactionStatus: paymentData.transactionStatus,
             paymentMethod: 'paypal',
 
+            // Terms acceptance tracking
+            termsAccepted: paymentData.termsAccepted || false,
+            termsAcceptedAt: paymentData.termsAcceptedAt ? new Date(paymentData.termsAcceptedAt) : null,
+
             // Timestamps
             paymentDate: paymentData.timestamp ? new Date(paymentData.timestamp) : new Date(),
             createdAt: serverTimestamp(),
@@ -124,6 +128,10 @@ export const enrollUserInCourse = async (userId, courseId, paymentData, userEmai
             paymentId: paymentData.paymentID,
             orderId: paymentData.orderID,
             amountPaid: parseFloat(paymentData.amount),
+
+            // Terms acceptance tracking
+            termsAccepted: paymentData.termsAccepted || false,
+            termsAcceptedAt: paymentData.termsAcceptedAt ? new Date(paymentData.termsAcceptedAt) : null,
 
             // Timestamps
             enrolledAt: serverTimestamp(),
@@ -582,6 +590,10 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
             manualEnrollmentNotes: notes,
             amountPaid: 0, // No payment for manual enrollment
 
+            // Terms acceptance tracking (N/A for manual enrollment)
+            termsAccepted: null, // Not applicable for manual enrollment
+            termsAcceptedAt: null, // Not applicable for manual enrollment
+
             // Timestamps
             enrolledAt: serverTimestamp(),
             lastAccessed: null,
@@ -610,6 +622,124 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
 
     } catch (error) {
         console.error('Error in manual enrollment:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
+ * Check if user has accepted terms for a specific enrollment
+ * @param {string} userId - Firebase user ID
+ * @param {string} courseId - Course identifier
+ * @param {number} batchNumber - Batch number (optional)
+ * @returns {Promise<Object>} Terms acceptance status
+ */
+export const checkUserTermsAcceptance = async (userId, courseId, batchNumber = null) => {
+    try {
+        if (!db) {
+            throw new Error('Firestore not initialized');
+        }
+
+        let enrollmentQuery;
+
+        if (batchNumber) {
+            // Check specific enrollment
+            const enrollmentId = `${userId}_${courseId}_batch${batchNumber}`;
+            const enrollmentRef = doc(db, 'enrollments', enrollmentId);
+            const enrollmentDoc = await getDoc(enrollmentRef);
+
+            if (enrollmentDoc.exists()) {
+                const data = enrollmentDoc.data();
+                return {
+                    success: true,
+                    termsAccepted: data.termsAccepted || false,
+                    termsAcceptedAt: data.termsAcceptedAt || null,
+                    enrollmentType: data.enrollmentType || 'web_purchase',
+                    enrollmentId: enrollmentDoc.id
+                };
+            } else {
+                return {
+                    success: false,
+                    error: 'Enrollment not found'
+                };
+            }
+        } else {
+            // Check all enrollments for this user and course
+            enrollmentQuery = query(
+                collection(db, 'enrollments'),
+                where('userId', '==', userId),
+                where('courseId', '==', courseId)
+            );
+
+            const querySnapshot = await getDocs(enrollmentQuery);
+            const enrollments = [];
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                enrollments.push({
+                    id: doc.id,
+                    termsAccepted: data.termsAccepted || false,
+                    termsAcceptedAt: data.termsAcceptedAt || null,
+                    enrollmentType: data.enrollmentType || 'web_purchase',
+                    batchNumber: data.batchNumber
+                });
+            });
+
+            return {
+                success: true,
+                enrollments: enrollments
+            };
+        }
+
+    } catch (error) {
+        console.error('Error checking terms acceptance:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
+ * Get terms acceptance statistics for admin dashboard
+ * @returns {Promise<Object>} Terms acceptance statistics
+ */
+export const getTermsAcceptanceStats = async () => {
+    try {
+        if (!db) {
+            throw new Error('Firestore not initialized');
+        }
+
+        const enrollmentsQuery = query(collection(db, 'enrollments'));
+        const querySnapshot = await getDocs(enrollmentsQuery);
+
+        let totalEnrollments = 0;
+        let termsAcceptedCount = 0;
+        let manualEnrollments = 0;
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            totalEnrollments++;
+
+            if (data.enrollmentType === 'manual') {
+                manualEnrollments++;
+            } else if (data.termsAccepted === true) {
+                termsAcceptedCount++;
+            }
+        });
+
+        const webEnrollments = totalEnrollments - manualEnrollments;
+        const acceptanceRate = webEnrollments > 0 ? (termsAcceptedCount / webEnrollments) * 100 : 0;
+
+        return {
+            success: true,
+            stats: {
+                totalEnrollments,
+                webEnrollments,
+                manualEnrollments,
+                termsAcceptedCount,
+                acceptanceRate: Math.round(acceptanceRate * 100) / 100
+            }
+        };
+
+    } catch (error) {
+        console.error('Error getting terms acceptance stats:', error);
         return { success: false, error: error.message };
     }
 };
