@@ -91,7 +91,7 @@ const CourseDetail = () => {
     };
 
     // Get current enrollment count from dynamic stats
-    const currentEnrollments = statsLoading ? (courseData.students || 0) : stats.enrollmentCount;
+    // const currentEnrollments = statsLoading ? (courseData.students || 0) : stats.enrollmentCount;
     const comingSoon = isComingSoon(courseData);
 
     // If course not found, show course not found message
