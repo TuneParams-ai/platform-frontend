@@ -56,7 +56,7 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
         }
     }
 
-    const subject = `Welcome to ${courseTitle}! Your AI learning journey starts now`;
+    const subject = `Welcome to ${courseTitle} Your AI learning journey starts now`;
 
     const htmlContent = `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000000;">
