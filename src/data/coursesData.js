@@ -91,7 +91,7 @@ export const coursesData = [
                 ]
             },
             {
-                section: "Neural Networks & Deep Learning",
+                section: "Neural Networks",
                 topics: [
                     "Linear Regression",
                     "Closed-Form Solution for Linear Regression",

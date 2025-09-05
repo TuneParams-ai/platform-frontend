@@ -83,9 +83,10 @@ export const recordPayment = async (paymentData, userId) => {
  * @param {string} userId - Firebase user ID
  * @param {string} courseId - Course identifier
  * @param {Object} paymentData - Payment details
+ * @param {string} userEmail - User's email address
  * @returns {Promise<Object>} Success/error response
  */
-export const enrollUserInCourse = async (userId, courseId, paymentData) => {
+export const enrollUserInCourse = async (userId, courseId, paymentData, userEmail = null) => {
     try {
         if (!db) {
             throw new Error('Firestore not initialized');
@@ -105,6 +106,7 @@ export const enrollUserInCourse = async (userId, courseId, paymentData) => {
 
         const enrollment = {
             userId: userId,
+            userEmail: userEmail, // Add user email
             courseId: courseId,
             courseTitle: paymentData.courseTitle || course.title,
 
@@ -330,21 +332,22 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
     try {
         console.log('Starting complete enrollment process...', { paymentData, userId });
 
-        // Step 1: Record the payment
+        // Step 1: Get logged-in user profile for email (moved up to use in enrollment)
+        const userProfile = await getUserProfile(userId);
+        const userData = userProfile.success ? userProfile.userData : null;
+        const userEmail = userData?.email;
+
+        // Step 2: Record the payment
         const paymentResult = await recordPayment(paymentData, userId);
         if (!paymentResult.success) {
             throw new Error(`Payment recording failed: ${paymentResult.error}`);
         }
 
-        // Step 2: Enroll user in the course (batch automatically determined)
-        const enrollmentResult = await enrollUserInCourse(userId, paymentData.courseId, paymentData);
+        // Step 3: Enroll user in the course (batch automatically determined) with email
+        const enrollmentResult = await enrollUserInCourse(userId, paymentData.courseId, paymentData, userEmail);
         if (!enrollmentResult.success) {
             throw new Error(`Enrollment failed: ${enrollmentResult.error}`);
         }
-
-        // Step 3: Get logged-in user profile for email
-        const userProfile = await getUserProfile(userId);
-        const userData = userProfile.success ? userProfile.userData : null;
 
         // Step 4: Prepare enrollment data for email
         const enrollmentDate = new Date().toLocaleDateString('en-US', {
@@ -552,8 +555,14 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
             throw new Error(`User is already enrolled in ${course.title} - Batch ${targetBatch.batchNumber}`);
         }
 
+        // Get user profile to include email
+        const userProfile = await getUserProfile(userId);
+        const userData = userProfile.success ? userProfile.userData : null;
+        const userEmail = userData?.email;
+
         const enrollment = {
             userId: userId,
+            userEmail: userEmail, // Add user email
             courseId: courseId,
             courseTitle: course.title,
 
