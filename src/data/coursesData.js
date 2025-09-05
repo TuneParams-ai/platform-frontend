@@ -42,8 +42,8 @@ export const coursesData = [
         lessons: 25,
         maxCapacity: 30,
         nextBatchDate: "2025-10-1",
-        price: 299,
-        originalPrice: 899,
+        price: 699,
+        originalPrice: 1199,
         icon: "🤖",
         image: "/data/FAAI/FAAI_thumbnail.png",
         category: "Artificial Intelligence",
@@ -155,121 +155,115 @@ export const coursesData = [
     },
 
     {
-        id: "AdvAI",
-        title: "Advanced Artificial Intelligence",
-        description: "This advanced course dives deep into cutting-edge AI research and applications, covering reinforcement learning, advanced deep learning architectures, AI safety, and emerging technologies that are shaping the future of artificial intelligence.",
+        id: "RLAI",
+        title: "Reinforcement Learning",
+        description: "Dive deep into the world of reinforcement learning and AI agents. Learn to build intelligent systems that can learn from their environment, make decisions, and solve complex sequential problems through trial and error.",
         level: "Advanced",
-        duration: "12 weeks",
-        lessons: 20,
-        maxCapacity: 20,
-        nextBatchDate: "2026-02-1",
-        price: 499,
-        originalPrice: 1299,
-        icon: "🚀",
-        image: "/data/AdvAI/AdvAI_thumbnail.png",
-        category: "Artificial Intelligence",
+        duration: "10 weeks",
+        lessons: 16,
+        maxCapacity: 25,
+        nextBatchDate: "TBD",
+        price: 599,
+        originalPrice: 1399,
+        icon: "🎯",
+        image: "/data/RLAI/RLAI_thumbnail.png",
+        category: "Reinforcement Learning",
         instructor: "TBD",
-        instructorBio: "Course will be taught by industry experts and researchers with extensive experience in advanced AI systems.",
+        instructorBio: "Course will be taught by leading experts in reinforcement learning and AI agents with extensive research and industry experience.",
         // Batch information
         currentBatch: 1,
         batches: [
             {
                 batchNumber: 1,
-                batchName: "Elite AI Masters 2026",
-                startDate: "2026-02-1",
-                endDate: "2026-04-30",
+                batchName: "Pioneer RL Cohort",
+                startDate: "TBD",
+                endDate: "TBD",
                 status: "upcoming",
-                maxCapacity: 20,
+                maxCapacity: 25,
                 enrollmentCount: 0,
                 classLinks: {
-                    zoom: "https://zoom.us/j/batch1-advai",
-                    discord: "https://discord.gg/batch1-advai",
-                    materials: "/batch1/materials"
+                    zoom: "TBD",
+                    discord: "TBD",
+                    materials: "TBD"
                 }
             }
         ],
         curriculum: [
             {
-                section: "Reinforcement Learning",
+                section: "Foundations of Reinforcement Learning",
                 topics: [
+                    "Introduction to RL: Agents, Environments, and Rewards",
                     "Markov Decision Processes (MDPs)",
-                    "Q-Learning and Deep Q-Networks (DQN)",
+                    "Bellman Equations and Dynamic Programming",
+                    "Value Functions and Policy Functions",
+                    "Exploration vs Exploitation Dilemma"
+                ]
+            },
+            {
+                section: "Classical RL Algorithms",
+                topics: [
+                    "Monte Carlo Methods",
+                    "Temporal Difference Learning",
+                    "Q-Learning and SARSA",
+                    "Function Approximation in RL",
+                    "Eligibility Traces and TD(λ)"
+                ]
+            },
+            {
+                section: "Deep Reinforcement Learning",
+                topics: [
+                    "Deep Q-Networks (DQN)",
                     "Policy Gradient Methods",
                     "Actor-Critic Algorithms",
+                    "Proximal Policy Optimization (PPO)",
+                    "Trust Region Policy Optimization (TRPO)"
+                ]
+            },
+            {
+                section: "Advanced RL Techniques",
+                topics: [
+                    "Model-Based Reinforcement Learning",
+                    "Hierarchical Reinforcement Learning",
                     "Multi-Agent Reinforcement Learning",
-                    "Hierarchical Reinforcement Learning"
+                    "Inverse Reinforcement Learning",
+                    "Meta-Learning in RL"
                 ]
             },
             {
-                section: "Advanced Deep Learning Architectures",
+                section: "RL Applications & AI Agents",
                 topics: [
-                    "Graph Neural Networks (GNNs)",
-                    "Attention Mechanisms and Vision Transformers",
-                    "Generative Adversarial Networks (GANs)",
-                    "Variational Autoencoders (VAEs)",
-                    "Diffusion Models",
-                    "Neural Architecture Search (NAS)"
+                    "Game AI and Strategic Decision Making",
+                    "Robotics and Control Systems",
+                    "Financial Trading and Portfolio Management",
+                    "Autonomous Systems and Self-Driving Cars",
+                    "Large Language Model Agents"
                 ]
             },
             {
-                section: "Advanced NLP and Language Models",
+                section: "Practical Implementation & Projects",
                 topics: [
-                    "Advanced Transformer Architectures",
-                    "Multimodal Language Models",
-                    "In-Context Learning and Few-Shot Learning",
-                    "Constitutional AI and RLHF",
-                    "Tool-Using Language Models",
-                    "Reasoning and Chain-of-Thought"
-                ]
-            },
-            {
-                section: "Computer Vision and Multimodal AI",
-                topics: [
-                    "Object Detection and Segmentation",
-                    "3D Computer Vision",
-                    "Neural Radiance Fields (NeRF)",
-                    "Vision-Language Models",
-                    "Video Understanding",
-                    "Medical Image Analysis"
-                ]
-            },
-            {
-                section: "AI Safety and Alignment",
-                topics: [
-                    "AI Safety Fundamentals",
-                    "Interpretability and Explainable AI",
-                    "Robustness and Adversarial Examples",
-                    "AI Alignment Techniques",
-                    "Value Learning and Preference Modeling",
-                    "AI Governance and Ethics"
-                ]
-            },
-            {
-                section: "Emerging AI Technologies",
-                topics: [
-                    "Neuromorphic Computing",
-                    "Quantum Machine Learning",
-                    "AI for Scientific Discovery",
-                    "Federated Learning",
-                    "Edge AI and Model Compression",
-                    "AI Systems Engineering"
+                    "RL Frameworks: Gym, Stable-Baselines3, Ray RLlib",
+                    "Building Custom RL Environments",
+                    "Hyperparameter Tuning for RL",
+                    "RL Agent Evaluation and Benchmarking",
+                    "Capstone Project: End-to-End RL Application"
                 ]
             }
         ],
         prerequisites: [
-            "Completion of Foundations to Frontiers of AI or equivalent",
+            "Completion of Foundations to Frontiers of AI or equivalent ML knowledge",
             "Strong programming skills in Python",
-            "Solid understanding of linear algebra and calculus",
-            "Experience with deep learning frameworks (PyTorch/TensorFlow)",
-            "Familiarity with machine learning concepts and neural networks"
+            "Understanding of neural networks and deep learning",
+            "Familiarity with NumPy, PyTorch/TensorFlow",
+            "Basic knowledge of probability and statistics"
         ],
         outcomes: [
-            "Master advanced reinforcement learning algorithms and apply them to complex decision-making problems.",
-            "Design and implement state-of-the-art deep learning architectures for various domains including vision, NLP, and multimodal tasks.",
-            "Understand and apply AI safety principles to build robust and aligned AI systems.",
-            "Explore cutting-edge research areas and emerging technologies in artificial intelligence.",
-            "Develop expertise in advanced topics like GANs, diffusion models, and neural architecture search.",
-            "Build real-world applications using advanced AI techniques and contribute to open-source AI projects."
+            "Master the fundamental concepts and mathematics of reinforcement learning.",
+            "Implement classical RL algorithms from scratch and understand their theoretical foundations.",
+            "Build and train deep reinforcement learning agents using modern frameworks.",
+            "Apply RL techniques to real-world problems in games, robotics, and decision-making.",
+            "Understand multi-agent systems and how agents can learn to cooperate or compete.",
+            "Develop practical skills in RL environment design and agent evaluation."
         ],
         downloadUrl: null,
         comingSoon: true
