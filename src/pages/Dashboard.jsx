@@ -33,7 +33,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       <div className="dashboard-header">
         <h1>My Dashboard</h1>
-        <p>Welcome back! Here are your enrolled courses.</p>
+        <p>Welcome! Here are your enrolled courses.</p>
       </div>
 
       <div className="dashboard-content">

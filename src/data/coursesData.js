@@ -146,10 +146,10 @@ export const coursesData = [
         ],
         prerequisites: ["High school mathematics", "Basic programming knowledge"],
         outcomes: [
-            "Master the fundamentals of machine learning — from training simple models to hyperparameter tuning and optimization — through clear, step-by-step coding exercises.",
-            "Deepen your knowledge of deep learning by building and experimenting with neural networks, CNNs, RNNs, and transformers.",
-            "Gain expertise in Large Language Models (LLMs) — understand how they are trained, fine-tuned, and applied in real-world scenarios.",
-            "Learn by doing with hands-on coding assignments and exciting projects that bring AI concepts to life."
+            "Build strong foundations in machine learning by combining theory with hands-on coding, so you can confidently move from simple models to advanced architectures.",
+            "Think like a practitioner by applying algorithms to real data, running experiments, tuning models, and analyzing trade-offs.",
+            "Work with modern AI systems by understanding how neural networks, transformers, and large language models are trained, fine-tuned, and deployed.",
+            "Develop end-to-end skills through projects that take you from problem definition to implementation, giving you practical experience you can showcase."
         ],
         downloadUrl: "/data/sample-course-info.pdf"
     },
