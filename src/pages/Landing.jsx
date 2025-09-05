@@ -27,12 +27,12 @@ const Landing = () => {
       <section className="hero-section">
         <div className="hero-content">
           <div className="hero-text">
-            <h1 className="hero-title">Master Machine Learning</h1>
+            <h1 className="hero-title">Master the World of AI</h1>
             <p className="hero-subtitle">
-              No prior experience? No problem. Learn the foundations of machine learning and build real-world applications with our beginner-friendly course.
+              No prior experience? No problem. Learn from the foundations of AI and build real-world applications in this beginner-friendly course.
             </p>
             <p className="hero-description">
-              Start your journey in AI with a hands-on, practical course designed for high-school students, experienced professionals, and curious minds.
+              Start your journey in AI with a hands-on course designed for beginners - from high-school students to experienced professionals and curious learners of all backgrounds.
             </p>
             <div className="hero-buttons">
               <button className="cta-primary" onClick={handleEnrollClick}>
@@ -60,9 +60,9 @@ const Landing = () => {
         <div className="about-content">
           <h2>Why TuneParams.ai?</h2>
           <p>
-            At TuneParams.ai, we believe that anyone can learn machine learning with the right guidance.
+            At TuneParams.ai, we believe that anyone can become master of Artificial Intelligence with the right guidance.
             Our Courses simplifies complex topics and helps you build an intuitive and practical understanding
-            of core ML concepts, with no math background required.
+            of core AI concepts, with no math background required.
           </p>
         </div>
       </section>
@@ -73,9 +73,9 @@ const Landing = () => {
       {/* What You'll Learn Section */}
       <section className="curriculum-section">
         <h2>What You'll Learn</h2>
-        <p className="curriculum-intro">
+        {/* <p className="curriculum-intro">
           This course covers both math foundations and practical skills. Topics include:
-        </p>
+        </p> */}
         <div className="curriculum-grid">
           <div className="curriculum-item">
             <div className="curriculum-icon">🤖</div>

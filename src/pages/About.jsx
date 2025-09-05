@@ -12,13 +12,11 @@ const About = () => {
 
                 <section className="about-section">
                     <p>
-                        We’re a small, passionate team with diverse backgrounds, united by a shared mission: to make a positive
-                        societal impact through Artificial Intelligence starting with accessible, practical, and impactful AI
-                        courses for learners from all walks of life.
+                        Our journey begins with our instructors — PhDs in Machine Learning from top-tier universities, with over 8 years of research experience and 2 years building state-of-the-art AI models in industry. They have worked on cutting-edge applications and now bring their expertise to guide you, from foundational concepts to advanced mastery.
+
                     </p>
                     <p>
-                        Our instructors hold PhD in Machine Learning from top-tier universities, with over 8 years of experience in AI/ML and 2 years building state-of-the-art models in industry. They have worked on the cutting
-                        edge applications and now, they are here to guide you from foundational concepts to advanced mastery.
+                        Together, we’re a small, passionate team with diverse backgrounds, united by a shared mission: to make a positive societal impact through Artificial Intelligence. We start with accessible, practical, and impactful AI courses designed for learners from all walks of life.
                     </p>
 
                     <p className="about-highlight metallic-border">
