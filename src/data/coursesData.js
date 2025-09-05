@@ -38,7 +38,7 @@ export const coursesData = [
         title: "Foundations to Frontiers of AI",
         description: "This beginner-friendly course takes you from the mathematical foundations of AI to hands-on implementation of modern machine learning and generative AI models.",
         level: "Beginner level",
-        duration: "14 weeks",
+        duration: "15 weeks",
         lessons: 25,
         maxCapacity: 30,
         nextBatchDate: "2025-10-1",
@@ -144,7 +144,7 @@ export const coursesData = [
                 ]
             }
         ],
-        prerequisites: ["High school mathematics", "Basic programming knowledge"],
+        prerequisites: ["Curious mind", "Basic programming experience (Optional)"],
         outcomes: [
             "Build strong foundations in machine learning by combining theory with hands-on coding, so you can confidently move from simple models to advanced architectures.",
             "Think like a practitioner by applying algorithms to real data, running experiments, tuning models, and analyzing trade-offs.",
