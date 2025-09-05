@@ -69,7 +69,7 @@ export const coursesData = [
             {
                 batchNumber: 2,
                 batchName: "Beta",
-                startDate: "2025-10-1",
+                startDate: "2025-10-4",
                 endDate: "2026-01-15",
                 status: "active",
                 maxCapacity: 30,
@@ -83,7 +83,7 @@ export const coursesData = [
         ],
         curriculum: [
             {
-                section: "Foundations",
+                section: "Foundation",
                 topics: [
                     "Introduction to Machine Learning",
                     "Vectors and Matrices for ML",
@@ -91,7 +91,7 @@ export const coursesData = [
                 ]
             },
             {
-                section: "Classical Machine Learning",
+                section: "Neural Networks & Deep Learning",
                 topics: [
                     "Linear Regression",
                     "Closed-Form Solution for Linear Regression",
@@ -100,13 +100,13 @@ export const coursesData = [
                     "Optimization Methods",
                     "Hyperparameter Tuning: Overfitting, Regularization, Model Selection",
                     "Logistic Regression & Classification",
+                    "Multi layer perceptron (MLP)",
                     "Mini Project: Regression and Classification"
                 ]
             },
             {
-                section: "Neural Networks",
+                section: "Convolutional Neural Networks",
                 topics: [
-                    "Introduction to Neural Networks (MLPs)",
                     "Convolutional Neural Networks (CNNs)",
                     "Applications of CNNs",
                     "Project: Application of CNNs"
@@ -115,7 +115,7 @@ export const coursesData = [
             {
                 section: "Natural Language Processing",
                 topics: [
-                    "Introduction to NLP and Transformers",
+                    "Introduction to NLP",
                     "Recurrent Neural Networks (RNNs)",
                     "Limitations of RNNs",
                     "Attention Mechanism",
@@ -146,7 +146,7 @@ export const coursesData = [
         ],
         prerequisites: ["Curious mind", "Basic programming experience (Optional)"],
         outcomes: [
-            "Build strong foundations in machine learning by combining theory with hands-on coding, so you can confidently move from simple models to advanced architectures.",
+            "Build strong foundations in Artificial Intelligence by combining theory with hands-on coding, so you can confidently move from simple models to advanced architectures.",
             "Think like a practitioner by applying algorithms to real data, running experiments, tuning models, and analyzing trade-offs.",
             "Work with modern AI systems by understanding how neural networks, transformers, and large language models are trained, fine-tuned, and deployed.",
             "Develop end-to-end skills through projects that take you from problem definition to implementation, giving you practical experience you can showcase."

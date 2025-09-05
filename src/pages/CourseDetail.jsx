@@ -399,9 +399,9 @@ const CourseDetail = () => {
                                 <div className="info-item">
                                     <strong>Total Lessons:</strong> {displayValue(courseData.lessons)}
                                 </div>
-                                <div className="info-item">
+                                {/* <div className="info-item">
                                     <strong>Available Seats:</strong> {comingSoon ? "Coming Soon" : `${currentEnrollments}/${displayValue(courseData.maxCapacity)}`}
-                                </div>
+                                </div> */}
                                 <div className="info-item">
                                     <strong>Next Batch:</strong> {(() => {
                                         const nextBatch = getNextAvailableBatch(courseData);
