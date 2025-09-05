@@ -202,7 +202,7 @@ const AuthProvider = ({ children }) => {
 
       return {
         success: true,
-        message: 'Verification email sent! Please check your inbox.'
+        message: 'Verification email sent! Please check your inbox and spam folder.'
       };
     } catch (error) {
       console.error('Send verification email error:', error);

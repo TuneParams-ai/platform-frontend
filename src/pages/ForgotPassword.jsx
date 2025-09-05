@@ -61,7 +61,7 @@ const ForgotPassword = () => {
                     </h1>
                     <p className="forgot-password-subtitle">
                         {emailSent
-                            ? "Check your email for reset instructions"
+                            ? "Check your email for reset instructions. If you don't see the email, please check your spam/junk folder."
                             : "Enter your email address and we'll send you instructions to reset your password"
                         }
                     </p>

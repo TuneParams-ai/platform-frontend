@@ -56,7 +56,7 @@ const Register = () => {
             if (result.requiresVerification) {
                 // Show success message for email verification
                 setError(""); // Clear any previous errors
-                alert(result.message || "Registration successful! Please check your email and verify your account before signing in.");
+                alert(result.message || "Registration successful! Please check your email and verify your account before signing in. If you don't see the email, please check your spam/junk folder.");
                 // Redirect to login page with a message
                 navigate('/login?message=verify-email');
             } else {

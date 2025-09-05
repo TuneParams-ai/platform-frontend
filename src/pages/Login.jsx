@@ -29,7 +29,7 @@ const Login = () => {
         if (from && from.pathname !== '/login') {
             setMessage("Please log in to access this page.");
         } else if (urlMessage === 'verify-email') {
-            setMessage("Registration successful! Please check your email and click the verification link before signing in.");
+            setMessage("Registration successful! Please check your email and click the verification link before signing in. If you don't see the email, please check your spam/junk folder.");
         } else if (verified === 'true' || emailVerified === 'true') {
             setMessage("Email verified successfully! You can now sign in.");
         }
@@ -63,7 +63,7 @@ const Login = () => {
             // If email verification is required, show resend option
             if (result.requiresVerification) {
                 setShowResendButton(true);
-                setMessage("Need to resend verification email? Use the 'Resend Verification' button below.");
+                setMessage("Need to resend verification email? Use the 'Resend Verification' button below. Please check your spam/junk folder if you don't see the email.");
             } else {
                 setShowResendButton(false);
             }
