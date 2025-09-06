@@ -152,7 +152,38 @@ const AdminCouponManager = () => {
             const result = await createCoupon(formData, user.uid);
 
             if (result.success) {
-                setSuccess(`Coupon created successfully! Code: ${result.couponCode}`);
+                // Create detailed success message
+                let successMessage = `🎉 Coupon Generated Successfully!\n\n`;
+                successMessage += `📋 Coupon Details:\n`;
+                successMessage += `• Code: ${result.couponCode}\n`;
+                successMessage += `• Name: ${formData.name}\n`;
+                successMessage += `• Discount: ${formData.discountType === 'percentage' ? formData.discountValue + '%' : '$' + formData.discountValue} off\n`;
+                successMessage += `• Type: ${formData.targetType === 'general' ? 'General (Available to all)' : formData.targetType === 'user_specific' ? 'User-specific' : 'Course-specific'}\n`;
+
+                if (formData.targetType === 'user_specific' && formData.targetUserEmail) {
+                    successMessage += `• Target User: ${formData.targetUserEmail}\n`;
+                }
+
+                if (formData.courseId) {
+                    const selectedCourse = coursesData.find(c => c.id === formData.courseId);
+                    successMessage += `• Course: ${selectedCourse?.title || 'Unknown Course'}\n`;
+                }
+
+                if (formData.validUntil) {
+                    successMessage += `• Valid Until: ${new Date(formData.validUntil).toLocaleDateString()}\n`;
+                }
+
+                if (formData.usageLimit) {
+                    successMessage += `• Usage Limit: ${formData.usageLimit} uses\n`;
+                }
+
+                if (formData.minOrderAmount) {
+                    successMessage += `• Minimum Order: $${formData.minOrderAmount}\n`;
+                }
+
+                successMessage += `\n✅ The coupon is now active and ready to use!`;
+
+                setSuccess(successMessage);
 
                 // Send email if requested and it's a user-specific coupon
                 if (formData.sendEmail && formData.targetType === 'user_specific' && formData.targetUserEmail) {

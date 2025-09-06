@@ -58,10 +58,27 @@
 .success-message {
     background-color: #c6f6d5;
     color: #2f855a;
-    padding: 12px;
-    border-radius: 6px;
+    padding: 16px;
+    border-radius: 8px;
     margin-bottom: 20px;
     border-left: 4px solid #2f855a;
+    white-space: pre-line;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.5;
+    box-shadow: 0 2px 4px rgba(47, 133, 90, 0.1);
+}
+
+.success-message strong {
+    font-weight: 600;
+}
+
+.success-message ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.success-message li {
+    margin: 4px 0;
 }
 
 /* Create Coupon Form */
