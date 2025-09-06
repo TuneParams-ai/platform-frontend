@@ -328,6 +328,30 @@ const AdminCouponManager = () => {
         }
     };
 
+    const handleCopyCoupon = async (couponCode) => {
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                // Use modern clipboard API if available
+                await navigator.clipboard.writeText(couponCode);
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = couponCode;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                textArea.remove();
+            }
+            setSuccess(`Coupon code "${couponCode}" copied to clipboard!`);
+        } catch (err) {
+            setError('Failed to copy coupon code to clipboard');
+        }
+    };
+
     const formatDiscount = (coupon) => {
         if (coupon.discountType === 'percentage') {
             return `${coupon.discountValue}% off`;
@@ -602,7 +626,15 @@ const AdminCouponManager = () => {
                         <tbody>
                             {coupons.map(coupon => (
                                 <tr key={coupon.id}>
-                                    <td className="coupon-code">{coupon.code}</td>
+                                    <td className="coupon-code">
+                                        <span
+                                            className="coupon-code-text"
+                                            onClick={() => handleCopyCoupon(coupon.code)}
+                                            title="Click to copy coupon code"
+                                        >
+                                            {coupon.code} 📋
+                                        </span>
+                                    </td>
                                     <td>{coupon.name}</td>
                                     <td>{formatDiscount(coupon)}</td>
                                     <td>{getTargetInfo(coupon)}</td>
@@ -648,6 +680,13 @@ const AdminCouponManager = () => {
                                                     📧
                                                 </button>
                                             )}
+                                            <button
+                                                onClick={() => handleCopyCoupon(coupon.code)}
+                                                className="btn-copy"
+                                                title="Copy Coupon Code"
+                                            >
+                                                📋
+                                            </button>
                                             <button
                                                 onClick={() => handleDeleteCoupon(coupon.id)}
                                                 className="btn-delete"
@@ -711,7 +750,15 @@ const AdminCouponManager = () => {
                                 {usageStats.usageRecords.slice(0, 10).map(usage => (
                                     <tr key={usage.id}>
                                         <td>{formatDate(usage.usedAt)}</td>
-                                        <td className="coupon-code">{usage.couponCode}</td>
+                                        <td className="coupon-code">
+                                            <span
+                                                className="coupon-code-text"
+                                                onClick={() => handleCopyCoupon(usage.couponCode)}
+                                                title="Click to copy coupon code"
+                                            >
+                                                {usage.couponCode} 📋
+                                            </span>
+                                        </td>
                                         <td>{usage.userId}</td>
                                         <td>{usage.courseId}</td>
                                         <td>${usage.discountAmount?.toFixed(2)}</td>

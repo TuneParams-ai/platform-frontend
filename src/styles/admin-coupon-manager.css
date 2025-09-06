@@ -272,6 +272,17 @@
     box-shadow: 0 2px 8px rgba(29, 126, 153, 0.3);
 }
 
+.coupon-code-text {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.coupon-code-text:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
+
 .status-badge {
     padding: 6px 12px;
     border-radius: 16px;
@@ -354,6 +365,24 @@
 .btn-email:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.btn-copy {
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.btn-copy:hover {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #c4b5fd;
+    transform: translateY(-1px);
 }
 
 /* Email Options Section */
