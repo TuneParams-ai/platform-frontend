@@ -204,13 +204,26 @@ const PayPalCheckout = ({
                             // Record coupon usage if coupon was applied
                             if (appliedCoupon) {
                                 try {
-                                    await recordCouponUsage(appliedCoupon.couponId, user?.uid, courseId, {
+                                    console.log('Recording coupon usage after payment:', {
+                                        couponId: appliedCoupon.couponId,
+                                        couponCode: appliedCoupon.couponCode,
+                                        userId: user?.uid,
+                                        courseId: courseId
+                                    });
+
+                                    const couponUsageResult = await recordCouponUsage(appliedCoupon.couponId, user?.uid, courseId, {
                                         orderAmount: originalPrice,
                                         discountAmount: appliedCoupon.discountAmount,
                                         finalAmount: finalPrice,
                                         paymentId: order.purchase_units[0].payments.captures[0].id,
                                         orderId: order.id
                                     });
+
+                                    if (couponUsageResult.success) {
+                                        console.log('Coupon usage recorded successfully:', couponUsageResult.usageLogId);
+                                    } else {
+                                        console.error('Failed to record coupon usage:', couponUsageResult.error);
+                                    }
                                 } catch (couponError) {
                                     console.error('Failed to record coupon usage:', couponError);
                                     // Don't fail the payment for coupon recording errors

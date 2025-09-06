@@ -21,6 +21,68 @@
     font-weight: bold;
 }
 
+/* Warning Banner for Disabled Coupons */
+.warning-banner {
+    background: rgba(255, 193, 7, 0.1);
+    border: 2px solid rgba(255, 193, 7, 0.4);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    animation: pulse-warning 2s infinite;
+}
+
+.warning-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.warning-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.warning-text {
+    flex: 1;
+}
+
+.warning-text strong {
+    color: #ffc107;
+    font-size: 18px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.warning-text p {
+    color: var(--secondary-text-color);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.warning-text code {
+    background: rgba(255, 193, 7, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    color: #ffc107;
+    font-weight: bold;
+}
+
+@keyframes pulse-warning {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.5);
+    }
+
+    100% {
+        box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+    }
+}
+
 /* Tab Navigation */
 .coupon-tabs {
     display: flex;
@@ -383,6 +445,29 @@
     border-color: rgba(168, 85, 247, 0.5);
     color: #c4b5fd;
     transform: translateY(-1px);
+}
+
+.btn-test {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    color: #ffc107;
+}
+
+.btn-test:hover:not(:disabled) {
+    background: rgba(255, 193, 7, 0.2);
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #ffd43b;
+    transform: translateY(-1px);
+}
+
+.btn-test:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Email Options Section */

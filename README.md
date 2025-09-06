@@ -17,6 +17,15 @@ This is the frontend application for TuneParams.ai educational platform, built w
 - Automatic course enrollment after payment
 - **Email confirmation system** with enrollment receipts
 - Downloadable payment receipts (HTML format)
+- **Coupon system** with configurable discount codes (optional)
+
+### 🎟️ Coupon System (Optional)
+- **Flexible discount codes** with percentage or fixed amount discounts
+- **Usage limitations** per coupon and per user
+- **Course-specific or general coupons** for targeted promotions
+- **Admin management interface** for creating and managing coupons
+- **Environment toggle** to enable/disable coupon functionality
+- **100% off coupons** for free course access without payment processing
 
 ### 📧 Email Notifications
 The platform includes a comprehensive email notification system for enrollment confirmations:
@@ -71,6 +80,16 @@ REACT_APP_EMAILJS_PUBLIC_KEY=your_public_key
 REACT_APP_SUPPORT_EMAIL=support@tuneparams.ai
 REACT_APP_WEBSITE_URL=https://www.tuneparams.ai
 ```
+
+### Environment Variables for Coupons:
+```bash
+# Enable or disable the coupon system
+# Set to 'true' to enable coupons, 'false' to disable
+# When disabled, coupon input will not appear in checkout
+REACT_APP_ENABLE_COUPONS=true
+```
+
+**Note:** When `REACT_APP_ENABLE_COUPONS=false`, the coupon input will be completely hidden from the checkout process, and the admin coupon manager will show a warning banner indicating that the system is disabled.
 
 ## Deployment
 

@@ -2,6 +2,7 @@
 // Component for applying coupon codes during checkout
 import React, { useState } from 'react';
 import { validateAndApplyCoupon } from '../services/couponService';
+import { areCouponsEnabled } from '../utils/configUtils';
 import '../styles/coupon-input.css';
 
 const CouponInput = ({
@@ -12,11 +13,19 @@ const CouponInput = ({
     onCouponRemoved,
     disabled = false
 }) => {
+    // Check if coupons are enabled via environment variable
+    const couponsEnabled = areCouponsEnabled();
+
     const [couponCode, setCouponCode] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [showCouponInput, setShowCouponInput] = useState(false);
+
+    // If coupons are disabled, don't render anything
+    if (!couponsEnabled) {
+        return null;
+    }
 
     const handleApplyCoupon = async () => {
         if (!couponCode.trim()) {

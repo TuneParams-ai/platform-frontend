@@ -2,16 +2,19 @@
 // Admin component for managing coupons and discount codes
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { db } from '../config/firebase';
 import {
     createCoupon,
     getAllCoupons,
     updateCouponStatus,
     deleteCoupon,
-    getCouponUsageStats
+    getCouponUsageStats,
+    testCouponUsageRecording
 } from '../services/couponService';
 import { getAllUsers } from '../services/userService';
 import { sendCouponEmail } from '../services/emailService';
 import { coursesData } from '../data/coursesData';
+import { areCouponsEnabled } from '../utils/configUtils';
 import '../styles/admin-coupon-manager.css';
 
 const AdminCouponManager = () => {
@@ -23,6 +26,9 @@ const AdminCouponManager = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [usageStats, setUsageStats] = useState(null);
+
+    // Check if coupons are enabled
+    const couponsEnabled = areCouponsEnabled();
 
     // Create coupon form state
     const [couponForm, setCouponForm] = useState({
@@ -362,6 +368,44 @@ const AdminCouponManager = () => {
             }
         } catch (err) {
             setError('Failed to delete coupon');
+        }
+    };
+
+    const handleTestCouponUsage = async (couponCode) => {
+        setLoading(true);
+        setError('');
+        setSuccess('');
+
+        try {
+            // Use current user or generate a test user ID
+            const testUserId = user?.uid || `test_user_${Date.now()}`;
+
+            console.log('Testing coupon usage with details:', {
+                couponCode,
+                testUserId,
+                isUserAuthenticated: !!user,
+                userUid: user?.uid,
+                userEmail: user?.email,
+                dbInitialized: !!db
+            });
+
+            const result = await testCouponUsageRecording(couponCode, testUserId);
+
+            console.log('Full test result:', result);
+
+            if (result.success) {
+                setSuccess(`✅ Test successful for ${couponCode}!\n\nBefore: ${result.before.usageCount} uses, ${result.before.historyLength} history records\nAfter: ${result.after.usageCount} uses, ${result.after.historyLength} history records\n\nUsage Log ID: ${result.usageLogId}\n\nTest User ID: ${testUserId}`);
+                loadCoupons(); // Refresh to see updated counts
+                loadUsageStats();
+            } else {
+                const errorDetails = result.details ? `\n\nDetails: ${JSON.stringify(result.details, null, 2)}` : '';
+                setError(`❌ Test failed: ${result.error}${errorDetails}`);
+            }
+        } catch (err) {
+            console.error('Test error details:', err);
+            setError(`❌ Test error: ${err.message}\n\nStack: ${err.stack}`);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -757,6 +801,14 @@ const AdminCouponManager = () => {
                                                 📋
                                             </button>
                                             <button
+                                                onClick={() => handleTestCouponUsage(coupon.code)}
+                                                className="btn-test"
+                                                title="Test Usage Recording"
+                                                disabled={loading}
+                                            >
+                                                🧪
+                                            </button>
+                                            <button
                                                 onClick={() => handleDeleteCoupon(coupon.id)}
                                                 className="btn-delete"
                                                 title="Delete"
@@ -845,6 +897,21 @@ const AdminCouponManager = () => {
     return (
         <div className="admin-coupon-manager">
             <h2>Coupon Management</h2>
+
+            {/* Coupon System Status Warning */}
+            {!couponsEnabled && (
+                <div className="warning-banner">
+                    <div className="warning-content">
+                        <span className="warning-icon">⚠️</span>
+                        <div className="warning-text">
+                            <strong>Coupon System Disabled</strong>
+                            <p>The coupon system is currently disabled in the environment configuration.
+                                Coupons created here will not be visible to users during checkout.
+                                To enable coupons, set <code>REACT_APP_ENABLE_COUPONS=true</code> in your .env file.</p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {error && <div className="error-message">{error}</div>}
             {success && <div className="success-message">{success}</div>}

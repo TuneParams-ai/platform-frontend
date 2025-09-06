@@ -10,7 +10,6 @@ import {
     orderBy,
     serverTimestamp,
     updateDoc,
-    increment,
     addDoc,
     limit,
     deleteDoc
@@ -262,21 +261,39 @@ export const validateAndApplyCoupon = async (couponCode, userId, courseId, order
 export const recordCouponUsage = async (couponId, userId, courseId, usageData) => {
     try {
         if (!db) {
+            console.error('Firestore database not initialized');
             throw new Error('Firestore not initialized');
         }
 
+        console.log('=== COUPON USAGE RECORDING DEBUG ===');
+        console.log('Input parameters:', { couponId, userId, courseId, usageData });
+        console.log('Database instance:', !!db);
+
         // Get user profile to include email
+        console.log('Getting user profile for userId:', userId);
         const userProfile = await getUserProfile(userId);
         const userEmail = userProfile.success ? userProfile.data?.email : null;
+        console.log('User profile result:', { success: userProfile.success, email: userEmail });
 
+        console.log('Creating document reference for coupon:', couponId);
         const couponRef = doc(db, 'coupons', couponId);
+        console.log('Coupon ref created:', couponRef.path);
+
+        console.log('Fetching coupon document...');
         const couponDoc = await getDoc(couponRef);
+        console.log('Coupon doc fetch result:', { exists: couponDoc.exists() });
 
         if (!couponDoc.exists()) {
+            console.error('Coupon document does not exist:', couponId);
             throw new Error('Coupon not found');
         }
 
         const coupon = couponDoc.data();
+        console.log('Current coupon data:', {
+            code: coupon.code,
+            currentUsageCount: coupon.usageCount,
+            currentHistoryLength: coupon.usageHistory?.length || 0
+        });
 
         // Create usage record
         const usageRecord = {
@@ -288,30 +305,72 @@ export const recordCouponUsage = async (couponId, userId, courseId, usageData) =
             discountAmount: usageData.discountAmount,
             finalAmount: usageData.finalAmount,
             paymentId: usageData.paymentId || null,
-            orderId: usageData.orderId || null
+            orderId: usageData.orderId || null,
+            enrollmentType: usageData.enrollmentType || 'payment'
         };
 
-        // Update coupon document
-        await updateDoc(couponRef, {
-            usageCount: increment(1),
-            usageHistory: [...(coupon.usageHistory || []), usageRecord],
-            updatedAt: serverTimestamp()
+        console.log('Usage record to add:', usageRecord);
+
+        // Get current usage history and add new record
+        const currentHistory = coupon.usageHistory || [];
+        const updatedHistory = [...currentHistory, usageRecord];
+
+        // Update coupon document with explicit values
+        const currentUsageCount = coupon.usageCount || 0;
+        const updateData = {
+            usageCount: currentUsageCount + 1, // Use explicit increment instead of increment()
+            usageHistory: updatedHistory,
+            updatedAt: new Date() // Use new Date() instead of serverTimestamp()
+        };
+
+        // Remove any undefined fields
+        Object.keys(updateData).forEach(key => {
+            if (updateData[key] === undefined) {
+                console.warn(`Removing undefined field: ${key}`);
+                delete updateData[key];
+            }
         });
 
+        console.log('Update data prepared:', {
+            incrementUsageCount: true,
+            newUsageCount: updateData.usageCount,
+            previousUsageCount: currentUsageCount,
+            newHistoryLength: updatedHistory.length,
+            updateDataKeys: Object.keys(updateData),
+            updateDataValues: updateData
+        });
+
+        console.log('Attempting to update coupon document...');
+        await updateDoc(couponRef, updateData);
+        console.log('✅ Coupon document updated successfully');
+
         // Create separate usage record for detailed tracking
+        console.log('Creating usage log entry...');
         const usageLogRef = await addDoc(collection(db, 'coupon_usage'), {
             couponId: couponId,
             couponCode: coupon.code,
             ...usageRecord,
-            createdAt: serverTimestamp()
+            createdAt: new Date() // Use new Date() instead of serverTimestamp()
+        });
+        console.log('✅ Usage log created with ID:', usageLogRef.id);
+
+        console.log('=== COUPON USAGE RECORDING SUCCESS ===');
+        console.log('Final result:', {
+            usageLogId: usageLogRef.id,
+            couponId: couponId,
+            couponCode: coupon.code
         });
 
-        console.log('Coupon usage recorded:', usageLogRef.id);
         return { success: true, usageLogId: usageLogRef.id };
 
     } catch (error) {
-        console.error('Error recording coupon usage:', error);
-        return { success: false, error: error.message };
+        console.error('=== COUPON USAGE RECORDING ERROR ===');
+        console.error('Error type:', error.constructor.name);
+        console.error('Error message:', error.message);
+        console.error('Error code:', error.code);
+        console.error('Full error:', error);
+        console.error('Stack trace:', error.stack);
+        return { success: false, error: error.message, errorCode: error.code };
     }
 };
 
@@ -594,6 +653,78 @@ export const getCouponByCode = async (couponCode) => {
 
     } catch (error) {
         console.error('Error getting coupon by code:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+/**
+ * Debug function to test coupon usage recording
+ * @param {string} couponCode - Coupon code to test
+ * @param {string} userId - User ID for testing
+ * @returns {Promise<Object>} Test result
+ */
+export const testCouponUsageRecording = async (couponCode, userId) => {
+    try {
+        console.log('Testing coupon usage recording for:', { couponCode, userId });
+
+        // First get the coupon
+        const couponResult = await getCouponByCode(couponCode);
+        if (!couponResult.success) {
+            return { success: false, error: `Coupon not found: ${couponCode}` };
+        }
+
+        const coupon = couponResult.coupon;
+        console.log('Found coupon for testing:', {
+            id: coupon.id,
+            code: coupon.code,
+            currentUsageCount: coupon.usageCount,
+            historyLength: coupon.usageHistory?.length || 0
+        });
+
+        // Record test usage
+        const testUsageData = {
+            orderAmount: 100,
+            discountAmount: 25,
+            finalAmount: 75,
+            paymentId: `TEST_${Date.now()}`,
+            orderId: `TEST_ORDER_${Date.now()}`,
+            enrollmentType: 'test'
+        };
+
+        const usageResult = await recordCouponUsage(coupon.id, userId, 'test-course', testUsageData);
+
+        if (usageResult.success) {
+            // Verify the update worked
+            const updatedCouponResult = await getCouponByCode(couponCode);
+            if (updatedCouponResult.success) {
+                const updatedCoupon = updatedCouponResult.coupon;
+                console.log('After usage recording:', {
+                    id: updatedCoupon.id,
+                    code: updatedCoupon.code,
+                    newUsageCount: updatedCoupon.usageCount,
+                    newHistoryLength: updatedCoupon.usageHistory?.length || 0
+                });
+
+                return {
+                    success: true,
+                    message: 'Test coupon usage recorded successfully',
+                    before: {
+                        usageCount: coupon.usageCount,
+                        historyLength: coupon.usageHistory?.length || 0
+                    },
+                    after: {
+                        usageCount: updatedCoupon.usageCount,
+                        historyLength: updatedCoupon.usageHistory?.length || 0
+                    },
+                    usageLogId: usageResult.usageLogId
+                };
+            }
+        }
+
+        return { success: false, error: 'Failed to record test usage', details: usageResult };
+
+    } catch (error) {
+        console.error('Error testing coupon usage recording:', error);
         return { success: false, error: error.message };
     }
 };
