@@ -40,6 +40,7 @@ const AdminCouponManager = () => {
         usageLimitPerUser: '1',
         validFrom: '',
         validUntil: '',
+        customCode: '',
         prefix: '',
         // Email options
         sendEmail: false,
@@ -97,6 +98,22 @@ const AdminCouponManager = () => {
             [field]: value
         }));
 
+        // Clear prefix if custom code is entered
+        if (field === 'customCode' && value && value.trim()) {
+            setCouponForm(prev => ({
+                ...prev,
+                prefix: ''
+            }));
+        }
+
+        // Clear custom code if prefix is entered
+        if (field === 'prefix' && value && value.trim()) {
+            setCouponForm(prev => ({
+                ...prev,
+                customCode: ''
+            }));
+        }
+
         // Auto-populate target user email when user is selected
         if (field === 'targetUserId' && value) {
             const selectedUser = users.find(u => u.id === value);
@@ -140,6 +157,20 @@ const AdminCouponManager = () => {
                 throw new Error('Please select a target course for course-specific coupons');
             }
 
+            // Validate custom code if provided
+            if (couponForm.customCode && couponForm.customCode.trim()) {
+                const customCode = couponForm.customCode.trim().toUpperCase();
+                if (customCode.length < 3) {
+                    throw new Error('Custom coupon code must be at least 3 characters long');
+                }
+                if (customCode.length > 20) {
+                    throw new Error('Custom coupon code must be 20 characters or less');
+                }
+                if (!/^[A-Z0-9]+$/.test(customCode)) {
+                    throw new Error('Custom coupon code can only contain letters and numbers');
+                }
+            }
+
             // Add course title to form data
             let formData = { ...couponForm };
             if (formData.courseId) {
@@ -147,6 +178,11 @@ const AdminCouponManager = () => {
                 if (selectedCourse) {
                     formData.courseTitle = selectedCourse.title;
                 }
+            }
+
+            // Use custom code if provided, otherwise use prefix for generation
+            if (formData.customCode && formData.customCode.trim()) {
+                formData.code = formData.customCode.trim().toUpperCase();
             }
 
             const result = await createCoupon(formData, user.uid);
@@ -238,6 +274,7 @@ const AdminCouponManager = () => {
                     usageLimitPerUser: '1',
                     validFrom: '',
                     validUntil: '',
+                    customCode: '',
                     prefix: '',
                     sendEmail: false,
                     emailMessage: ''
@@ -393,16 +430,48 @@ const AdminCouponManager = () => {
                             required
                         />
                     </div>
-                    <div className="form-group">
-                        <label>Code Prefix (Optional)</label>
-                        <input
-                            type="text"
-                            value={couponForm.prefix}
-                            onChange={(e) => handleFormChange('prefix', e.target.value.toUpperCase())}
-                            placeholder="e.g., SUMMER"
-                            maxLength={10}
-                        />
+                </div>
+
+                <div className="coupon-code-section">
+                    <h4>🎫 Coupon Code Configuration</h4>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label>Custom Code (Optional)</label>
+                            <input
+                                type="text"
+                                value={couponForm.customCode}
+                                onChange={(e) => handleFormChange('customCode', e.target.value.toUpperCase())}
+                                placeholder="e.g., SAVE25, EARLY10, WELCOME50"
+                                maxLength={20}
+                            />
+                            <small>Set an exact coupon code (recommended for general use coupons like SAVE25, EARLY10)</small>
+                        </div>
+                        <div className="form-group">
+                            <label>OR Random Code Prefix (Optional)</label>
+                            <input
+                                type="text"
+                                value={couponForm.prefix}
+                                onChange={(e) => handleFormChange('prefix', e.target.value.toUpperCase())}
+                                placeholder="e.g., SUMMER"
+                                maxLength={10}
+                                disabled={couponForm.customCode && couponForm.customCode.trim()}
+                            />
+                            <small>Prefix for auto-generated code (will add random suffix)</small>
+                        </div>
                     </div>
+                    {couponForm.customCode && couponForm.customCode.trim() && (
+                        <div className="code-preview">
+                            <strong>Preview Code: </strong>
+                            <span className="preview-code">{couponForm.customCode.toUpperCase()}</span>
+                        </div>
+                    )}
+                    {!couponForm.customCode && couponForm.prefix && (
+                        <div className="code-preview">
+                            <strong>Preview Code: </strong>
+                            <span className="preview-code">{couponForm.prefix}XXXXXX</span>
+                            <small> (X's will be replaced with random characters)</small>
+                        </div>
+                    )}
                 </div>
 
                 <div className="form-group">
