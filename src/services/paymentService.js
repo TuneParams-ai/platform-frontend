@@ -16,6 +16,7 @@ import { db } from '../config/firebase';
 import { getUserProfile } from './userService';
 import { sendEnrollmentConfirmationEmail } from './emailService';
 import { recordEnrollmentEmail } from './emailTrackingService';
+import { recordCouponUsage } from './couponService';
 import { findCourseById, getNextAvailableBatch } from '../data/coursesData';
 
 /**
@@ -332,6 +333,137 @@ export const getUserPayments = async (userId) => {
     } catch (error) {
         console.error('Error getting user payments:', error);
         return { success: false, error: error.message, payments: [] };
+    }
+};
+
+/**
+ * Direct enrollment for 100% off coupons (no payment required)
+ * @param {Object} enrollmentData - Enrollment details
+ * @param {string} userId - Firebase user ID
+ * @returns {Promise<Object>} Complete enrollment result
+ */
+export const processDirectEnrollment = async (enrollmentData, userId) => {
+    try {
+        console.log('Starting direct enrollment process (100% off coupon)...', { enrollmentData, userId });
+
+        // Step 1: Get user profile for email
+        const userProfile = await getUserProfile(userId);
+        const userData = userProfile.success ? userProfile.userData : null;
+        const userEmail = userData?.email;
+
+        if (!userEmail) {
+            throw new Error('User email not found');
+        }
+
+        // Step 2: Create mock payment data for enrollment (amount = 0)
+        const mockPaymentData = {
+            courseId: enrollmentData.courseId,
+            courseTitle: enrollmentData.courseTitle,
+            amount: 0,
+            originalAmount: enrollmentData.originalAmount,
+            paymentID: `FREE_${Date.now()}_${userId.substring(0, 8)}`,
+            orderID: `FREE_ORDER_${Date.now()}`,
+            payerEmail: userEmail,
+            payerName: userData?.displayName || userData?.email?.split('@')[0] || 'Student',
+            transactionStatus: 'Free_Enrollment',
+            timestamp: new Date().toISOString(),
+            termsAccepted: enrollmentData.termsAccepted || true,
+            termsAcceptedAt: new Date().toISOString(),
+            appliedCoupon: enrollmentData.appliedCoupon,
+            paymentMethod: 'Free_Coupon',
+            fundingSource: 'Coupon_100_Percent_Off'
+        };
+
+        // Step 3: Enroll user in the course (batch automatically determined)
+        const enrollmentResult = await enrollUserInCourse(userId, enrollmentData.courseId, mockPaymentData, userEmail);
+        if (!enrollmentResult.success) {
+            throw new Error(`Enrollment failed: ${enrollmentResult.error}`);
+        }
+
+        // Step 4: Prepare enrollment data for email
+        const enrollmentDate = new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const enrollmentEmailData = {
+            userName: userData?.displayName || userData?.email?.split('@')[0] || 'Student',
+            userEmail: userEmail,
+            courseTitle: enrollmentData.courseTitle,
+            courseId: enrollmentData.courseId,
+            amount: 0,
+            originalAmount: enrollmentData.originalAmount,
+            paymentId: mockPaymentData.paymentID,
+            orderId: mockPaymentData.orderID,
+            enrollmentId: enrollmentResult.enrollmentId,
+            enrollmentDate: enrollmentDate,
+            batchNumber: enrollmentResult.batchNumber,
+            batchStartDate: enrollmentResult.batchInfo?.startDate,
+            batchEndDate: enrollmentResult.batchInfo?.endDate,
+            batchStatus: enrollmentResult.batchInfo?.status,
+            paymentMethod: 'Free Enrollment (100% Off Coupon)',
+            payerName: mockPaymentData.payerName,
+            payerEmail: mockPaymentData.payerEmail,
+            transactionStatus: 'Free Enrollment',
+            paymentSource: null,
+            fundingSource: 'Coupon_100_Percent_Off',
+            appliedCoupon: enrollmentData.appliedCoupon
+        };
+
+        // Step 5: Send enrollment confirmation email
+        const emailResult = await sendEnrollmentConfirmationEmail(enrollmentEmailData);
+
+        // Step 6: Record email tracking in Firestore
+        let emailTrackingResult = null;
+        try {
+            emailTrackingResult = await recordEnrollmentEmail(enrollmentEmailData, emailResult, userId);
+            if (emailTrackingResult.success) {
+                console.log('Email tracking recorded with ID:', emailTrackingResult.emailRecordId);
+            } else {
+                console.error('Failed to record email tracking:', emailTrackingResult.error);
+            }
+        } catch (trackingError) {
+            console.error('Error recording email tracking:', trackingError);
+        }
+
+        // Step 7: Record coupon usage if coupon was applied
+        if (enrollmentData.appliedCoupon) {
+            try {
+                await recordCouponUsage(enrollmentData.appliedCoupon.couponId, userId, enrollmentData.courseId, {
+                    orderAmount: enrollmentData.originalAmount,
+                    discountAmount: enrollmentData.appliedCoupon.discountAmount,
+                    finalAmount: 0,
+                    paymentId: mockPaymentData.paymentID,
+                    orderId: mockPaymentData.orderID,
+                    enrollmentType: 'free_coupon'
+                });
+                console.log('Coupon usage recorded for 100% off coupon');
+            } catch (couponError) {
+                console.error('Failed to record coupon usage:', couponError);
+                // Don't fail the enrollment for coupon recording errors
+            }
+        }
+
+        console.log('Direct enrollment completed successfully');
+        return {
+            success: true,
+            enrollmentId: enrollmentResult.enrollmentId,
+            batchNumber: enrollmentResult.batchNumber,
+            batchInfo: enrollmentResult.batchInfo,
+            emailSent: emailResult.success,
+            emailTrackingId: emailTrackingResult?.emailRecordId,
+            paymentId: mockPaymentData.paymentID,
+            orderId: mockPaymentData.orderID,
+            enrollmentType: 'free_coupon',
+            couponUsed: enrollmentData.appliedCoupon?.couponCode || null
+        };
+
+    } catch (error) {
+        console.error('Error in direct enrollment process:', error);
+        return { success: false, error: error.message };
     }
 };
 
