@@ -37,7 +37,7 @@ export const searchCollection = async (collectionName, searchOptions = {}) => {
 
         // For search queries, get all documents to avoid index issues
         let searchQuery = collection(db, collectionName);
-        
+
         // If we have a search term, just get all documents and filter client-side
         if (searchTerm && searchTerm.trim()) {
             // Simple query with just limit to avoid composite index requirements
@@ -479,7 +479,7 @@ export const globalSearch = async (searchTerm, collections = ['users', 'coupons'
     }
 };
 
-export default {
+const searchServiceAPI = {
     searchCollection,
     searchUsers,
     searchCoupons,
@@ -491,3 +491,5 @@ export default {
     advancedSearch,
     globalSearch
 };
+
+export default searchServiceAPI;

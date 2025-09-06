@@ -17,7 +17,7 @@ const AdminSearch = () => {
             const couponsSnapshot = await getDocs(collection(db, 'coupons'));
             console.log('Direct coupon query result:', couponsSnapshot);
             console.log('Number of coupon docs:', couponsSnapshot.size);
-            
+
             const coupons = [];
             couponsSnapshot.forEach((doc) => {
                 const data = doc.data();
@@ -27,7 +27,7 @@ const AdminSearch = () => {
                     console.log('Coupon code found:', data.code);
                 }
             });
-            
+
             console.log('All coupons:', coupons);
             return coupons;
         } catch (error) {
@@ -47,10 +47,10 @@ const AdminSearch = () => {
 
         try {
             console.log('Searching for:', searchTerm);
-            
+
             // First test direct access to coupons
             await testCouponsDirectly();
-            
+
             // Then do the global search
             const result = await globalSearch(searchTerm);
             console.log('Search result:', result);
