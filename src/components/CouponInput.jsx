@@ -16,6 +16,7 @@ const CouponInput = ({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [showCouponInput, setShowCouponInput] = useState(false);
 
     const handleApplyCoupon = async () => {
         if (!couponCode.trim()) {
@@ -58,6 +59,7 @@ const CouponInput = ({
         setAppliedCoupon(null);
         setError('');
         setCouponCode('');
+        setShowCouponInput(false);
         if (onCouponRemoved) {
             onCouponRemoved();
         }
@@ -84,29 +86,54 @@ const CouponInput = ({
     return (
         <div className="coupon-input-container">
             {!appliedCoupon ? (
-                <div className="coupon-input-section">
-                    <h4>Have a coupon code?</h4>
-                    <div className="coupon-input-group">
-                        <input
-                            type="text"
-                            value={couponCode}
-                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                            onKeyPress={handleKeyPress}
-                            placeholder="Enter coupon code"
-                            className="coupon-input"
-                            disabled={disabled || loading}
-                            maxLength={20}
-                        />
-                        <button
-                            onClick={handleApplyCoupon}
-                            disabled={disabled || loading || !couponCode.trim()}
-                            className="apply-coupon-btn"
-                        >
-                            {loading ? 'Applying...' : 'Apply'}
-                        </button>
-                    </div>
-                    {error && <div className="coupon-error">{error}</div>}
-                </div>
+                <>
+                    {!showCouponInput ? (
+                        <div className="coupon-toggle-section">
+                            <button
+                                type="button"
+                                className="coupon-toggle-btn"
+                                onClick={() => setShowCouponInput(true)}
+                                disabled={disabled}
+                            >
+                                Have a coupon code?
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="coupon-input-section">
+                            <div className="coupon-input-header">
+                                <h4>Enter your coupon code</h4>
+                                <button
+                                    type="button"
+                                    className="coupon-close-btn"
+                                    onClick={() => setShowCouponInput(false)}
+                                    disabled={disabled || loading}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                            <div className="coupon-input-group">
+                                <input
+                                    type="text"
+                                    value={couponCode}
+                                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="Enter coupon code"
+                                    className="coupon-input"
+                                    disabled={disabled || loading}
+                                    maxLength={20}
+                                />
+                                <button
+                                    onClick={handleApplyCoupon}
+                                    disabled={disabled || loading || !couponCode.trim()}
+                                    className="apply-coupon-btn"
+                                >
+                                    {loading ? 'Applying...' : 'Apply'}
+                                </button>
+                            </div>
+                            {error && <div className="coupon-error">{error}</div>}
+                        </div>
+                    )}
+                </>
             ) : (
                 <div className="applied-coupon-section">
                     <div className="applied-coupon-info">
