@@ -265,6 +265,10 @@ export const recordCouponUsage = async (couponId, userId, courseId, usageData) =
             throw new Error('Firestore not initialized');
         }
 
+        // Get user profile to include email
+        const userProfile = await getUserProfile(userId);
+        const userEmail = userProfile.success ? userProfile.data?.email : null;
+
         const couponRef = doc(db, 'coupons', couponId);
         const couponDoc = await getDoc(couponRef);
 
@@ -277,6 +281,7 @@ export const recordCouponUsage = async (couponId, userId, courseId, usageData) =
         // Create usage record
         const usageRecord = {
             userId: userId,
+            userEmail: userEmail,
             courseId: courseId,
             usedAt: new Date(),
             orderAmount: usageData.orderAmount,

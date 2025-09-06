@@ -1,16 +1,24 @@
 /* src/styles/admin-coupon-manager.css */
-/* Styles for the admin coupon management component */
+/* Styles for the admin coupon management component - Updated to match website theme */
 
 .admin-coupon-manager {
     padding: 20px;
     max-width: 1400px;
     margin: 0 auto;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
 }
 
 .admin-coupon-manager h2 {
-    color: #2d3748;
+    background: var(--metallic-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 20px;
     text-align: center;
+    font-size: 2.2rem;
+    font-weight: bold;
 }
 
 /* Tab Navigation */
@@ -18,58 +26,67 @@
     display: flex;
     justify-content: center;
     margin-bottom: 30px;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid rgba(29, 126, 153, 0.3);
+    background: rgba(29, 126, 153, 0.05);
+    border-radius: 12px 12px 0 0;
+    padding: 10px;
 }
 
 .tab-button {
-    background: none;
-    border: none;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     padding: 12px 24px;
     margin: 0 5px;
     cursor: pointer;
     font-size: 16px;
     font-weight: 500;
-    color: #4a5568;
-    border-bottom: 3px solid transparent;
+    color: var(--text-color);
+    border-radius: 8px;
     transition: all 0.3s ease;
 }
 
 .tab-button:hover {
-    color: #3182ce;
-    background-color: #f7fafc;
+    background: rgba(29, 126, 153, 0.2);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.3);
 }
 
 .tab-button.active {
-    color: #3182ce;
-    border-bottom-color: #3182ce;
-    background-color: #f7fafc;
+    background: var(--metallic-gradient);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 16px rgba(29, 126, 153, 0.4);
 }
 
 /* Error and Success Messages */
 .error-message {
-    background-color: #fed7d7;
-    color: #c53030;
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 20px;
-    border-left: 4px solid #c53030;
-}
-
-.success-message {
-    background-color: #c6f6d5;
-    color: #2f855a;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 20px;
-    border-left: 4px solid #2f855a;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.success-message {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #86efac;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(34, 197, 94, 0.3);
     white-space: pre-line;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-family);
     line-height: 1.5;
-    box-shadow: 0 2px 4px rgba(47, 133, 90, 0.1);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .success-message strong {
     font-weight: 600;
+    color: #22c55e;
 }
 
 .success-message ul {
@@ -85,16 +102,23 @@
 .coupon-form-container {
     max-width: 800px;
     margin: 0 auto;
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .coupon-form-container h3 {
-    color: #2d3748;
+    background: var(--metallic-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 25px;
     text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
 }
 
 .coupon-form {
@@ -116,52 +140,62 @@
 
 .form-group label {
     font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 5px;
+    color: var(--text-color);
+    margin-bottom: 8px;
     font-size: 14px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
-    padding: 10px;
-    border: 2px solid #e2e8f0;
-    border-radius: 6px;
+    padding: 12px;
+    border: 2px solid rgba(29, 126, 153, 0.3);
+    border-radius: 8px;
     font-size: 14px;
-    transition: border-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #3182ce;
-    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(29, 126, 153, 0.2);
+    background-color: rgba(29, 126, 153, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--secondary-text-color);
 }
 
 .form-group small {
-    color: #718096;
+    color: var(--secondary-text-color);
     font-size: 12px;
     margin-top: 5px;
 }
 
 .create-coupon-btn {
-    background: linear-gradient(135deg, #3182ce, #2c5aa0);
-    color: white;
-    padding: 12px 24px;
+    background: var(--metallic-gradient);
+    color: #ffffff;
+    padding: 14px 28px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 10px;
+    box-shadow: 0 4px 16px rgba(29, 126, 153, 0.3);
 }
 
 .create-coupon-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #2c5aa0, #2a69ac);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3);
+    box-shadow: 0 8px 24px rgba(29, 126, 153, 0.4);
+    filter: brightness(1.1);
 }
 
 .create-coupon-btn:disabled {
@@ -172,18 +206,25 @@
 
 /* Coupons List */
 .coupons-list-container {
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
 
 .coupons-list-container h3 {
-    color: #2d3748;
+    background: var(--metallic-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     padding: 20px;
     margin: 0;
-    background-color: #f7fafc;
-    border-bottom: 1px solid #e2e8f0;
+    background-color: rgba(29, 126, 153, 0.1);
+    border-bottom: 1px solid rgba(29, 126, 153, 0.3);
+    font-size: 1.6rem;
+    font-weight: bold;
 }
 
 .coupons-table {
@@ -197,94 +238,117 @@
 
 .coupons-table th,
 .coupons-table td {
-    padding: 12px;
+    padding: 14px 12px;
     text-align: left;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid rgba(29, 126, 153, 0.2);
 }
 
 .coupons-table th {
-    background-color: #f7fafc;
+    background-color: rgba(29, 126, 153, 0.1);
     font-weight: 600;
-    color: #2d3748;
+    color: var(--primary-color);
     font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .coupons-table td {
     font-size: 14px;
-    color: #4a5568;
+    color: var(--text-color);
+}
+
+.coupons-table tr:hover {
+    background-color: rgba(29, 126, 153, 0.05);
 }
 
 .coupon-code {
     font-family: 'Courier New', monospace;
     font-weight: bold;
-    background-color: #edf2f7;
-    padding: 4px 8px;
-    border-radius: 4px;
+    background: var(--metallic-gradient);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 6px;
     display: inline-block;
+    box-shadow: 0 2px 8px rgba(29, 126, 153, 0.3);
 }
 
 .status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .status-active {
-    background-color: #c6f6d5;
-    color: #2f855a;
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .status-inactive {
-    background-color: #fed7d7;
-    color: #c53030;
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .status-expired {
-    background-color: #faf089;
-    color: #744210;
+    background: rgba(245, 158, 11, 0.2);
+    color: #fcd34d;
+    border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .action-buttons {
     display: flex;
     gap: 8px;
+    align-items: center;
 }
 
 .action-buttons button {
-    background: none;
-    border: none;
-    padding: 6px;
-    border-radius: 4px;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    padding: 8px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    color: var(--text-color);
 }
 
 .btn-activate:hover {
-    background-color: #c6f6d5;
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.5);
+    color: #86efac;
 }
 
 .btn-deactivate:hover {
-    background-color: #fed7d7;
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
 }
 
 .btn-delete:hover {
-    background-color: #fbb6ce;
+    background: rgba(236, 72, 153, 0.2);
+    border-color: rgba(236, 72, 153, 0.5);
+    color: #f9a8d4;
 }
 
 .btn-email {
-    background: none;
-    border: none;
-    padding: 6px;
-    border-radius: 4px;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    padding: 8px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    color: var(--text-color);
 }
 
 .btn-email:hover:not(:disabled) {
-    background-color: #bee3f8;
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.5);
+    color: #93c5fd;
 }
 
 .btn-email:disabled {
@@ -294,17 +358,22 @@
 
 /* Email Options Section */
 .email-options-section {
-    background: #f0f8ff;
-    border: 2px solid #3182ce;
-    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
     padding: 20px;
     margin: 20px 0;
+    backdrop-filter: blur(10px);
 }
 
 .email-options-section h4 {
-    color: #2c5aa0;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin: 0 0 15px 0;
     font-size: 16px;
+    font-weight: 600;
 }
 
 .checkbox-label {
@@ -312,13 +381,14 @@
     align-items: center;
     cursor: pointer;
     font-size: 14px;
-    color: #2d3748;
+    color: var(--text-color);
     margin-bottom: 10px;
 }
 
 .checkbox-label input[type="checkbox"] {
     margin-right: 10px;
     transform: scale(1.2);
+    accent-color: var(--primary-color);
 }
 
 .checkbox-label .checkmark {
@@ -331,16 +401,23 @@
 
 /* Usage Statistics */
 .usage-stats-container {
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     padding: 30px;
 }
 
 .usage-stats-container h3 {
-    color: #2d3748;
+    background: var(--metallic-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 25px;
     text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
 }
 
 .stats-grid {
@@ -351,25 +428,30 @@
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
+    background: var(--metallic-gradient);
+    color: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 24px rgba(29, 126, 153, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(195, 199, 202, 0.2);
 }
 
 .stat-card h4 {
-    margin: 0 0 10px 0;
+    margin: 0 0 12px 0;
     font-size: 14px;
     font-weight: 500;
     opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .stat-value {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .recent-usage {
@@ -377,14 +459,17 @@
 }
 
 .recent-usage h4 {
-    color: #2d3748;
+    color: var(--text-color);
     margin-bottom: 15px;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 .usage-table {
     overflow-x: auto;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    background: rgba(29, 126, 153, 0.05);
 }
 
 .usage-table table {
@@ -394,21 +479,23 @@
 
 .usage-table th,
 .usage-table td {
-    padding: 10px;
+    padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid rgba(29, 126, 153, 0.2);
 }
 
 .usage-table th {
-    background-color: #f7fafc;
+    background-color: rgba(29, 126, 153, 0.1);
     font-weight: 600;
-    color: #2d3748;
+    color: var(--primary-color);
     font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .usage-table td {
     font-size: 13px;
-    color: #4a5568;
+    color: var(--text-color);
 }
 
 /* Responsive Design */
@@ -496,8 +583,8 @@
 .spinner {
     width: 40px;
     height: 40px;
-    border: 4px solid #e2e8f0;
-    border-top: 4px solid #3182ce;
+    border: 4px solid rgba(29, 126, 153, 0.3);
+    border-top: 4px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -515,12 +602,13 @@
 /* Form Validation */
 .form-group input:invalid,
 .form-group select:invalid {
-    border-color: #e53e3e;
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 .form-group input:valid,
 .form-group select:valid {
-    border-color: #38a169;
+    border-color: rgba(34, 197, 94, 0.5);
 }
 
 /* Tooltip Styles */
@@ -532,11 +620,11 @@
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
-    background-color: #2d3748;
-    color: white;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: var(--text-color);
     text-align: center;
     border-radius: 6px;
-    padding: 5px 10px;
+    padding: 8px 12px;
     position: absolute;
     z-index: 1;
     bottom: 125%;
@@ -545,6 +633,8 @@
     opacity: 0;
     transition: opacity 0.3s;
     font-size: 12px;
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 .tooltip:hover .tooltiptext {
@@ -556,20 +646,21 @@
 .empty-state {
     text-align: center;
     padding: 40px;
-    color: #718096;
+    color: var(--secondary-text-color);
 }
 
 .empty-state-icon {
     font-size: 48px;
     margin-bottom: 20px;
     opacity: 0.5;
+    color: var(--primary-color);
 }
 
 .empty-state h3 {
-    color: #4a5568;
+    color: var(--text-color);
     margin-bottom: 10px;
 }
 
 .empty-state p {
-    color: #718096;
+    color: var(--secondary-text-color);
 }

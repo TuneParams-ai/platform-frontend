@@ -57,6 +57,7 @@ const CreateThreadModal = ({ onClose, onThreadCreated }) => {
                 ...formData,
                 tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
                 authorId: user.uid,
+                authorEmail: user.email,
                 authorName: user.name || user.displayName || 'Anonymous',
                 authorAvatar: user.photoURL || null,
             };

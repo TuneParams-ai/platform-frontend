@@ -23,6 +23,7 @@ const ReplyForm = ({ threadId, onReplyPosted }) => {
                 threadId,
                 content,
                 authorId: user.uid,
+                authorEmail: user.email,
                 authorName: user.name || user.displayName || 'Anonymous',
                 authorAvatar: user.photoURL || null,
             };
