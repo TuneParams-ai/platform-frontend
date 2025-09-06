@@ -44,6 +44,12 @@ export const recordPayment = async (paymentData, userId) => {
             courseId: paymentData.courseId,
             courseTitle: paymentData.courseTitle,
             amount: parseFloat(paymentData.amount),
+            originalAmount: paymentData.originalAmount ? parseFloat(paymentData.originalAmount) : parseFloat(paymentData.amount),
+
+            // Coupon details (if applied)
+            appliedCoupon: paymentData.appliedCoupon || null,
+            discountAmount: paymentData.appliedCoupon ? paymentData.appliedCoupon.discountAmount : 0,
+            couponCode: paymentData.appliedCoupon ? paymentData.appliedCoupon.couponCode : null,
 
             // User details - use actual user data instead of payer data
             userId: userId,

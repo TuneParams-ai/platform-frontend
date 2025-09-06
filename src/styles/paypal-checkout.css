@@ -48,6 +48,23 @@
     margin-top: 8px;
 }
 
+.payment-item.discount-item {
+    color: #2f855a;
+    font-weight: 600;
+}
+
+.savings-info {
+    background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+    color: #2f855a;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 8px;
+    border: 1px solid #38a169;
+}
+
 .paypal-button-container {
     margin: 20px 0;
     min-height: 45px;

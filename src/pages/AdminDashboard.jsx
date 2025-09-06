@@ -8,6 +8,7 @@ import AdminOverview from '../components/AdminOverview';
 import AdminPayments from '../components/AdminPayments';
 import AdminEnrollments from '../components/AdminEnrollments';
 import AdminEmailTracking from '../components/AdminEmailTracking';
+import AdminCouponManager from '../components/AdminCouponManager';
 import '../styles/admin-dashboard.css';
 
 const AdminDashboard = () => {
@@ -111,6 +112,12 @@ const AdminDashboard = () => {
                     📧 Email Tracking
                 </button>
                 <button
+                    onClick={() => setActiveTab('coupons')}
+                    className={`admin-tab-button ${activeTab === 'coupons' ? 'active' : ''}`}
+                >
+                    🎫 Coupons
+                </button>
+                <button
                     onClick={() => setActiveTab('roles')}
                     className={`admin-tab-button ${activeTab === 'roles' ? 'active' : ''}`}
                 >
@@ -123,6 +130,7 @@ const AdminDashboard = () => {
                 {activeTab === 'payments' && <AdminPayments />}
                 {activeTab === 'enrollments' && <AdminEnrollments />}
                 {activeTab === 'emails' && <AdminEmailTracking />}
+                {activeTab === 'coupons' && <AdminCouponManager />}
                 {activeTab === 'roles' && <AdminRoleManager />}
             </div>
         </div>

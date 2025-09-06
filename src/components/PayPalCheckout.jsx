@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import CouponInput from './CouponInput';
+import { recordCouponUsage } from '../services/couponService';
 import '../styles/paypal-checkout.css';
 
 const PayPalCheckout = ({
@@ -10,12 +13,18 @@ const PayPalCheckout = ({
     onCancel,
     disabled = false
 }) => {
+    const { user } = useAuth();
     const paypalRef = useRef();
     const [isLoading, setIsLoading] = useState(true);
     const [paypalLoaded, setPaypalLoaded] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [showTermsModal, setShowTermsModal] = useState(false);
     const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+
+    // Coupon state
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [finalPrice, setFinalPrice] = useState(coursePrice);
+    const [originalPrice] = useState(coursePrice);
 
     // PayPal Client ID - Must be configured in environment variables
     const PAYPAL_CLIENT_ID = process.env.REACT_APP_PAYPAL_CLIENT_ID;
@@ -55,6 +64,17 @@ const PayPalCheckout = ({
         loadPayPalScript();
     }, [PAYPAL_CLIENT_ID, onError]);
 
+    // Coupon handlers
+    const handleCouponApplied = (couponData) => {
+        setAppliedCoupon(couponData);
+        setFinalPrice(couponData.finalAmount);
+    };
+
+    const handleCouponRemoved = () => {
+        setAppliedCoupon(null);
+        setFinalPrice(originalPrice);
+    };
+
     const renderPayPalButton = useCallback(() => {
         if (paypalRef.current && window.paypal) {
             // Clear any existing PayPal button
@@ -65,10 +85,12 @@ const PayPalCheckout = ({
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
-                                value: coursePrice.toString(),
+                                value: finalPrice.toString(),
                                 currency_code: 'USD'
                             },
-                            description: `Enrollment for ${courseTitle}`,
+                            description: appliedCoupon
+                                ? `Enrollment for ${courseTitle} (Coupon: ${appliedCoupon.couponCode})`
+                                : `Enrollment for ${courseTitle}`,
                             custom_id: courseId,
                             soft_descriptor: 'TuneParams Course'
                         }],
@@ -101,7 +123,8 @@ const PayPalCheckout = ({
                                 paymentID: order.purchase_units[0].payments.captures[0].id,
                                 courseId,
                                 courseTitle,
-                                amount: coursePrice,
+                                amount: finalPrice,
+                                originalAmount: originalPrice,
                                 payerEmail: order.payer.email_address,
                                 payerName: payerName,
                                 transactionStatus: order.status,
@@ -113,8 +136,26 @@ const PayPalCheckout = ({
                                 payerAddress: order.payer.address || null,
                                 // Add terms acceptance data
                                 termsAccepted: termsAccepted,
-                                termsAcceptedAt: new Date().toISOString()
+                                termsAcceptedAt: new Date().toISOString(),
+                                // Add coupon data if applied
+                                appliedCoupon: appliedCoupon
                             });
+
+                            // Record coupon usage if coupon was applied
+                            if (appliedCoupon) {
+                                try {
+                                    await recordCouponUsage(appliedCoupon.couponId, user?.uid, courseId, {
+                                        orderAmount: originalPrice,
+                                        discountAmount: appliedCoupon.discountAmount,
+                                        finalAmount: finalPrice,
+                                        paymentId: order.purchase_units[0].payments.captures[0].id,
+                                        orderId: order.id
+                                    });
+                                } catch (couponError) {
+                                    console.error('Failed to record coupon usage:', couponError);
+                                    // Don't fail the payment for coupon recording errors
+                                }
+                            }
                         }
                     } catch (error) {
                         console.error('Error capturing payment:', error);
@@ -144,16 +185,16 @@ const PayPalCheckout = ({
                 }
             }).render(paypalRef.current);
         }
-    }, [coursePrice, courseTitle, courseId, onSuccess, onError, onCancel]);
+    }, [finalPrice, courseTitle, courseId, onSuccess, onError, onCancel, appliedCoupon, originalPrice, termsAccepted, user]);
 
     useEffect(() => {
-        if (paypalLoaded && !disabled && coursePrice > 0 && termsAccepted) {
+        if (paypalLoaded && !disabled && finalPrice > 0 && termsAccepted) {
             renderPayPalButton();
         } else if (paypalRef.current) {
             // Clear PayPal button if terms not accepted
             paypalRef.current.innerHTML = '';
         }
-    }, [paypalLoaded, disabled, coursePrice, termsAccepted, renderPayPalButton]);
+    }, [paypalLoaded, disabled, finalPrice, termsAccepted, renderPayPalButton]);
 
     // Validate PayPal Client ID is configured (after all hooks)
     if (!PAYPAL_CLIENT_ID) {
@@ -192,7 +233,7 @@ const PayPalCheckout = ({
         );
     }
 
-    if (disabled || coursePrice <= 0) {
+    if (disabled || finalPrice <= 0) {
         return (
             <div className="paypal-disabled">
                 <p>Payment not available for this course.</p>
@@ -202,6 +243,18 @@ const PayPalCheckout = ({
 
     return (
         <div className="paypal-checkout-container">
+            {/* Coupon Input Section */}
+            {user && (
+                <CouponInput
+                    userId={user.uid}
+                    courseId={courseId}
+                    originalAmount={originalPrice}
+                    onCouponApplied={handleCouponApplied}
+                    onCouponRemoved={handleCouponRemoved}
+                    disabled={disabled}
+                />
+            )}
+
             <div className="payment-summary">
                 <h4>Payment Summary</h4>
                 <div className="payment-details">
@@ -209,10 +262,27 @@ const PayPalCheckout = ({
                         <span>Course:</span>
                         <span>{courseTitle}</span>
                     </div>
+                    {appliedCoupon && (
+                        <>
+                            <div className="payment-item">
+                                <span>Original Price:</span>
+                                <span>${originalPrice.toFixed(2)}</span>
+                            </div>
+                            <div className="payment-item discount-item">
+                                <span>Discount ({appliedCoupon.couponCode}):</span>
+                                <span>-${appliedCoupon.discountAmount.toFixed(2)}</span>
+                            </div>
+                        </>
+                    )}
                     <div className="payment-item total">
                         <span>Total:</span>
-                        <span>${coursePrice}</span>
+                        <span>${finalPrice.toFixed(2)}</span>
                     </div>
+                    {appliedCoupon && appliedCoupon.savings > 0 && (
+                        <div className="savings-info">
+                            🎉 You save ${appliedCoupon.savings.toFixed(2)}!
+                        </div>
+                    )}
                 </div>
             </div>
 
