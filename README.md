@@ -77,7 +77,7 @@ The platform uses EmailJS for sending enrollment confirmation emails. See [EMAIL
 REACT_APP_EMAILJS_SERVICE_ID=your_service_id
 REACT_APP_EMAILJS_TEMPLATE_ID=your_template_id
 REACT_APP_EMAILJS_PUBLIC_KEY=your_public_key
-REACT_APP_SUPPORT_EMAIL=support@tuneparams.ai
+REACT_APP_SUPPORT_EMAIL=contact@tuneparams.com
 REACT_APP_WEBSITE_URL=https://www.tuneparams.ai
 ```
 

@@ -13,7 +13,7 @@ const Navbar = () => {
 
   // Admin emails list
   const adminEmails = [
-    'admin@tuneparams.ai',
+    'contact@tuneparams.com',
     'abhinaykotla@gmail.com',
     'admin@tuneparams.com',
     // Add more admin emails here as needed

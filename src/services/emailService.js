@@ -9,7 +9,7 @@ const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
 // Company information
 const COMPANY_NAME = process.env.REACT_APP_COMPANY_NAME || 'TuneParams AI Learning Platform';
-const SUPPORT_EMAIL = process.env.REACT_APP_SUPPORT_EMAIL || 'support@tuneparams.ai';
+const SUPPORT_EMAIL = process.env.REACT_APP_SUPPORT_EMAIL || 'contact@tuneparams.com';
 const WEBSITE_URL = process.env.REACT_APP_WEBSITE_URL || 'https://www.tuneparams.ai';
 
 /**

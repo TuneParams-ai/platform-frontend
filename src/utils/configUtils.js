@@ -54,7 +54,7 @@ export const getAppConfig = () => {
         },
         company: {
             name: process.env.REACT_APP_COMPANY_NAME || 'TuneParams.ai',
-            email: process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai',
+            email: process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.com',
             phone: process.env.REACT_APP_COMPANY_PHONE || '+1-555-0123',
             website: process.env.REACT_APP_WEBSITE_URL || 'https://www.tuneparams.ai'
         }

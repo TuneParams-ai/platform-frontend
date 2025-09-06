@@ -43,7 +43,7 @@ const AdminDashboard = () => {
 
     // Fallback: Simple email-based admin check for development
     const adminEmails = [
-        'admin@tuneparams.ai',
+        'contact@tuneparams.com',
         'abhinaykotla@gmail.com',
         'admin@tuneparams.com',
         // Add more admin emails here as needed

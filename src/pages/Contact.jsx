@@ -208,9 +208,9 @@ function Contact() {
                             <p>❌ Sorry, there was an error sending your message.</p>
                             <p className="contact-form-note">
                                 Please try again or email us directly at{' '}
-                                <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}`}
+                                <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.com'}`}
                                     className="contact-form-link">
-                                    {process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}
+                                    {process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.com'}
                                 </a>
                             </p>
                         </div>
@@ -305,7 +305,7 @@ function Contact() {
                     <p>
                         Having trouble with the form? You can also reach us directly:
                     </p>
-                    <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}?subject=Contact Form Inquiry&body=Hello TuneParams.ai team,%0D%0A%0D%0AI would like to inquire about...`}
+                    <a href={`mailto:${process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.com'}?subject=Contact Form Inquiry&body=Hello TuneParams.ai team,%0D%0A%0D%0AI would like to inquire about...`}
                         className="btn">
                         📧 Send Email Directly
                     </a>
@@ -318,7 +318,7 @@ function Contact() {
                             <div className="contact-item-icon">📧</div>
                             <div className="contact-item-title">Email</div>
                             <div className="contact-item-text">
-                                {process.env.REACT_APP_COMPANY_EMAIL || 'admin@tuneparams.ai'}
+                                {process.env.REACT_APP_COMPANY_EMAIL || 'contact@tuneparams.com'}
                             </div>
                         </div>
 
