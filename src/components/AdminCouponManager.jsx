@@ -181,6 +181,8 @@ const AdminCouponManager = () => {
                     successMessage += `• Minimum Order: $${formData.minOrderAmount}\n`;
                 }
 
+                successMessage += `• Created by: ${user?.displayName || user?.email || 'Admin'}\n`;
+
                 successMessage += `\n✅ The coupon is now active and ready to use!`;
 
                 setSuccess(successMessage);
@@ -592,6 +594,7 @@ const AdminCouponManager = () => {
                                 <th>Target</th>
                                 <th>Usage</th>
                                 <th>Valid Until</th>
+                                <th>Created By</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -608,6 +611,9 @@ const AdminCouponManager = () => {
                                         {coupon.usageLimit && ` / ${coupon.usageLimit}`}
                                     </td>
                                     <td>{formatDate(coupon.validUntil)}</td>
+                                    <td title={coupon.createdByEmail || 'Unknown'}>
+                                        {coupon.createdByName || coupon.createdByEmail || 'Unknown'}
+                                    </td>
                                     <td>
                                         <span className={`status-badge status-${coupon.status}`}>
                                             {coupon.status}

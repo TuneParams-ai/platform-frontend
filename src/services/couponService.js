@@ -42,6 +42,12 @@ export const createCoupon = async (couponData, adminUserId) => {
             throw new Error('Firestore not initialized');
         }
 
+        // Get admin user profile to store email
+        const adminProfile = await getUserProfile(adminUserId);
+        if (!adminProfile.success) {
+            throw new Error('Admin user not found');
+        }
+
         // Generate unique coupon code if not provided
         const couponCode = couponData.code || generateCouponCode(couponData.prefix || '');
 
@@ -114,6 +120,8 @@ export const createCoupon = async (couponData, adminUserId) => {
 
             // Admin information
             createdBy: adminUserId,
+            createdByEmail: adminProfile.data?.email || null,
+            createdByName: adminProfile.data?.displayName || adminProfile.data?.email?.split('@')[0] || 'Unknown Admin',
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
 
