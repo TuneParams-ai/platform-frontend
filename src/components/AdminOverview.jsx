@@ -108,6 +108,8 @@ const AdminOverview = () => {
                     <ul>
                         <li>View detailed payment records in the Payments tab</li>
                         <li>Manage user enrollments in the Enrollments tab</li>
+                        <li>Track and update student progress in the Progress Tracking tab</li>
+                        <li>Configure coupon discounts in the Coupons tab</li>
                         <li>Assign user roles in the Role Management section</li>
                         <li>Test system functionality using admin tools</li>
                     </ul>

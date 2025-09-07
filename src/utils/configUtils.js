@@ -10,6 +10,14 @@ export const areCouponsEnabled = () => {
 };
 
 /**
+ * Check if the progress tracking system is enabled
+ * @returns {boolean} true if progress tracking is enabled, false otherwise
+ */
+export const isProgressTrackingEnabled = () => {
+    return process.env.REACT_APP_ENABLE_PROGRESS_TRACKING === 'true';
+};
+
+/**
  * Check if PayPal is properly configured
  * @returns {boolean} true if PayPal client ID is configured
  */
@@ -45,6 +53,7 @@ export const getAppConfig = () => {
     return {
         features: {
             coupons: areCouponsEnabled(),
+            progressTracking: isProgressTrackingEnabled(),
             paypal: isPayPalConfigured(),
             emailjs: isEmailJSConfigured()
         },

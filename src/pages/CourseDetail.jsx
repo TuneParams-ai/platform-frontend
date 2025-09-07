@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useCourseStats } from "../hooks/useCourseStats";
 import { findCourseById, isComingSoon, getNextAvailableBatch } from "../data/coursesData";
 import { useCourseAccess } from "../hooks/useCourseAccess";
+import { isProgressTrackingEnabled } from '../utils/configUtils';
 import PayPalCheckout from "../components/PayPalCheckout";
 import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import StarRating from "../components/StarRating";
@@ -20,6 +21,9 @@ const CourseDetail = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
     const [enrollmentResult, setEnrollmentResult] = useState(null);
+
+    // Check if progress tracking is enabled
+    const progressTrackingEnabled = isProgressTrackingEnabled();
     const [showPayPal, setShowPayPal] = useState(false);
 
     // Use the course access hook
@@ -236,7 +240,7 @@ const CourseDetail = () => {
                                                     <p className="course-detail-success-title">
                                                         ✅ You're enrolled!
                                                     </p>
-                                                    {enrollment && (
+                                                    {progressTrackingEnabled && enrollment && (
                                                         <p className="course-detail-success-text">
                                                             Progress: {enrollment.progress || 0}%
                                                         </p>

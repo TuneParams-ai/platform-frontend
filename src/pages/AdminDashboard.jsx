@@ -9,6 +9,7 @@ import AdminPayments from '../components/AdminPayments';
 import AdminEnrollments from '../components/AdminEnrollments';
 import AdminEmailTracking from '../components/AdminEmailTracking';
 import AdminCouponManager from '../components/AdminCouponManager';
+import AdminProgressManager from '../components/AdminProgressManager';
 import AdminSearch from '../components/AdminSearch';
 import '../styles/admin-dashboard.css';
 
@@ -119,6 +120,12 @@ const AdminDashboard = () => {
                     🎫 Coupons
                 </button>
                 <button
+                    onClick={() => setActiveTab('progress')}
+                    className={`admin-tab-button ${activeTab === 'progress' ? 'active' : ''}`}
+                >
+                    📈 Progress Tracking
+                </button>
+                <button
                     onClick={() => setActiveTab('search')}
                     className={`admin-tab-button ${activeTab === 'search' ? 'active' : ''}`}
                 >
@@ -138,6 +145,7 @@ const AdminDashboard = () => {
                 {activeTab === 'enrollments' && <AdminEnrollments />}
                 {activeTab === 'emails' && <AdminEmailTracking />}
                 {activeTab === 'coupons' && <AdminCouponManager />}
+                {activeTab === 'progress' && <AdminProgressManager />}
                 {activeTab === 'search' && <AdminSearch />}
                 {activeTab === 'roles' && <AdminRoleManager />}
             </div>
