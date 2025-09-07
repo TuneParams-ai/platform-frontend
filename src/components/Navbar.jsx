@@ -1,26 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { isUserAdmin } from '../services/roleService';
 import "./../styles/root.css";
 import "./../styles/navbar.css";
+
+// Admin emails list (fallback) - moved outside component to avoid recreating on each render
+const adminEmails = [
+  'contact@tuneparams.com',
+  'abhinaykotla@gmail.com',
+  'admin@tuneparams.com',
+  // Add more admin emails here as needed
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  // Admin emails list
-  const adminEmails = [
-    'contact@tuneparams.com',
-    'abhinaykotla@gmail.com',
-    'admin@tuneparams.com',
-    // Add more admin emails here as needed
-  ];
+  // Check admin status from database and fallback to email
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
 
-  // Check if current user is admin
-  const isAdmin = user && adminEmails.includes(user.email);
+      try {
+        // First check database role
+        const adminStatus = await isUserAdmin(user.uid);
+        if (adminStatus) {
+          setIsAdmin(true);
+          return;
+        }
+
+        // Fallback to email-based check
+        setIsAdmin(adminEmails.includes(user.email));
+      } catch (err) {
+        console.error('Error checking admin status in navbar:', err);
+        // Fallback to email-based check on error
+        setIsAdmin(adminEmails.includes(user.email));
+      }
+    };
+
+    checkAdminStatus();
+  }, [user]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
