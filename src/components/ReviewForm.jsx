@@ -79,6 +79,7 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
         const res = await addOrUpdateReview({
             userId,
             userName,
+            userEmail: user?.email,
             userPhotoURL: photoURL,
             courseId,
             courseTitle,

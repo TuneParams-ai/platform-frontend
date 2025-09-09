@@ -23,6 +23,7 @@ const REVIEWS_COLLECTION = 'course_reviews';
 export const addOrUpdateReview = async ({
     userId,
     userName,
+    userEmail,
     userPhotoURL,
     courseId,
     courseTitle,
@@ -39,9 +40,18 @@ export const addOrUpdateReview = async ({
         if (c.length === 0) throw new Error('Comment is required');
         if (c.length > 2000) throw new Error('Comment too long (max 2000 characters)');
 
-        // Get user profile to include email
-        const userProfile = await getUserProfile(userId);
-        const userEmail = userProfile.success ? userProfile.data?.email : null;
+        // Use the userEmail passed directly from the component
+        // If not provided, fallback to fetching from user profile
+        let finalUserEmail = userEmail;
+        if (!finalUserEmail) {
+            const userProfile = await getUserProfile(userId);
+            finalUserEmail = userProfile.success ? userProfile.userData?.email : null;
+        }
+
+        // Ensure we have a valid email
+        if (!finalUserEmail) {
+            throw new Error('Unable to determine user email. Please ensure you are logged in properly.');
+        }
 
         // Determine verified flag by checking enrollment
         const access = await checkCourseAccess(userId, courseId);
@@ -60,7 +70,7 @@ export const addOrUpdateReview = async ({
             ref,
             {
                 userId,
-                userEmail,
+                userEmail: finalUserEmail,
                 userName,
                 userPhotoURL: userPhotoURL || '',
                 courseId,
