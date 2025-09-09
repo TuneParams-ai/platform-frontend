@@ -17,6 +17,15 @@ This is the frontend application for TuneParams.ai educational platform, built w
 - Automatic course enrollment after payment
 - **Email confirmation system** with enrollment receipts
 - Downloadable payment receipts (HTML format)
+- **Coupon system** with configurable discount codes (optional)
+
+### 🎟️ Coupon System (Optional)
+- **Flexible discount codes** with percentage or fixed amount discounts
+- **Usage limitations** per coupon and per user
+- **Course-specific or general coupons** for targeted promotions
+- **Admin management interface** for creating and managing coupons
+- **Environment toggle** to enable/disable coupon functionality
+- **100% off coupons** for free course access without payment processing
 
 ### 📧 Email Notifications
 The platform includes a comprehensive email notification system for enrollment confirmations:
@@ -42,13 +51,21 @@ The platform includes a comprehensive email notification system for enrollment c
 
 ### 👤 User Dashboard
 - Personal course enrollment tracking
-- Progress monitoring
+- **Progress monitoring with visual progress bars**
 - Payment history
+
+### 📈 Progress Tracking (Optional)
+- **Visual progress bars** for course completion tracking
+- **Admin management interface** for updating student progress
+- **Progress analytics** with completion statistics
+- **Environment toggle** to enable/disable progress tracking functionality
+- **Flexible progress updates** with batch-specific tracking
 
 ### 🛡️ Admin Features
 - Enrollment management
 - Payment tracking
 - **Email tracking and analytics dashboard**
+- **Progress tracking management with toggle controls**
 - User role management
 - Review moderation
 
@@ -68,9 +85,26 @@ The platform uses EmailJS for sending enrollment confirmation emails. See [EMAIL
 REACT_APP_EMAILJS_SERVICE_ID=your_service_id
 REACT_APP_EMAILJS_TEMPLATE_ID=your_template_id
 REACT_APP_EMAILJS_PUBLIC_KEY=your_public_key
-REACT_APP_SUPPORT_EMAIL=support@tuneparams.ai
+REACT_APP_SUPPORT_EMAIL=contact@tuneparams.com
 REACT_APP_WEBSITE_URL=https://www.tuneparams.ai
 ```
+
+### Environment Variables for Coupons:
+```bash
+# Enable or disable the coupon system
+# Set to 'true' to enable coupons, 'false' to disable
+# When disabled, coupon input will not appear in checkout
+REACT_APP_ENABLE_COUPONS=true
+
+# Enable or disable the progress tracking system
+# Set to 'true' to enable progress tracking, 'false' to disable
+# When disabled, progress bars and tracking will not be visible
+REACT_APP_ENABLE_PROGRESS_TRACKING=true
+```
+
+**Note:** When `REACT_APP_ENABLE_COUPONS=false`, the coupon input will be completely hidden from the checkout process, and the admin coupon manager will show a warning banner indicating that the system is disabled.
+
+**Note:** When `REACT_APP_ENABLE_PROGRESS_TRACKING=false`, progress bars will be hidden from the user dashboard, course details, and admin enrollment views. The admin progress manager will show a warning banner indicating that the system is disabled.
 
 ## Deployment
 

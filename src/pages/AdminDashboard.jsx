@@ -8,6 +8,9 @@ import AdminOverview from '../components/AdminOverview';
 import AdminPayments from '../components/AdminPayments';
 import AdminEnrollments from '../components/AdminEnrollments';
 import AdminEmailTracking from '../components/AdminEmailTracking';
+import AdminCouponManager from '../components/AdminCouponManager';
+import AdminProgressManager from '../components/AdminProgressManager';
+import AdminSearch from '../components/AdminSearch';
 import '../styles/admin-dashboard.css';
 
 const AdminDashboard = () => {
@@ -26,31 +29,35 @@ const AdminDashboard = () => {
             }
 
             try {
+                // Primary check: Database role
                 const adminStatus = await isUserAdmin(user.uid);
-                setIsAdmin(adminStatus);
+
+                if (adminStatus) {
+                    setIsAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                }
             } catch (err) {
                 console.error('Error checking admin status:', err);
                 setIsAdmin(false);
             } finally {
                 setAdminLoading(false);
             }
-        };
-
-        checkAdminStatus();
+        }; checkAdminStatus();
     }, [user]);
 
-    // Fallback: Simple email-based admin check for development
+    // Fallback: Simple email-based admin check for development/emergency access
     const adminEmails = [
-        'admin@tuneparams.ai',
+        'contact@tuneparams.com',
         'abhinaykotla@gmail.com',
         'admin@tuneparams.com',
         // Add more admin emails here as needed
     ];
 
     const isEmailAdmin = user && adminEmails.includes(user.email);
-    const hasAdminAccess = isAdmin || isEmailAdmin;
 
-    if (!user) {
+    // Database role takes priority, email is fallback only
+    const hasAdminAccess = isAdmin || isEmailAdmin; if (!user) {
         return (
             <div className="admin-access-denied">
                 <h2>Please log in to access admin panel</h2>
@@ -71,12 +78,7 @@ const AdminDashboard = () => {
             <div className="admin-access-denied">
                 <h2>Access Denied</h2>
                 <p>You don't have permission to access this page.</p>
-                {isEmailAdmin && (
-                    <div className="admin-note">
-                        <p><strong>Note:</strong> You have email-based admin access but no database role.</p>
-                        <p>Use the Role Manager below to set up proper database roles.</p>
-                    </div>
-                )}
+                <p>Please contact an administrator to assign you admin privileges.</p>
             </div>
         );
     }
@@ -111,6 +113,24 @@ const AdminDashboard = () => {
                     📧 Email Tracking
                 </button>
                 <button
+                    onClick={() => setActiveTab('coupons')}
+                    className={`admin-tab-button ${activeTab === 'coupons' ? 'active' : ''}`}
+                >
+                    🎫 Coupons
+                </button>
+                <button
+                    onClick={() => setActiveTab('progress')}
+                    className={`admin-tab-button ${activeTab === 'progress' ? 'active' : ''}`}
+                >
+                    📈 Progress Tracking
+                </button>
+                <button
+                    onClick={() => setActiveTab('search')}
+                    className={`admin-tab-button ${activeTab === 'search' ? 'active' : ''}`}
+                >
+                    🔍 Search
+                </button>
+                <button
                     onClick={() => setActiveTab('roles')}
                     className={`admin-tab-button ${activeTab === 'roles' ? 'active' : ''}`}
                 >
@@ -123,6 +143,9 @@ const AdminDashboard = () => {
                 {activeTab === 'payments' && <AdminPayments />}
                 {activeTab === 'enrollments' && <AdminEnrollments />}
                 {activeTab === 'emails' && <AdminEmailTracking />}
+                {activeTab === 'coupons' && <AdminCouponManager />}
+                {activeTab === 'progress' && <AdminProgressManager />}
+                {activeTab === 'search' && <AdminSearch />}
                 {activeTab === 'roles' && <AdminRoleManager />}
             </div>
         </div>

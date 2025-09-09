@@ -226,8 +226,8 @@ const EmailSetupGuide = () => {
                             <span style={{ color: '#68d391' }}>REACT_APP_EMAILJS_SERVICE_ID</span>=your_service_id_here<br />
                             <span style={{ color: '#68d391' }}>REACT_APP_EMAILJS_TEMPLATE_ID</span>=your_template_id_here<br />
                             <span style={{ color: '#68d391' }}>REACT_APP_EMAILJS_PUBLIC_KEY</span>=your_public_key_here<br />
-                            <span style={{ color: '#68d391' }}>REACT_APP_FROM_EMAIL</span>=noreply@tuneparams.ai<br />
-                            <span style={{ color: '#68d391' }}>REACT_APP_SUPPORT_EMAIL</span>=support@tuneparams.ai<br />
+                            <span style={{ color: '#68d391' }}>REACT_APP_FROM_EMAIL</span>=noreply@tuneparams.com<br />
+                            <span style={{ color: '#68d391' }}>REACT_APP_SUPPORT_EMAIL</span>=contact@tuneparams.com<br />
                             <span style={{ color: '#68d391' }}>REACT_APP_WEBSITE_URL</span>=https://www.tuneparams.ai
                         </div>
                     </div>

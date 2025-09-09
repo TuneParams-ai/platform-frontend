@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCourseAccess } from '../hooks/useCourseAccess';
 import { findCourseById } from '../data/coursesData';
+import { isProgressTrackingEnabled } from '../utils/configUtils';
 import '../styles/dashboard.css';
 
 const Dashboard = () => {
@@ -15,6 +16,9 @@ const Dashboard = () => {
     // hasAnyCourseAccess, - currently unused
     // updateProgress - currently unused  
   } = useCourseAccess();
+
+  // Check if progress tracking is enabled
+  const progressTrackingEnabled = isProgressTrackingEnabled();
 
   // Convert enrollments to the format expected by the UI
   const enrolledCourses = allEnrollments.map(enrollment => {
@@ -65,15 +69,17 @@ const Dashboard = () => {
                     <h3>{course.title}</h3>
                     <span className="course-status">{course.status}</span>
                   </div>
-                  <div className="course-progress">
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${course.progress}%` }}
-                      ></div>
+                  {progressTrackingEnabled && (
+                    <div className="course-progress">
+                      <div className="progress-bar">
+                        <div
+                          className="progress-fill"
+                          style={{ width: `${course.progress}%` }}
+                        ></div>
+                      </div>
+                      <span className="progress-text">{course.progress}% Complete</span>
                     </div>
-                    <span className="progress-text">{course.progress}% Complete</span>
-                  </div>
+                  )}
                   <div className="course-actions">
                     <button
                       className="btn"

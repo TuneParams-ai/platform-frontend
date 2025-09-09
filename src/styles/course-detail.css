@@ -578,13 +578,28 @@
 .back-btn {
     margin-bottom: 15px;
     font-size: 0.85rem !important;
-    padding: 8px 16px !important;
+    padding: 10px 20px !important;
     min-height: auto !important;
     min-width: auto !important;
     width: auto !important;
     max-width: 200px !important;
     align-self: flex-start !important;
     display: inline-flex !important;
+    background: var(--metallic-gradient) !important;
+    color: white !important;
+    border: 1px solid rgba(29, 126, 153, 0.3) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(29, 126, 153, 0.3) !important;
+    font-weight: 500 !important;
+}
+
+.back-btn:hover {
+    background: var(--metallic-gradient-reverse) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
 }
 
 /* Course materials and downloads */
@@ -652,20 +667,24 @@
 }
 
 .back-to-enroll-btn {
-    background: #f3f4f6;
-    border: 1px solid #d1d5db;
-    color: #374151;
-    padding: 8px 16px;
-    border-radius: 6px;
+    background: var(--metallic-gradient);
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     align-self: flex-start;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(29, 126, 153, 0.3);
 }
 
 .back-to-enroll-btn:hover {
-    background: #e5e7eb;
-    border-color: #9ca3af;
+    background: var(--metallic-gradient-reverse);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.4);
 }
 
 /* Additional Course Detail Inline Styles */
@@ -833,11 +852,22 @@
     }
 
     .back-btn {
-        padding: 6px 12px !important;
+        padding: 8px 16px !important;
         font-size: 0.8rem !important;
         margin-bottom: 12px;
         width: auto !important;
         max-width: 150px !important;
+        background: var(--metallic-gradient) !important;
+        color: white !important;
+        border: 1px solid rgba(29, 126, 153, 0.3) !important;
+        box-shadow: 0 2px 8px rgba(29, 126, 153, 0.3) !important;
+    }
+
+    .back-btn:hover {
+        background: var(--metallic-gradient-reverse) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(29, 126, 153, 0.4) !important;
+        color: white !important;
     }
 
     .download-btn {

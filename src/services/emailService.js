@@ -9,7 +9,7 @@ const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
 // Company information
 const COMPANY_NAME = process.env.REACT_APP_COMPANY_NAME || 'TuneParams AI Learning Platform';
-const SUPPORT_EMAIL = process.env.REACT_APP_SUPPORT_EMAIL || 'support@tuneparams.ai';
+const SUPPORT_EMAIL = process.env.REACT_APP_SUPPORT_EMAIL || 'contact@tuneparams.com';
 const WEBSITE_URL = process.env.REACT_APP_WEBSITE_URL || 'https://www.tuneparams.ai';
 
 /**
@@ -468,4 +468,387 @@ export const downloadReceipt = (enrollmentData) => {
         console.error('Error downloading receipt:', error);
         return { success: false, error: error.message };
     }
+};
+
+/**
+ * Sends a coupon code via email
+ * @param {Object} couponEmailData - Coupon email details
+ * @param {string} userId - User ID for tracking (optional)
+ * @returns {Promise<Object>} Email sending result
+ */
+export const sendCouponEmail = async (couponEmailData, userId = null) => {
+    // Import email tracking service
+    const { recordEmailSent } = await import('./emailTrackingService');
+
+    // Check if EmailJS is configured
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+        console.warn('EmailJS not configured. Coupon email would be sent if EmailJS was set up.');
+
+        // Still record the attempt for tracking
+        try {
+            await recordEmailSent({
+                userId: userId,
+                recipientEmail: couponEmailData.recipientEmail,
+                recipientName: couponEmailData.recipientName,
+                emailType: 'coupon_notification',
+                subject: `🎫 Your Exclusive Coupon Code: ${couponEmailData.couponCode}`,
+                courseId: couponEmailData.courseId || null,
+                courseTitle: couponEmailData.courseTitle || null,
+                success: false,
+                error: 'Email service not configured',
+                metadata: {
+                    couponCode: couponEmailData.couponCode,
+                    couponName: couponEmailData.couponName,
+                    discountType: couponEmailData.discountType,
+                    discountValue: couponEmailData.discountValue
+                }
+            });
+        } catch (trackingError) {
+            console.error('Failed to record email tracking:', trackingError);
+        }
+
+        return {
+            success: false,
+            skipped: true,
+            message: 'Email service not configured'
+        };
+    }
+
+    try {
+        // Initialize EmailJS
+        initializeEmailJS();
+
+        const emailContent = generateCouponEmailContent(couponEmailData);
+
+        console.log('Sending coupon email with data:', emailContent);
+
+        const response = await emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID, // You might want a separate template for coupons
+            emailContent
+        );
+
+        console.log('Coupon email sent successfully:', response);
+
+        // Record successful email sending
+        try {
+            await recordEmailSent({
+                userId: userId,
+                recipientEmail: couponEmailData.recipientEmail,
+                recipientName: couponEmailData.recipientName,
+                emailType: 'coupon_notification',
+                subject: emailContent.subject,
+                courseId: couponEmailData.courseId || null,
+                courseTitle: couponEmailData.courseTitle || null,
+                emailServiceResponse: response,
+                success: true,
+                rawTextContent: generateCouponEmailText(couponEmailData),
+                metadata: {
+                    couponCode: couponEmailData.couponCode,
+                    couponName: couponEmailData.couponName,
+                    discountType: couponEmailData.discountType,
+                    discountValue: couponEmailData.discountValue,
+                    validUntil: couponEmailData.validUntil,
+                    minOrderAmount: couponEmailData.minOrderAmount,
+                    senderName: couponEmailData.senderName
+                }
+            });
+        } catch (trackingError) {
+            console.error('Failed to record email tracking:', trackingError);
+        }
+
+        return {
+            success: true,
+            response: response,
+            emailId: response.text
+        };
+
+    } catch (error) {
+        console.error('Failed to send coupon email:', error);
+
+        // Record failed email attempt
+        try {
+            await recordEmailSent({
+                userId: userId,
+                recipientEmail: couponEmailData.recipientEmail,
+                recipientName: couponEmailData.recipientName,
+                emailType: 'coupon_notification',
+                subject: `🎫 Your Exclusive Coupon Code: ${couponEmailData.couponCode}`,
+                courseId: couponEmailData.courseId || null,
+                courseTitle: couponEmailData.courseTitle || null,
+                success: false,
+                error: error.message || 'Failed to send coupon email',
+                metadata: {
+                    couponCode: couponEmailData.couponCode,
+                    couponName: couponEmailData.couponName,
+                    discountType: couponEmailData.discountType,
+                    discountValue: couponEmailData.discountValue
+                }
+            });
+        } catch (trackingError) {
+            console.error('Failed to record email tracking:', trackingError);
+        }
+
+        return {
+            success: false,
+            error: error.message || 'Failed to send coupon email'
+        };
+    }
+};
+
+/**
+ * Generate coupon email content
+ * @param {Object} couponData - Coupon email details
+ * @returns {Object} Email template parameters
+ */
+const generateCouponEmailContent = (couponData) => {
+    const {
+        recipientName,
+        recipientEmail,
+        couponCode,
+        couponName,
+        discountType,
+        discountValue,
+        courseTitle,
+        courseId,
+        validUntil,
+        minOrderAmount,
+        adminMessage,
+        senderName
+    } = couponData;
+
+    // Format discount display
+    const discountDisplay = discountType === 'percentage'
+        ? `${discountValue}% off`
+        : `$${discountValue} off`;
+
+    // Format expiry date
+    const expiryText = validUntil
+        ? `Valid until ${new Date(validUntil).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })}`
+        : 'No expiry date';
+
+    // Format minimum order requirement
+    const minOrderText = minOrderAmount
+        ? `Minimum order amount: $${minOrderAmount}`
+        : 'No minimum order requirement';
+
+    // Course-specific message and links
+    let courseInfo = '';
+    let courseLinks = '';
+    let enrollmentUrl = `${WEBSITE_URL}/courses`;
+
+    if (courseTitle && courseId) {
+        courseInfo = `This coupon is specifically for: **${courseTitle}**`;
+        enrollmentUrl = `${WEBSITE_URL}/courses/${courseId}`;
+        courseLinks = `
+📚 **Course Information**: ${WEBSITE_URL}/courses/${courseId}
+🎯 **Direct Enrollment**: ${enrollmentUrl}
+        `;
+    } else {
+        courseInfo = 'This coupon can be used for any of our courses';
+        courseLinks = `
+📚 **Browse All Courses**: ${WEBSITE_URL}/courses
+🎯 **AI Foundations Course**: ${WEBSITE_URL}/courses/FAAI
+🤖 **Reinforcement Learning**: ${WEBSITE_URL}/courses/RLAI
+        `;
+    }
+
+    // Step-by-step instructions
+    const detailedInstructions = courseTitle && courseId ?
+        `
+**How to Redeem Your Coupon:**
+
+1. 🌐 **Visit the course page**: ${enrollmentUrl}
+2. 📝 **Click "Enroll Now"** to start the enrollment process
+3. 💳 **At checkout**, look for "Have a coupon code?" section
+4. 🎫 **Enter your coupon code**: \`${couponCode}\`
+5. ✅ **Click "Apply"** to see your discount applied instantly
+6. 💰 **Complete payment** with your discounted price
+7. 🎉 **Start learning immediately** after enrollment
+
+**Need Help?**
+- 📧 Email us at: ${SUPPORT_EMAIL}
+- 🌐 Visit our help center: ${WEBSITE_URL}/support
+- 💬 Live chat available on our website
+        ` :
+        `
+**How to Redeem Your Coupon:**
+
+1. 🌐 **Browse our courses**: ${WEBSITE_URL}/courses
+2. 📚 **Select any course** that interests you
+3. 📝 **Click "Enroll Now"** on your chosen course
+4. 💳 **At checkout**, look for "Have a coupon code?" section
+5. 🎫 **Enter your coupon code**: \`${couponCode}\`
+6. ✅ **Click "Apply"** to see your discount applied instantly
+7. 💰 **Complete payment** with your discounted price
+8. 🎉 **Start learning immediately** after enrollment
+
+**Need Help?**
+- 📧 Email us at: ${SUPPORT_EMAIL}
+- 🌐 Visit our help center: ${WEBSITE_URL}/support
+- 💬 Live chat available on our website
+        `;
+
+    return {
+        to_email: recipientEmail,
+        to_name: recipientName || 'Student',
+        from_name: COMPANY_NAME,
+        reply_to: SUPPORT_EMAIL,
+
+        subject: `🎫 Your Exclusive Coupon Code: ${couponCode}`,
+
+        // Email content
+        message_title: `🎉 You've Received a Special Discount!`,
+
+        greeting: `Dear ${recipientName || 'Student'},`,
+
+        main_content: `${senderName ? `${senderName} has sent you` : 'You have received'} an exclusive coupon code for ${COMPANY_NAME}! Get ready to advance your AI and machine learning skills at a discounted price.`,
+
+        // Coupon details section
+        coupon_section: `
+🎫 **Your Coupon Code**: \`${couponCode}\`
+🎁 **Discount**: ${discountDisplay}
+📝 **Coupon Name**: ${couponName || 'Special Discount'}
+⏰ **Validity**: ${expiryText}
+💰 **${minOrderText}**
+        `,
+
+        course_info: courseInfo,
+        course_links: courseLinks,
+
+        // Detailed instructions
+        instructions: detailedInstructions,
+
+        // Personal message from admin if provided
+        admin_message: adminMessage ? `
+**Personal Message:**
+"${adminMessage}"
+        ` : '',
+
+        // Call to action
+        cta_section: `
+🚀 **Ready to Start Learning?**
+
+${courseTitle && courseId ?
+                `[**Enroll in ${courseTitle} Now →**](${enrollmentUrl})` :
+                `[**Browse All Courses →**](${WEBSITE_URL}/courses)`
+            }
+
+[**Visit TuneParams.ai →**](${WEBSITE_URL})
+        `,
+
+        // Social proof and trust signals
+        trust_section: `
+**Why Choose TuneParams.ai?**
+✅ Expert-led courses by industry professionals
+✅ Hands-on projects and real-world applications
+✅ Small batch sizes for personalized attention
+✅ Comprehensive curriculum from foundations to advanced topics
+✅ Career support and networking opportunities
+        `,
+
+        // Footer information
+        footer_info: `
+**Important Information:**
+• This coupon code is unique to you - please don't share it
+• Discount will be applied automatically at checkout
+• For technical issues, contact ${SUPPORT_EMAIL}
+• Terms and conditions apply
+
+Follow us for updates:
+📱 **Website**: ${WEBSITE_URL}
+💼 **LinkedIn**: [TuneParams AI](https://linkedin.com/company/tuneparams-ai)
+🐦 **Twitter**: [@TuneParamsAI](https://twitter.com/tuneparamsai)
+
+Thank you for choosing TuneParams.ai for your AI learning journey!
+
+Best regards,
+The ${COMPANY_NAME} Team
+        `,
+
+        support_email: SUPPORT_EMAIL,
+        website_url: WEBSITE_URL,
+        company_name: COMPANY_NAME,
+        enrollment_url: enrollmentUrl,
+
+        // Additional metadata for tracking
+        email_type: 'coupon_notification',
+        coupon_code: couponCode,
+        coupon_name: couponName,
+        discount_type: discountType,
+        discount_value: discountValue,
+        course_id: courseId,
+        timestamp: new Date().toISOString()
+    };
+};
+
+/**
+ * Generate plain text version of coupon email for tracking
+ * @param {Object} couponData - Coupon email details
+ * @returns {string} Plain text email content
+ */
+const generateCouponEmailText = (couponData) => {
+    const {
+        recipientName,
+        couponCode,
+        couponName,
+        discountType,
+        discountValue,
+        courseTitle,
+        courseId,
+        validUntil,
+        minOrderAmount,
+        adminMessage,
+        senderName
+    } = couponData;
+
+    const discountDisplay = discountType === 'percentage'
+        ? `${discountValue}% off`
+        : `$${discountValue} off`;
+
+    const expiryText = validUntil
+        ? `Valid until ${new Date(validUntil).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })}`
+        : 'No expiry date';
+
+    const enrollmentUrl = courseId ? `${WEBSITE_URL}/courses/${courseId}` : `${WEBSITE_URL}/courses`;
+
+    return `
+Your Exclusive Coupon Code: ${couponCode}
+
+Dear ${recipientName || 'Student'},
+
+${senderName ? `${senderName} has sent you` : 'You have received'} an exclusive coupon code for ${COMPANY_NAME}!
+
+COUPON DETAILS:
+- Code: ${couponCode}
+- Discount: ${discountDisplay}
+- Name: ${couponName || 'Special Discount'}
+- Validity: ${expiryText}
+- ${minOrderAmount ? `Minimum order: $${minOrderAmount}` : 'No minimum order requirement'}
+
+${courseTitle ? `This coupon is for: ${courseTitle}` : 'This coupon can be used for any course'}
+
+HOW TO REDEEM:
+1. Visit: ${enrollmentUrl}
+2. Select your course and click "Enroll Now"
+3. At checkout, enter coupon code: ${couponCode}
+4. Click "Apply" to see your discount
+5. Complete payment and start learning!
+
+${adminMessage ? `Personal Message: "${adminMessage}"` : ''}
+
+Need help? Email us at ${SUPPORT_EMAIL}
+
+Best regards,
+The ${COMPANY_NAME} Team
+${WEBSITE_URL}
+    `;
 };

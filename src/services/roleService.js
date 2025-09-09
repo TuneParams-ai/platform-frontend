@@ -80,7 +80,6 @@ export const assignUserRole = async (userId, role, assignedBy) => {
             updatedAt: serverTimestamp()
         }, { merge: true });
 
-        console.log(`Role ${role} assigned to user ${userId} in both collections`);
         return { success: true, role: userRoleData };
 
     } catch (error) {
@@ -104,7 +103,8 @@ export const getUserRole = async (userId) => {
         const roleDoc = await getDoc(roleRef);
 
         if (roleDoc.exists()) {
-            return roleDoc.data();
+            const userData = roleDoc.data();
+            return userData;
         } else {
             // Default to student role if no role assigned
             return {
@@ -118,9 +118,7 @@ export const getUserRole = async (userId) => {
         console.error('Error getting user role:', error);
         return { role: USER_ROLES.STUDENT, permissions: [] };
     }
-};
-
-/**
+};/**
  * Checks if a user has a specific permission
  * @param {string} userId - Firebase user ID
  * @param {string} permission - Permission to check
@@ -144,14 +142,13 @@ export const userHasPermission = async (userId, permission) => {
 export const isUserAdmin = async (userId) => {
     try {
         const userRole = await getUserRole(userId);
-        return userRole.role === USER_ROLES.ADMIN && userRole.isActive;
+        const isAdmin = userRole.role === USER_ROLES.ADMIN && userRole.isActive;
+        return isAdmin;
     } catch (error) {
         console.error('Error checking admin status:', error);
         return false;
     }
-};
-
-/**
+};/**
  * Logs role assignment actions for audit trail
  * @param {string} action - Action performed
  * @param {string} targetUserId - User who was affected

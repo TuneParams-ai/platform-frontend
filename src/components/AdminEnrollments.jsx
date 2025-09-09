@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { findCourseById, getBatchByNumber, getBatchShortName } from '../data/coursesData';
+import { isProgressTrackingEnabled } from '../utils/configUtils';
 import ManualEnrollmentModal from './ManualEnrollmentModal';
 
 const AdminEnrollments = () => {
@@ -13,6 +14,9 @@ const AdminEnrollments = () => {
     const [selectedBatch, setSelectedBatch] = useState('all');
     const [selectedCourse, setSelectedCourse] = useState('all');
     const [showManualEnrollmentModal, setShowManualEnrollmentModal] = useState(false);
+
+    // Check if progress tracking is enabled
+    const progressTrackingEnabled = isProgressTrackingEnabled();
 
     const loadEnrollments = async () => {
         setLoading(true);
@@ -205,7 +209,7 @@ const AdminEnrollments = () => {
                             <th>Course</th>
                             <th>Batch</th>
                             <th>User ID</th>
-                            <th>Progress</th>
+                            {progressTrackingEnabled && <th>Progress</th>}
                             <th>Status</th>
                             <th>Amount Paid</th>
                         </tr>
@@ -241,30 +245,32 @@ const AdminEnrollments = () => {
                                 <td className="user-id">
                                     {enrollment.userId}
                                 </td>
-                                <td>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div
-                                            style={{
-                                                width: '60px',
-                                                height: '8px',
-                                                backgroundColor: 'rgba(29, 126, 153, 0.2)',
-                                                borderRadius: '4px',
-                                                overflow: 'hidden'
-                                            }}
-                                        >
+                                {progressTrackingEnabled && (
+                                    <td>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                             <div
                                                 style={{
-                                                    width: `${enrollment.progress || 0}%`,
-                                                    height: '100%',
-                                                    backgroundColor: enrollment.progress >= 100 ? '#4caf50' :
-                                                        enrollment.progress >= 50 ? '#ff9800' : '#2196f3',
-                                                    transition: 'width 0.3s ease'
+                                                    width: '60px',
+                                                    height: '8px',
+                                                    backgroundColor: 'rgba(29, 126, 153, 0.2)',
+                                                    borderRadius: '4px',
+                                                    overflow: 'hidden'
                                                 }}
-                                            />
+                                            >
+                                                <div
+                                                    style={{
+                                                        width: `${enrollment.progress || 0}%`,
+                                                        height: '100%',
+                                                        backgroundColor: enrollment.progress >= 100 ? '#4caf50' :
+                                                            enrollment.progress >= 50 ? '#ff9800' : '#2196f3',
+                                                        transition: 'width 0.3s ease'
+                                                    }}
+                                                />
+                                            </div>
+                                            <span>{enrollment.progress || 0}%</span>
                                         </div>
-                                        <span>{enrollment.progress || 0}%</span>
-                                    </div>
-                                </td>
+                                    </td>
+                                )}
                                 <td>
                                     <span className={`status-${enrollment.status}`}>
                                         {enrollment.status}

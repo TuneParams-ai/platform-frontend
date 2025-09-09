@@ -16,12 +16,14 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { checkCourseAccess } from './paymentService';
+import { getUserProfile } from './userService';
 
 const REVIEWS_COLLECTION = 'course_reviews';
 
 export const addOrUpdateReview = async ({
     userId,
     userName,
+    userEmail,
     userPhotoURL,
     courseId,
     courseTitle,
@@ -37,6 +39,19 @@ export const addOrUpdateReview = async ({
         const c = (comment || '').trim();
         if (c.length === 0) throw new Error('Comment is required');
         if (c.length > 2000) throw new Error('Comment too long (max 2000 characters)');
+
+        // Use the userEmail passed directly from the component
+        // If not provided, fallback to fetching from user profile
+        let finalUserEmail = userEmail;
+        if (!finalUserEmail) {
+            const userProfile = await getUserProfile(userId);
+            finalUserEmail = userProfile.success ? userProfile.userData?.email : null;
+        }
+
+        // Ensure we have a valid email
+        if (!finalUserEmail) {
+            throw new Error('Unable to determine user email. Please ensure you are logged in properly.');
+        }
 
         // Determine verified flag by checking enrollment
         const access = await checkCourseAccess(userId, courseId);
@@ -55,6 +70,7 @@ export const addOrUpdateReview = async ({
             ref,
             {
                 userId,
+                userEmail: finalUserEmail,
                 userName,
                 userPhotoURL: userPhotoURL || '',
                 courseId,

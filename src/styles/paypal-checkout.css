@@ -48,6 +48,27 @@
     margin-top: 8px;
 }
 
+.payment-item.discount-item {
+    color: #00cc6a;
+    font-weight: 700;
+    font-size: 15px;
+    text-shadow: 0 0 5px rgba(0, 204, 106, 0.3);
+}
+
+.savings-info {
+    background: linear-gradient(135deg, #00ff88, #00cc6a);
+    color: #000;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 12px;
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    animation: pulse-savings 2s infinite;
+}
+
 .paypal-button-container {
     margin: 20px 0;
     min-height: 45px;
@@ -410,4 +431,119 @@
     .privacy-content p {
         font-size: 13px;
     }
+}
+
+/* Free Course Enrollment Styles */
+.payment-item.free-total {
+    color: #00ff88;
+    font-size: 18px;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.savings-info.free-course {
+    background: linear-gradient(135deg, #00ff88, #00cc6a);
+    color: #000;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    animation: pulse-free 2s infinite;
+}
+
+@keyframes pulse-free {
+    0% {
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    }
+}
+
+@keyframes pulse-savings {
+    0% {
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+    }
+
+    100% {
+        box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    }
+}
+
+.direct-enrollment-section {
+    position: relative;
+    margin: 20px 0;
+}
+
+.direct-enrollment-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #00ff88, #00cc6a);
+    color: #000;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+}
+
+.direct-enrollment-btn:hover:not(.disabled) {
+    background: linear-gradient(135deg, #00cc6a, #00ff88);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+}
+
+.direct-enrollment-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, #666, #888);
+    box-shadow: none;
+}
+
+.enrollment-disabled-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.enrollment-disabled-overlay p {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.enrollment-security {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--secondary-text-color);
+}
+
+.enrollment-security p {
+    margin: 4px 0;
 }
