@@ -57,12 +57,14 @@ const CourseDetail = () => {
                 setShowSuccessModal(true);
                 setShowPayPal(false);
             }
-        } catch (error) {alert(`Enrollment failed: ${error.message}. Please contact support with your payment details.`);
+        } catch (error) {
+            alert(`Enrollment failed: ${error.message}. Please contact support with your payment details.`);
             setShowPayPal(false);
         }
     }, [processEnrollment]);
 
-    const handlePaymentError = useCallback((error) => {alert('Payment failed. Please try again or contact support.');
+    const handlePaymentError = useCallback((error) => {
+        alert('Payment failed. Please try again or contact support.');
         setShowPayPal(false);
     }, []);
 
@@ -426,29 +428,6 @@ const CourseDetail = () => {
                             courseTitle={courseData.title}
                         />
 
-                        {/* <section className="course-section">
-                            <h3>Course Materials</h3>
-                            <div className="course-materials">
-                                {courseData.downloadUrl ? (
-                                    <a
-                                        href={courseData.downloadUrl}
-                                        download={`${courseData.title || 'Course'}_Info.pdf`}
-                                        className="download-btn"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        📄 Download Course Info PDF
-                                    </a>
-                                ) : (
-                                    <div className="download-btn disabled">
-                                        📄 Course Info PDF (Coming Soon)
-                                    </div>
-                                )}
-                                <p className="download-description">
-                                    Detailed course information, curriculum, and requirements
-                                </p>
-                            </div>
-                        </section> */}
                     </div>
                 </div>
 

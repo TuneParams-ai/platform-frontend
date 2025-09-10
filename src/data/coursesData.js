@@ -62,8 +62,7 @@ export const coursesData = [
                 enrollmentCount: 0,
                 classLinks: {
                     zoom: "https://zoom.us/j/batch1-faai",
-                    discord: "https://discord.gg/batch1-faai",
-                    materials: "/materials/FAAI/1"
+                    discord: "https://discord.gg/batch1-faai"
                 },
                 schedule: []
             },
@@ -77,8 +76,7 @@ export const coursesData = [
                 enrollmentCount: 0,
                 classLinks: {
                     zoom: "https://zoom.us/j/batch2-faai",
-                    discord: "https://discord.gg/batch2-faai",
-                    materials: "/materials/FAAI/2"
+                    discord: "https://discord.gg/batch2-faai"
                 },
                 schedule: [
                     {
@@ -221,8 +219,7 @@ export const coursesData = [
                 enrollmentCount: 0,
                 classLinks: {
                     zoom: "TBD",
-                    discord: "TBD",
-                    materials: "/materials/RLAI/1"
+                    discord: "TBD"
                 },
                 schedule: [] // Empty schedule for courses not yet scheduled
             }
@@ -509,10 +506,9 @@ export const getNextLiveClass = (batch) => {
 export const hasAccessLinks = (batch) => {
     if (!batch.classLinks) return false;
 
-    const { zoom, discord, materials } = batch.classLinks;
+    const { zoom, discord } = batch.classLinks;
     return (zoom && zoom !== 'TBD') ||
-        (discord && discord !== 'TBD') ||
-        (materials && materials !== 'TBD');
+        (discord && discord !== 'TBD');
 };
 
 // Get available access links for a batch
@@ -520,11 +516,10 @@ export const getAvailableAccessLinks = (batch) => {
     if (!batch.classLinks) return {};
 
     const links = {};
-    const { zoom, discord, materials } = batch.classLinks;
+    const { zoom, discord } = batch.classLinks;
 
     if (zoom && zoom !== 'TBD') links.zoom = zoom;
     if (discord && discord !== 'TBD') links.discord = discord;
-    if (materials && materials !== 'TBD') links.materials = materials;
 
     return links;
 };

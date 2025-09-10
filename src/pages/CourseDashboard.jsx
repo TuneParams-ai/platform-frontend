@@ -340,16 +340,7 @@ const CourseDashboard = () => {
                                 <div className="access-card materials-card">
                                     <div className="card-icon">📚</div>
                                     <h3>Course Materials</h3>
-                                    {selectedBatch ? (
-                                        <Link
-                                            to={`/materials/${courseId}/${selectedBatch.batchNumber}`}
-                                            className="access-link"
-                                        >
-                                            Access Materials
-                                        </Link>
-                                    ) : (
-                                        <span className="link-unavailable">Materials will be available soon</span>
-                                    )}
+                                    <span className="link-unavailable">Materials will be available soon</span>
                                 </div>
                             </div>
                         </div>

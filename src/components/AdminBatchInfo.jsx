@@ -43,7 +43,8 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                 }
 
             } catch (err) {
-                setError(`Error loading batch information: ${err.message}`);} finally {
+                setError(`Error loading batch information: ${err.message}`);
+            } finally {
                 setLoading(false);
             }
         };
@@ -164,7 +165,6 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                                             🔗 Links:
                                             {batch.classLinks.zoom && <span className="link-indicator">Zoom</span>}
                                             {batch.classLinks.discord && <span className="link-indicator">Discord</span>}
-                                            {batch.classLinks.materials && <span className="link-indicator">Materials</span>}
                                         </div>
                                     )}
                                 </div>

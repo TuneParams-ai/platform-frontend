@@ -105,11 +105,6 @@ const BatchInfo = ({ course, enrollmentCount = 0, showDetailed = false, selected
                                                     💬 Discord
                                                 </a>
                                             )}
-                                            {batch.classLinks.materials && (
-                                                <a href={batch.classLinks.materials} className="class-link materials" target="_blank" rel="noopener noreferrer">
-                                                    📚 Materials
-                                                </a>
-                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -348,11 +343,6 @@ const BatchInfo = ({ course, enrollmentCount = 0, showDetailed = false, selected
 
                 .class-link.discord {
                     background-color: #5865f2;
-                    color: white;
-                }
-
-                .class-link.materials {
-                    background-color: #6c757d;
                     color: white;
                 }
 

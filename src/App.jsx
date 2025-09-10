@@ -13,8 +13,7 @@ import About from "./pages/About";
 import AdminDashboard from "./pages/AdminDashboard";
 import Forums from "./pages/Forums";
 import ThreadDetail from "./pages/ThreadDetail";
-import Materials from "./pages/Materials";
-import MaterialsUpload from "./components/MaterialsUpload";
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -46,20 +45,6 @@ function App() {
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
-          </ProtectedRoute>
-        } />
-
-        {/* Course Materials - Protected Route */}
-        <Route path="/materials/:courseId/:batchNumber" element={
-          <ProtectedRoute>
-            <Materials />
-          </ProtectedRoute>
-        } />
-
-        {/* Materials Upload - Instructor/Admin Only */}
-        <Route path="/materials/:courseId/:batchNumber/upload" element={
-          <ProtectedRoute requiredRole="instructor">
-            <MaterialsUpload />
           </ProtectedRoute>
         } />
 
