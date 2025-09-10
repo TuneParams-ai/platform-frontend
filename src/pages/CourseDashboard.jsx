@@ -7,7 +7,6 @@ import {
     getBatchDisplayName,
     formatBatchDateRange,
     hasSchedule,
-    formatScheduleTime,
     hasAccessLinks,
     getAvailableAccessLinks
 } from '../data/coursesData';
@@ -31,9 +30,65 @@ const CourseDashboard = () => {
         setLoading(false);
     }, [courseId]);
 
-    const formatDay = (day) => {
-        if (!day || day === 'TBD') return 'TBD';
-        return day;
+    // Function to determine class status based on current date and time
+    const getClassStatus = (scheduleItem) => {
+        // If no proper date/time data, return scheduled
+        if (!scheduleItem.date || !scheduleItem.time) {
+            return 'scheduled';
+        }
+
+        const now = new Date();
+
+        // Parse the class date and time
+        const classDate = new Date(scheduleItem.date);
+        const [hours, minutes] = scheduleItem.time.split(':');
+        classDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+        // Calculate the class end time using duration
+        const classDuration = scheduleItem.duration || 90; // default 90 minutes
+        const classEndTime = new Date(classDate.getTime() + (classDuration * 60 * 1000));
+
+        // Calculate time differences in minutes
+        const timeDiffStart = (now - classDate) / (1000 * 60); // minutes since class start
+        const timeDiffEnd = (now - classEndTime) / (1000 * 60); // minutes since class end
+
+        // Determine status:
+        // Live: 30 minutes before start until class ends
+        // Completed: after class ends
+        // Scheduled: more than 30 minutes before start
+
+        if (timeDiffStart >= -30 && timeDiffEnd <= 0) {
+            return 'live';
+        } else if (timeDiffEnd > 0) {
+            return 'completed';
+        } else {
+            return 'scheduled';
+        }
+    };
+
+    const formatScheduleDateTime = (scheduleItem) => {
+        if (!scheduleItem.date || !scheduleItem.time) return 'TBD';
+
+        const classDate = new Date(scheduleItem.date);
+        const [hours, minutes] = scheduleItem.time.split(':');
+        classDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+        const dateStr = classDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        const timeStr = classDate.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+
+        const timezone = scheduleItem.timezone ? ` (${scheduleItem.timezone})` : '';
+        const duration = scheduleItem.duration ? ` • ${scheduleItem.duration} mins` : '';
+        return `${dateStr} at ${timeStr}${timezone}${duration}`;
     };
 
     const getStatusBadge = (batch) => {
@@ -56,13 +111,30 @@ const CourseDashboard = () => {
         );
     };
 
-    const getLiveBadge = (isLive) => {
-        return isLive ? (
-            <span className="live-badge">
-                <span className="live-indicator"></span>
-                LIVE
-            </span>
-        ) : null;
+    const getClassStatusBadge = (status) => {
+        switch (status) {
+            case 'live':
+                return (
+                    <span className="live-badge">
+                        <span className="live-indicator"></span>
+                        LIVE
+                    </span>
+                );
+            case 'scheduled':
+                return (
+                    <span className="scheduled-badge">
+                        SCHEDULED
+                    </span>
+                );
+            case 'completed':
+                return (
+                    <span className="completed-badge">
+                        COMPLETED
+                    </span>
+                );
+            default:
+                return null;
+        }
     };
 
     if (loading) {
@@ -197,39 +269,50 @@ const CourseDashboard = () => {
                         <div className="schedule-section">
                             <h2>Class Schedule</h2>
                             {hasSchedule(selectedBatch) ? (
-                                <div className="schedule-grid">
-                                    {selectedBatch.schedule.map((scheduleItem, index) => (
-                                        <div key={index} className={`schedule-card ${scheduleItem.isLive ? 'live-class' : ''}`}>
-                                            <div className="schedule-header">
-                                                <div className="day-time">
-                                                    <h3>{formatDay(scheduleItem.day)}</h3>
-                                                    <p className="time">
-                                                        {formatScheduleTime(scheduleItem)}
-                                                    </p>
+                                <div className="schedule-list">
+                                    {selectedBatch.schedule.map((scheduleItem, index) => {
+                                        const classStatus = getClassStatus(scheduleItem);
+                                        return (
+                                            <div key={index} className={`schedule-card ${classStatus === 'live' ? 'live-class' : classStatus === 'completed' ? 'completed-class' : 'scheduled-class'}`}>
+                                                <div className="schedule-header">
+                                                    <div className="date-time-info">
+                                                        <h3>{scheduleItem.topic || 'Topic TBD'}</h3>
+                                                        <p className="date-time">
+                                                            {formatScheduleDateTime(scheduleItem)}
+                                                        </p>
+                                                    </div>
+                                                    {getClassStatusBadge(classStatus)}
                                                 </div>
-                                                {getLiveBadge(scheduleItem.isLive)}
+                                                <div className="schedule-content">
+                                                    {classStatus === 'live' && hasAccessLinks(selectedBatch) && (
+                                                        <a
+                                                            href={getAvailableAccessLinks(selectedBatch).zoom || selectedBatch.classLinks.zoom}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="join-now-btn"
+                                                        >
+                                                            Join Live Class
+                                                        </a>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="schedule-content">
-                                                <p className="topic">{scheduleItem.topic || 'Topic TBD'}</p>
-                                                {scheduleItem.isLive && hasAccessLinks(selectedBatch) && (
-                                                    <a
-                                                        href={getAvailableAccessLinks(selectedBatch).zoom || selectedBatch.classLinks.zoom}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="join-now-btn"
-                                                    >
-                                                        Join Now
-                                                    </a>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             ) : (
                                 <div className="no-schedule">
                                     <div className="no-schedule-icon">📅</div>
-                                    <h3>Schedule Coming Soon</h3>
-                                    <p>The class schedule for this batch will be announced soon. Stay tuned!</p>
+                                    {selectedBatch.status === 'completed' ? (
+                                        <>
+                                            <h3>No Schedule Available</h3>
+                                            <p>This batch has been completed. Schedule is no longer available.</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <h3>Schedule Coming Soon</h3>
+                                            <p>The class schedule for this batch will be announced soon. Stay tuned!</p>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         </div>

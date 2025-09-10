@@ -3,7 +3,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #f8fafc;
+    background-color: var(--background-color);
 }
 
 .dashboard-container {
@@ -26,7 +26,7 @@
 
 .loading-spinner {
     font-size: 1.1rem;
-    color: #6b7280;
+    color: var(--secondary-text-color);
 }
 
 .error-container h1 {
@@ -35,24 +35,25 @@
 }
 
 .back-link {
-    color: #3b82f6;
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.2s;
 }
 
 .back-link:hover {
-    color: #2563eb;
+    color: var(--secondary-color);
     text-decoration: underline;
 }
 
 /* Course Header */
 .course-header {
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 12px;
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -63,12 +64,12 @@
 .course-info h1 {
     font-size: 2rem;
     font-weight: 700;
-    color: #1f2937;
+    color: var(--text-color);
     margin-bottom: 0.5rem;
 }
 
 .course-description {
-    color: #6b7280;
+    color: var(--secondary-text-color);
     font-size: 1.1rem;
     line-height: 1.6;
     max-width: 600px;
@@ -81,32 +82,34 @@
 }
 
 .course-detail-link {
-    background-color: #3b82f6;
+    background: var(--metallic-gradient);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     text-decoration: none;
     font-weight: 500;
-    transition: background-color 0.2s;
+    transition: all 0.2s;
 }
 
 .course-detail-link:hover {
-    background-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.3);
 }
 
 /* Batch Selector */
 .batch-selector {
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 .batch-selector h2 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
     margin-bottom: 1rem;
 }
 
@@ -117,8 +120,8 @@
 }
 
 .batch-tab {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
+    background: rgba(29, 126, 153, 0.05);
+    border: 2px solid rgba(29, 126, 153, 0.2);
     border-radius: 8px;
     padding: 1rem;
     cursor: pointer;
@@ -131,24 +134,26 @@
 }
 
 .batch-tab:hover {
-    border-color: #3b82f6;
-    background: #f0f9ff;
+    border-color: var(--primary-color);
+    background: rgba(29, 126, 153, 0.15);
+    transform: translateY(-1px);
 }
 
 .batch-tab.active {
-    border-color: #3b82f6;
-    background: #dbeafe;
+    border-color: var(--primary-color);
+    background: rgba(29, 126, 153, 0.2);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.3);
 }
 
 .batch-name {
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
     font-size: 0.95rem;
 }
 
 .batch-dates {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--secondary-text-color);
 }
 
 .status-badge {
@@ -160,27 +165,27 @@
 }
 
 .bg-blue-100 {
-    background-color: #dbeafe;
+    background-color: rgba(59, 130, 246, 0.2);
 }
 
 .text-blue-800 {
-    color: #1e40af;
+    color: #3b82f6;
 }
 
 .bg-green-100 {
-    background-color: #dcfce7;
+    background-color: rgba(16, 185, 129, 0.2);
 }
 
 .text-green-800 {
-    color: #166534;
+    color: #10b981;
 }
 
 .bg-gray-100 {
-    background-color: #f3f4f6;
+    background-color: rgba(156, 163, 175, 0.2);
 }
 
 .text-gray-800 {
-    color: #1f2937;
+    color: var(--secondary-text-color);
 }
 
 /* Dashboard Content */
@@ -192,16 +197,17 @@
 
 /* Quick Access Section */
 .quick-access-section {
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 .quick-access-section h2 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
     margin-bottom: 1.5rem;
 }
 
@@ -212,8 +218,8 @@
 }
 
 .access-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: rgba(29, 126, 153, 0.05);
+    border: 1px solid rgba(29, 126, 153, 0.2);
     border-radius: 10px;
     padding: 1.5rem;
     text-align: center;
@@ -222,19 +228,22 @@
 
 .access-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.3);
 }
 
 .zoom-card:hover {
-    border-color: #3b82f6;
+    border-color: var(--primary-color);
+    background: rgba(59, 130, 246, 0.1);
 }
 
 .discord-card:hover {
     border-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.1);
 }
 
 .materials-card:hover {
     border-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
 }
 
 .card-icon {
@@ -245,13 +254,13 @@
 .access-card h3 {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
     margin-bottom: 1rem;
 }
 
 .access-link {
     display: inline-block;
-    background-color: #3b82f6;
+    background: var(--metallic-gradient);
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 6px;
@@ -261,28 +270,29 @@
 }
 
 .access-link:hover {
-    background-color: #2563eb;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.4);
 }
 
 .link-unavailable {
-    color: #6b7280;
+    color: var(--secondary-text-color);
     font-style: italic;
     font-size: 0.9rem;
 }
 
 /* Schedule Section */
 .schedule-section {
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 .schedule-section h2 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
     margin-bottom: 1.5rem;
 }
 
@@ -292,55 +302,90 @@
     gap: 1.5rem;
 }
 
+.schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
 .schedule-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 1.5rem;
+    background: rgba(29, 126, 153, 0.05);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
     transition: all 0.2s;
 }
 
 .schedule-card.live-class {
     border-color: #ef4444;
-    background: linear-gradient(135deg, #fef2f2 0%, #fff5f5 100%);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
     box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.1);
+}
+
+.schedule-card.scheduled-class {
+    border-color: rgba(29, 126, 153, 0.3);
+    background: rgba(29, 126, 153, 0.05);
+}
+
+.schedule-card.completed-class {
+    border-color: rgba(156, 163, 175, 0.3);
+    background: rgba(156, 163, 175, 0.05);
+    opacity: 0.8;
 }
 
 .schedule-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-}
-
-.day-time h3 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #1f2937;
+    align-items: center;
     margin-bottom: 0.25rem;
 }
 
-.time {
-    color: #6b7280;
-    font-size: 0.95rem;
+.date-time-info h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.15rem;
 }
 
-.timezone {
+.date-time {
+    color: var(--secondary-text-color);
     font-size: 0.85rem;
-    color: #9ca3af;
+    font-weight: 500;
 }
 
 .live-badge {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     background: #ef4444;
     color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 16px;
+    font-size: 0.7rem;
     font-weight: 600;
     animation: pulse 2s infinite;
+}
+
+.scheduled-badge {
+    display: flex;
+    align-items: center;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 16px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.completed-badge {
+    display: flex;
+    align-items: center;
+    background: var(--secondary-text-color);
+    color: var(--background-color);
+    padding: 0.2rem 0.6rem;
+    border-radius: 16px;
+    font-size: 0.7rem;
+    font-weight: 600;
 }
 
 .live-indicator {
@@ -378,10 +423,24 @@
     }
 }
 
+.schedule-content {
+    margin-top: 0.25rem;
+}
+
 .schedule-content .topic {
-    color: #374151;
+    color: var(--text-color);
     font-weight: 500;
-    margin-bottom: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Completed class styling */
+.schedule-card.completed-class .day-time h3,
+.schedule-card.completed-class .schedule-content .topic {
+    opacity: 0.7;
+}
+
+.schedule-card.completed-class .time {
+    opacity: 0.6;
 }
 
 .join-now-btn {
@@ -418,7 +477,7 @@
 .no-schedule {
     text-align: center;
     padding: 3rem 2rem;
-    color: #6b7280;
+    color: var(--secondary-text-color);
 }
 
 .no-schedule-icon {
@@ -429,7 +488,7 @@
 .no-schedule h3 {
     font-size: 1.3rem;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-color);
     margin-bottom: 0.5rem;
 }
 
@@ -440,16 +499,17 @@
 
 /* Batch Information Section */
 .batch-info-section {
-    background: white;
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
 
 .batch-info-section h2 {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
     margin-bottom: 1.5rem;
 }
 
@@ -460,17 +520,24 @@
 }
 
 .info-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: rgba(29, 126, 153, 0.05);
+    border: 1px solid rgba(29, 126, 153, 0.2);
     border-radius: 8px;
     padding: 1.25rem;
     text-align: center;
+    transition: all 0.2s;
+}
+
+.info-card:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary-color);
+    background: rgba(29, 126, 153, 0.1);
 }
 
 .info-card h4 {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #6b7280;
+    color: var(--secondary-text-color);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 0.5rem;
@@ -479,7 +546,7 @@
 .info-card p {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-color);
 }
 
 /* Responsive Design */

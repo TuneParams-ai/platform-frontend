@@ -65,29 +65,7 @@ export const coursesData = [
                     discord: "https://discord.gg/batch1-faai",
                     materials: "/batch1/materials"
                 },
-                schedule: [
-                    {
-                        day: "Monday",
-                        time: "7:00 PM - 8:30 PM",
-                        timezone: "IST",
-                        topic: "Foundation Week",
-                        isLive: false
-                    },
-                    {
-                        day: "Wednesday",
-                        time: "7:00 PM - 8:30 PM",
-                        timezone: "IST",
-                        topic: "Neural Networks",
-                        isLive: false
-                    },
-                    {
-                        day: "Saturday",
-                        time: "10:00 AM - 11:30 AM",
-                        timezone: "IST",
-                        topic: "Hands-on Session",
-                        isLive: false
-                    }
-                ]
+                schedule: []
             },
             {
                 batchNumber: 2,
@@ -104,25 +82,39 @@ export const coursesData = [
                 },
                 schedule: [
                     {
-                        day: "Tuesday",
-                        time: "8:00 PM - 9:30 PM",
-                        timezone: "IST",
-                        topic: "Foundation Week",
-                        isLive: true
+                        date: "2025-09-02",
+                        time: "20:00",
+                        duration: 90, // minutes
+                        timezone: "CT",
+                        topic: "Introduction to Machine Learning"
                     },
                     {
-                        day: "Thursday",
-                        time: "8:00 PM - 9:30 PM",
-                        timezone: "IST",
-                        topic: "Neural Networks",
-                        isLive: true
+                        date: "2025-09-09",
+                        time: "14:30",
+                        duration: 90,
+                        timezone: "CT",
+                        topic: "Live Demo - AI in Action"
                     },
                     {
-                        day: "Sunday",
-                        time: "11:00 AM - 12:30 PM",
-                        timezone: "IST",
-                        topic: "Hands-on Session",
-                        isLive: true
+                        date: "2025-09-09",
+                        time: "20:00",
+                        duration: 90,
+                        timezone: "CT",
+                        topic: "Foundation Week"
+                    },
+                    {
+                        date: "2025-09-12",
+                        time: "20:00",
+                        duration: 90,
+                        timezone: "CT",
+                        topic: "Neural Networks"
+                    },
+                    {
+                        date: "2025-09-15",
+                        time: "11:00",
+                        duration: 90,
+                        timezone: "CT",
+                        topic: "Hands-on Session"
                     }
                 ]
             }
