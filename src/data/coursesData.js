@@ -64,7 +64,30 @@ export const coursesData = [
                     zoom: "https://zoom.us/j/batch1-faai",
                     discord: "https://discord.gg/batch1-faai",
                     materials: "/batch1/materials"
-                }
+                },
+                schedule: [
+                    {
+                        day: "Monday",
+                        time: "7:00 PM - 8:30 PM",
+                        timezone: "IST",
+                        topic: "Foundation Week",
+                        isLive: false
+                    },
+                    {
+                        day: "Wednesday",
+                        time: "7:00 PM - 8:30 PM",
+                        timezone: "IST",
+                        topic: "Neural Networks",
+                        isLive: false
+                    },
+                    {
+                        day: "Saturday",
+                        time: "10:00 AM - 11:30 AM",
+                        timezone: "IST",
+                        topic: "Hands-on Session",
+                        isLive: false
+                    }
+                ]
             },
             {
                 batchNumber: 2,
@@ -78,7 +101,30 @@ export const coursesData = [
                     zoom: "https://zoom.us/j/batch2-faai",
                     discord: "https://discord.gg/batch2-faai",
                     materials: "/batch2/materials"
-                }
+                },
+                schedule: [
+                    {
+                        day: "Tuesday",
+                        time: "8:00 PM - 9:30 PM",
+                        timezone: "IST",
+                        topic: "Foundation Week",
+                        isLive: true
+                    },
+                    {
+                        day: "Thursday",
+                        time: "8:00 PM - 9:30 PM",
+                        timezone: "IST",
+                        topic: "Neural Networks",
+                        isLive: true
+                    },
+                    {
+                        day: "Sunday",
+                        time: "11:00 AM - 12:30 PM",
+                        timezone: "IST",
+                        topic: "Hands-on Session",
+                        isLive: true
+                    }
+                ]
             }
         ],
         curriculum: [
@@ -185,7 +231,8 @@ export const coursesData = [
                     zoom: "TBD",
                     discord: "TBD",
                     materials: "TBD"
-                }
+                },
+                schedule: [] // Empty schedule for courses not yet scheduled
             }
         ],
         curriculum: [
@@ -426,4 +473,66 @@ export const getBatchShortName = (batch) => {
 // Get batch identifier for URLs and technical use
 export const getBatchIdentifier = (batch) => {
     return `batch${batch.batchNumber}`;
+};
+
+// Schedule-related helper functions
+
+// Check if a batch has any scheduled classes
+export const hasSchedule = (batch) => {
+    return batch.schedule && batch.schedule.length > 0;
+};
+
+// Get live classes for a batch
+export const getLiveClasses = (batch) => {
+    if (!hasSchedule(batch)) return [];
+    return batch.schedule.filter(scheduleItem => scheduleItem.isLive);
+};
+
+// Get upcoming classes for a batch (non-live)
+export const getUpcomingClasses = (batch) => {
+    if (!hasSchedule(batch)) return [];
+    return batch.schedule.filter(scheduleItem => !scheduleItem.isLive);
+};
+
+// Check if batch has live classes
+export const hasLiveClasses = (batch) => {
+    return getLiveClasses(batch).length > 0;
+};
+
+// Format schedule time for display
+export const formatScheduleTime = (scheduleItem) => {
+    if (!scheduleItem.time || scheduleItem.time === 'TBD') return 'TBD';
+
+    const timezone = scheduleItem.timezone ? ` (${scheduleItem.timezone})` : '';
+    return `${scheduleItem.time}${timezone}`;
+};
+
+// Get next live class for a batch
+export const getNextLiveClass = (batch) => {
+    const liveClasses = getLiveClasses(batch);
+    return liveClasses.length > 0 ? liveClasses[0] : null;
+};
+
+// Check if batch has access links available
+export const hasAccessLinks = (batch) => {
+    if (!batch.classLinks) return false;
+
+    const { zoom, discord, materials } = batch.classLinks;
+    return (zoom && zoom !== 'TBD') ||
+        (discord && discord !== 'TBD') ||
+        (materials && materials !== 'TBD');
+};
+
+// Get available access links for a batch
+export const getAvailableAccessLinks = (batch) => {
+    if (!batch.classLinks) return {};
+
+    const links = {};
+    const { zoom, discord, materials } = batch.classLinks;
+
+    if (zoom && zoom !== 'TBD') links.zoom = zoom;
+    if (discord && discord !== 'TBD') links.discord = discord;
+    if (materials && materials !== 'TBD') links.materials = materials;
+
+    return links;
 };

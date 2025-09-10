@@ -24,7 +24,13 @@ const CourseCard = ({ course, isEnrolled = false }) => {
       return;
     }
 
-    // If user is logged in, proceed to course detail for enrollment
+    // If user is enrolled, go to course dashboard
+    if (isEnrolled) {
+      navigate(`/course/${course.id}/dashboard`);
+      return;
+    }
+
+    // If user is logged in but not enrolled, proceed to course detail for enrollment
     navigate(`/courses/${course.id}`);
   };
 

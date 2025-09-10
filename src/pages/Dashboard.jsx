@@ -83,9 +83,9 @@ const Dashboard = () => {
                   <div className="course-actions">
                     <button
                       className="btn"
-                      onClick={() => navigate(`/courses/${course.id}`)}
+                      onClick={() => navigate(`/course/${course.id}/dashboard`)}
                     >
-                      {course.progress === 0 ? 'Course Material' : 'Course Material'}
+                      Course Dashboard
                     </button>
                   </div>
                   <div className="enrollment-info">

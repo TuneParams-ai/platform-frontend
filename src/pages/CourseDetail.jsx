@@ -77,8 +77,8 @@ const CourseDetail = () => {
 
     const handleGoToDashboard = useCallback(() => {
         setShowSuccessModal(false);
-        navigate('/dashboard'); // You might need to create this route
-    }, [navigate]);
+        navigate(`/course/${courseId}/dashboard`);
+    }, [navigate, courseId]);
 
     const handleGoBack = useCallback(() => {
         navigate('/courses');
@@ -248,9 +248,9 @@ const CourseDetail = () => {
                                                 </div>
                                                 <button
                                                     className="btn enroll-btn-detail"
-                                                    onClick={() => navigate('/dashboard')}
+                                                    onClick={() => navigate(`/course/${courseId}/dashboard`)}
                                                 >
-                                                    Go to Dashboard
+                                                    Go to Course Dashboard
                                                 </button>
                                             </div>
                                         ) : (
