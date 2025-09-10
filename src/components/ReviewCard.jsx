@@ -19,6 +19,27 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin 
     const { userName, userPhotoURL, rating, comment, verified, createdAt, courseTitle } = review;
     const dateText = createdAt?.toDate ? createdAt.toDate().toLocaleDateString() : '';
 
+    // Helper function to format user names properly
+    const formatUserName = (name) => {
+        if (!name) return 'User';
+
+        // If the name looks like an email username (all lowercase, no spaces)
+        // and contains common email patterns, try to format it better
+        if (name === name.toLowerCase() && !name.includes(' ')) {
+            // Split camelCase or handle common patterns
+            return name
+                .replace(/([a-z])([A-Z])/g, '$1 $2') // Split camelCase
+                .split(/[._-]/) // Split on dots, underscores, hyphens
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ')
+                .trim() || name;
+        }
+
+        return name;
+    };
+
+    const displayName = formatUserName(userName);
+
     // Check if comment is long enough to need expansion
     const commentLength = (comment || '').length;
     const isLongComment = commentLength > 300;
@@ -51,18 +72,18 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin 
                         {shouldShowImage ? (
                             <img
                                 src={userPhotoURL}
-                                alt={userName || 'User'}
+                                alt={displayName || 'User'}
                                 onError={handleImageError}
                             />
                         ) : (
                             <div className="default-avatar">
-                                {(userName || 'User').charAt(0)?.toUpperCase()}
+                                {(displayName || 'User').charAt(0)?.toUpperCase()}
                             </div>
                         )}
                     </div>
                     <div>
                         <div className="review-username">
-                            <span>{userName || 'User'}</span>
+                            <span>{displayName || 'User'}</span>
                             {verified && <span className="review-verified" title="Verified User">✓</span>}
                         </div>
                         {dateText && <div className="review-date">{dateText}</div>}

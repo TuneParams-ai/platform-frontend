@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { addOrUpdateReview, getUserReviewForCourse, deleteReview } from '../services/reviewService';
 import { useAuth } from '../hooks/useAuth';
 import { getUserProfile } from '../services/userService';
@@ -25,13 +25,42 @@ const StarInput = ({ value = 0, onChange }) => {
 const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
     const { user } = useAuth();
     const userId = user?.uid;
-    const userName = useMemo(() => user?.displayName || user?.email?.split('@')[0] || 'User', [user]);
 
     const [loading, setLoading] = useState(false);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const [error, setError] = useState(null);
     const [hasExisting, setHasExisting] = useState(false);
+    const [userDisplayName, setUserDisplayName] = useState('');
+
+    // Get user display name from profile
+    useEffect(() => {
+        const fetchUserDisplayName = async () => {
+            if (!userId) return;
+
+            // First try to use display name from auth
+            if (user?.displayName) {
+                setUserDisplayName(user.displayName);
+                return;
+            }
+
+            // If no display name in auth, get it from Firestore profile
+            try {
+                const userProfile = await getUserProfile(userId);
+                if (userProfile.success && userProfile.userData?.displayName) {
+                    setUserDisplayName(userProfile.userData.displayName);
+                } else {
+                    // Fallback to email username as last resort
+                    setUserDisplayName(user?.email?.split('@')[0] || 'User');
+                }
+            } catch (error) {
+                console.warn('Could not fetch user profile for display name:', error);
+                setUserDisplayName(user?.email?.split('@')[0] || 'User');
+            }
+        };
+
+        fetchUserDisplayName();
+    }, [user, userId]);
 
     useEffect(() => {
         let mounted = true;
@@ -78,7 +107,7 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
 
         const res = await addOrUpdateReview({
             userId,
-            userName,
+            userName: userDisplayName,
             userEmail: user?.email,
             userPhotoURL: photoURL,
             courseId,
