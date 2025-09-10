@@ -263,20 +263,31 @@
 .thread-stats {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.6rem;
     flex-wrap: wrap;
 }
 
 .stat-item {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 0.25rem;
     font-size: 0.8rem;
     opacity: 0.7;
+    white-space: nowrap;
+    padding: 0.2rem 0.4rem;
+    border-radius: 12px;
+    min-height: 1.6rem;
+    box-sizing: border-box;
 }
 
 .stat-icon {
     font-size: 0.8rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.8rem;
+    height: 0.8rem;
 }
 
 /* Thread stats delete button positioning */
@@ -284,6 +295,9 @@
     margin-left: auto;
     font-size: 0.9rem;
     padding: 0.3rem 0.6rem;
+    display: flex;
+    align-items: center;
+    border-radius: 15px;
 }
 
 .load-more-btn {
@@ -821,46 +835,108 @@
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     .forum-container {
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     .forum-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 1rem;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
     }
 
     .forum-header-actions {
         width: 100%;
         justify-content: space-between;
+        align-items: center;
     }
 
     .forum-title h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.3;
+    }
+
+    /* Category filters mobile */
+    .category-filter {
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding-bottom: 0.25rem;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .category-filter::-webkit-scrollbar {
+        display: none;
+    }
+
+    .category-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-weight: 500;
     }
 
     /* Thread card mobile adjustments */
     .thread-card {
-        padding: 1rem;
+        padding: 1.25rem;
+        margin-bottom: 0.75rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .thread-header {
         margin-bottom: 1rem;
+    }
+
+    .thread-title-row {
+        margin-bottom: 0.75rem;
+        gap: 0.75rem;
+    }
+
+    .thread-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .thread-category {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 10px;
+        font-weight: 500;
+        flex-shrink: 0;
+    }
+
+    .thread-preview {
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: var(--text-secondary);
+        margin: 0;
     }
 
     .thread-footer {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.8rem;
+        gap: 1rem;
     }
 
     .thread-author {
         width: 100%;
         justify-content: flex-start;
+        gap: 0.75rem;
     }
 
     .author-avatar,
     .default-avatar {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         flex-shrink: 0;
+        font-size: 0.9rem;
+        font-weight: 600;
     }
 
     .author-info {
@@ -870,30 +946,73 @@
 
     .author-name {
         font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.1rem;
     }
 
     .post-date {
         font-size: 0.8rem;
+        opacity: 0.7;
     }
 
     .thread-stats {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-start;
         flex-wrap: wrap;
         gap: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .stat-item {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        gap: 0.3rem;
+        padding: 0.4rem 0.7rem;
+        min-height: 1.8rem;
+        border-radius: 14px;
+        background-color: rgba(255, 255, 255, 0.05);
+        font-weight: 500;
+    }
+
+    .stat-icon {
+        font-size: 0.8rem;
+        width: 0.8rem;
+        height: 0.8rem;
     }
 
     .like-btn {
-        padding: 0.3rem 0.6rem;
+        padding: 0.4rem 0.7rem;
         font-size: 0.8rem;
+        gap: 0.3rem;
+        min-height: 1.8rem;
+        border-radius: 14px;
+        background-color: rgba(255, 255, 255, 0.05);
+        font-weight: 500;
+    }
+
+    .like-btn:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .like-btn.liked {
+        background-color: rgba(255, 107, 107, 0.15);
+    }
+
+    .like-icon {
+        font-size: 0.8rem;
+        width: 0.8rem;
+        height: 0.8rem;
     }
 
     .thread-stats-delete {
         margin-left: auto;
+        padding: 0.4rem 0.7rem;
+        border-radius: 14px;
+        background-color: rgba(255, 255, 255, 0.05);
+        min-height: 1.8rem;
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
     }
 
     /* Modal styles */
@@ -902,17 +1021,57 @@
         max-width: none;
         margin: 1rem;
         padding: 1.5rem;
+        border-radius: 16px;
     }
 
     .modal-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .close-btn {
         align-self: flex-end;
         margin-top: -0.5rem;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .forum-container {
+        padding: 0.5rem;
+    }
+
+    .thread-card {
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .thread-title {
+        font-size: 1rem;
+    }
+
+    .forum-title h1 {
+        font-size: 1.4rem;
+    }
+
+    .category-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .stat-item,
+    .like-btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+        min-height: 1.6rem;
+    }
+
+    .thread-stats-delete {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.8rem;
+        min-height: 1.6rem;
     }
 
     .form-actions {
@@ -958,22 +1117,28 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
+    gap: 0.25rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 12px;
     transition: all 0.2s ease;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    white-space: nowrap;
+    min-height: 1.6rem;
+    box-sizing: border-box;
+    opacity: 0.7;
 }
 
 .like-btn:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: translateY(-1px);
+    opacity: 1;
 }
 
 .like-btn.liked {
     background-color: rgba(255, 107, 107, 0.1);
     color: #ff6b6b;
+    opacity: 1;
 }
 
 .like-btn.liked:hover {
@@ -987,16 +1152,21 @@
 }
 
 .like-icon {
-    font-size: 1rem;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
+    justify-content: center;
+    line-height: 1;
+    width: 0.8rem;
+    height: 0.8rem;
 }
 
 .like-count {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 500;
     min-width: 1rem;
     text-align: center;
+    line-height: 1;
 }
 
 /* Reply like button - smaller */
