@@ -56,12 +56,8 @@ const ThreadCard = ({ thread, onClick, onDelete, onLike }) => {
                 if (onLike) {
                     onLike(thread.id, result.liked, result.likeCount);
                 }
-            } else {
-                console.error('Failed to like thread:', result.error);
-            }
-        } catch (error) {
-            console.error('Error liking thread:', error);
-        } finally {
+            } else {}
+        } catch (error) {} finally {
             setIsLiking(false);
         }
     };

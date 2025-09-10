@@ -39,9 +39,7 @@ const Navbar = () => {
 
         // Fallback to email-based check
         setIsAdmin(adminEmails.includes(user.email));
-      } catch (err) {
-        console.error('Error checking admin status in navbar:', err);
-        // Fallback to email-based check on error
+      } catch (err) {// Fallback to email-based check on error
         setIsAdmin(adminEmails.includes(user.email));
       }
     };

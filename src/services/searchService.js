@@ -58,7 +58,7 @@ export const searchCollection = async (collectionName, searchOptions = {}) => {
                 try {
                     constraints.push(orderBy(orderByField, orderDirection));
                 } catch (e) {
-                    console.warn(`Ordering by ${orderByField} failed for ${collectionName}, skipping ordering:`, e);
+                    // Silently skip ordering if it fails
                 }
             }
 
@@ -70,7 +70,6 @@ export const searchCollection = async (collectionName, searchOptions = {}) => {
                 try {
                     searchQuery = query(searchQuery, ...constraints);
                 } catch (e) {
-                    console.warn(`Query with constraints failed for ${collectionName}, falling back to simple query:`, e);
                     // Fallback to simple collection query
                     searchQuery = query(collection(db, collectionName), limit(limitCount));
                 }
@@ -87,19 +86,12 @@ export const searchCollection = async (collectionName, searchOptions = {}) => {
             });
         });
 
-        console.log(`Got ${allResults.length} documents from ${collectionName}`);
-        if (collectionName === 'coupons') {
-            console.log('Sample coupon documents:', allResults.slice(0, 3));
-        }
-
         // Client-side text search if searchTerm provided
         let filteredResults = allResults;
         if (searchTerm && searchTerm.trim() && searchFields.length > 0) {
             const normalizedSearchTerm = caseSensitive ?
                 searchTerm.trim() :
                 searchTerm.trim().toLowerCase();
-
-            console.log(`Filtering for search term: "${normalizedSearchTerm}" in fields:`, searchFields);
 
             filteredResults = allResults.filter(item => {
                 const matches = searchFields.some(field => {
@@ -114,16 +106,10 @@ export const searchCollection = async (collectionName, searchOptions = {}) => {
                         normalizedFieldValue === normalizedSearchTerm :
                         normalizedFieldValue.includes(normalizedSearchTerm);
 
-                    if (collectionName === 'coupons' && field === 'code') {
-                        console.log(`Checking coupon code: "${fieldValue}" vs search term: "${normalizedSearchTerm}" = ${result}`);
-                    }
-
                     return result;
                 });
                 return matches;
             });
-
-            console.log(`Filtered to ${filteredResults.length} results for ${collectionName}`);
         }
 
         return {
@@ -134,7 +120,6 @@ export const searchCollection = async (collectionName, searchOptions = {}) => {
         };
 
     } catch (error) {
-        console.error(`Error searching ${collectionName}:`, error);
         return {
             success: false,
             error: error.message,
@@ -291,7 +276,6 @@ export const prefixSearch = async (collectionName, field, prefix, limitCount = 1
         };
 
     } catch (error) {
-        console.error('Error in prefix search:', error);
         return {
             success: false,
             error: error.message,
@@ -395,7 +379,6 @@ export const advancedSearch = async (collectionName, searchConfig) => {
         };
 
     } catch (error) {
-        console.error('Error in advanced search:', error);
         return {
             success: false,
             error: error.message,
@@ -445,15 +428,11 @@ export const globalSearch = async (searchTerm, collections = ['users', 'coupons'
                     searchFields = ['name', 'title', 'email'];
             }
 
-            console.log(`Searching ${collectionName} for "${searchTerm}" in fields:`, searchFields);
-
             const result = await searchCollection(collectionName, {
                 searchTerm,
                 searchFields,
                 limitCount: 20
             });
-
-            console.log(`${collectionName} search result:`, result);
 
             return {
                 collection: collectionName,
@@ -470,7 +449,6 @@ export const globalSearch = async (searchTerm, collections = ['users', 'coupons'
         };
 
     } catch (error) {
-        console.error('Error in global search:', error);
         return {
             success: false,
             error: error.message,

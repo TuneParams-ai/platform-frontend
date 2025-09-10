@@ -43,9 +43,7 @@ const AdminBatchInfo = ({ course, className = '' }) => {
                 }
 
             } catch (err) {
-                setError(`Error loading batch information: ${err.message}`);
-                console.error('Error loading batch stats:', err);
-            } finally {
+                setError(`Error loading batch information: ${err.message}`);} finally {
                 setLoading(false);
             }
         };

@@ -14,7 +14,7 @@ const Dashboard = () => {
     loading,
     error
     // hasAnyCourseAccess, - currently unused
-    // updateProgress - currently unused  
+    // updateProgress - currently unused
   } = useCourseAccess();
 
   // Check if progress tracking is enabled

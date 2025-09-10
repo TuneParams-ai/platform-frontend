@@ -53,9 +53,7 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
                     // Fallback to email username as last resort
                     setUserDisplayName(user?.email?.split('@')[0] || 'User');
                 }
-            } catch (error) {
-                console.warn('Could not fetch user profile for display name:', error);
-                setUserDisplayName(user?.email?.split('@')[0] || 'User');
+            } catch (error) {setUserDisplayName(user?.email?.split('@')[0] || 'User');
             }
         };
 
@@ -100,9 +98,7 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
                 if (userProfile.success && userProfile.userData?.photoURL) {
                     photoURL = userProfile.userData.photoURL;
                 }
-            } catch (error) {
-                console.warn('Could not fetch user profile for photoURL:', error);
-            }
+            } catch (error) {}
         }
 
         const res = await addOrUpdateReview({

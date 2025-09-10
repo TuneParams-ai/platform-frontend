@@ -24,10 +24,7 @@ const requiredEnvVars = [
 ];
 
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-if (missingVars.length > 0) {
-    console.error('Missing required Firebase environment variables:', missingVars);
-    console.error('Please check your .env.local file contains all required Firebase variables');
-}
+if (missingVars.length > 0) {}
 
 // Initialize Firebase
 let app;
@@ -56,12 +53,7 @@ try {
         prompt: 'select_account'
     });
 
-    isFirebaseConfigured = true;
-    console.log('✅ Firebase initialized successfully');
-
-} catch (error) {
-    console.error('Firebase initialization error:', error);
-    // Create mock objects to prevent app crashes
+    isFirebaseConfigured = true;} catch (error) {// Create mock objects to prevent app crashes
     auth = null;
     db = null;
     googleProvider = null;

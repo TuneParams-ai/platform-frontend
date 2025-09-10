@@ -48,9 +48,7 @@ const AdminEnrollments = () => {
     // Handle successful manual enrollment
     const handleManualEnrollmentSuccess = (result) => {
         // Reload enrollments to show the new enrollment
-        loadEnrollments();
-        console.log('Manual enrollment successful:', result);
-    };
+        loadEnrollments();};
 
     // Filter enrollments based on selected filters
     const filteredEnrollments = enrollments.filter(enrollment => {
@@ -302,40 +300,40 @@ const AdminEnrollments = () => {
                     text-align: center;
                     min-width: 60px;
                 }
-                
+
                 .batch-1 {
                     background-color: rgba(59, 130, 246, 0.2);
                     color: #60a5fa;
                     border: 1px solid rgba(59, 130, 246, 0.3);
                 }
-                
+
                 .batch-2 {
                     background-color: rgba(168, 85, 247, 0.2);
                     color: #c084fc;
                     border: 1px solid rgba(168, 85, 247, 0.3);
                 }
-                
+
                 .batch-3 {
                     background-color: rgba(34, 197, 94, 0.2);
                     color: #4ade80;
                     border: 1px solid rgba(34, 197, 94, 0.3);
                 }
-                
+
                 .batch-legacy {
                     background-color: rgba(107, 114, 128, 0.2);
                     color: var(--secondary-text-color);
                     border: 1px solid rgba(107, 114, 128, 0.3);
                 }
-                
+
                 .admin-filters {
                     border: 1px solid rgba(29, 126, 153, 0.2);
                 }
-                
+
                 .batch-summary {
                     border-top: 2px solid var(--primary-color);
                     padding-top: 20px;
                 }
-                
+
                 .batch-summary h3 {
                     margin-bottom: 15px;
                     color: #333;

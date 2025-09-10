@@ -53,7 +53,6 @@ const PayPalCheckout = ({
                 setIsLoading(false);
             };
             script.onerror = () => {
-                console.error('PayPal SDK failed to load');
                 setIsLoading(false);
                 if (onError) {
                     onError(new Error('PayPal SDK failed to load'));
@@ -83,8 +82,6 @@ const PayPalCheckout = ({
         }
 
         try {
-            console.log('Processing direct enrollment for 100% off coupon...');
-
             const enrollmentData = {
                 courseId,
                 courseTitle,
@@ -122,13 +119,11 @@ const PayPalCheckout = ({
                     });
                 }
             } else {
-                console.error('Direct enrollment failed:', result.error);
                 if (onError) {
                     onError(new Error(result.error));
                 }
             }
         } catch (error) {
-            console.error('Error in direct enrollment:', error);
             if (onError) {
                 onError(error);
             }
@@ -163,10 +158,7 @@ const PayPalCheckout = ({
                 },
                 onApprove: async (data, actions) => {
                     try {
-                        const order = await actions.order.capture();
-                        console.log('Payment successful:', order);
-
-                        // Call the success handler with payment details
+                        const order = await actions.order.capture();// Call the success handler with payment details
                         if (onSuccess) {
                             // Format payer name properly (PayPal returns an object)
                             const payerName = order.payer.name
@@ -204,13 +196,6 @@ const PayPalCheckout = ({
                             // Record coupon usage if coupon was applied
                             if (appliedCoupon) {
                                 try {
-                                    console.log('Recording coupon usage after payment:', {
-                                        couponId: appliedCoupon.couponId,
-                                        couponCode: appliedCoupon.couponCode,
-                                        userId: user?.uid,
-                                        courseId: courseId
-                                    });
-
                                     const couponUsageResult = await recordCouponUsage(appliedCoupon.couponId, user?.uid, courseId, {
                                         orderAmount: originalPrice,
                                         discountAmount: appliedCoupon.discountAmount,
@@ -219,32 +204,23 @@ const PayPalCheckout = ({
                                         orderId: order.id
                                     });
 
-                                    if (couponUsageResult.success) {
-                                        console.log('Coupon usage recorded successfully:', couponUsageResult.usageLogId);
-                                    } else {
-                                        console.error('Failed to record coupon usage:', couponUsageResult.error);
-                                    }
-                                } catch (couponError) {
-                                    console.error('Failed to record coupon usage:', couponError);
-                                    // Don't fail the payment for coupon recording errors
+                                    if (couponUsageResult.success) { } else { }
+                                } catch (couponError) {// Don't fail the payment for coupon recording errors
                                 }
                             }
                         }
                     } catch (error) {
-                        console.error('Error capturing payment:', error);
                         if (onError) {
                             onError(error);
                         }
                     }
                 },
                 onError: (err) => {
-                    console.error('PayPal error:', err);
                     if (onError) {
                         onError(err);
                     }
                 },
                 onCancel: (data) => {
-                    console.log('Payment cancelled:', data);
                     if (onCancel) {
                         onCancel(data);
                     }
@@ -271,7 +247,6 @@ const PayPalCheckout = ({
 
     // Validate PayPal Client ID is configured (after all hooks)
     if (!PAYPAL_CLIENT_ID) {
-        console.error('PayPal Client ID not configured. Please set REACT_APP_PAYPAL_CLIENT_ID in your .env file');
         return (
             <div style={{
                 padding: '20px',

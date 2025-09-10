@@ -52,7 +52,6 @@ export const createOrUpdateUserProfile = async (user) => {
         };
 
     } catch (error) {
-        console.error('Error creating/updating user profile:', error);
         return {
             success: false,
             error: error.message
@@ -90,7 +89,6 @@ export const getUserProfile = async (userId) => {
         }
 
     } catch (error) {
-        console.error('Error getting user profile:', error);
         return {
             success: false,
             error: error.message
@@ -121,7 +119,6 @@ export const getAllUsers = async () => {
         };
 
     } catch (error) {
-        console.error('Error getting all users:', error);
         return {
             success: false,
             error: error.message,
@@ -165,7 +162,6 @@ export const getUserByEmail = async (email) => {
         }
 
     } catch (error) {
-        console.error('Error searching user by email:', error);
         return {
             success: false,
             error: error.message
@@ -199,7 +195,6 @@ export const updateUserProfile = async (userId, updates) => {
         };
 
     } catch (error) {
-        console.error('Error updating user profile:', error);
         return {
             success: false,
             error: error.message
@@ -231,7 +226,6 @@ export const syncUserRole = async (userId, role) => {
         };
 
     } catch (error) {
-        console.error('Error syncing user role:', error);
         return {
             success: false,
             error: error.message

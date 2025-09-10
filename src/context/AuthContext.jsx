@@ -55,7 +55,6 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userData));
       return { success: true, user: userData };
     } catch (error) {
-      console.error('Google sign-in error:', error);
       return { success: false, error: error.message };
     }
   };
@@ -91,8 +90,6 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(userData));
       return { success: true, user: userData };
     } catch (error) {
-      console.error('Email sign-in error:', error);
-
       let errorMessage = 'Sign-in failed';
       switch (error.code) {
         case 'auth/user-not-found':
@@ -117,36 +114,25 @@ const AuthProvider = ({ children }) => {
 
   // Email/Password Registration function with email verification
   const registerWithEmail = async (email, password, firstName, lastName) => {
-    console.log('Starting registration process for:', email);
-
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      const user = result.user;
-      console.log('User created successfully:', user.uid);
-
-      // Update profile with name
+      const user = result.user;// Update profile with name
       await updateProfile(user, {
         displayName: `${firstName} ${lastName}`
-      });
-      console.log('Profile updated with name:', `${firstName} ${lastName}`);
-
-      // Create user profile in Firestore (but they'll need to verify email first)
+      });// Create user profile in Firestore (but they'll need to verify email first)
       await createOrUpdateUserProfile({
         ...user,
         displayName: `${firstName} ${lastName}`
       });
 
       // Send email verification
-      console.log('Sending email verification...');
       await sendEmailVerification(user, {
         url: `${window.location.origin}/login?emailVerified=true`,
         handleCodeInApp: false
       });
-      console.log('Email verification sent successfully to:', user.email);
 
       // Sign out the user after registration so they can't access the app until verified
       await signOut(auth);
-      console.log('User signed out after registration');
 
       // Don't store user in localStorage until email is verified
       // Just return success with verification message
@@ -161,10 +147,7 @@ const AuthProvider = ({ children }) => {
           emailVerified: user.emailVerified
         }
       };
-    } catch (error) {
-      console.error('Registration error:', error);
-
-      // Handle specific registration errors
+    } catch (error) {// Handle specific registration errors
       let errorMessage = 'Registration failed';
       switch (error.code) {
         case 'auth/email-already-in-use':
@@ -205,17 +188,13 @@ const AuthProvider = ({ children }) => {
         message: 'Verification email sent! Please check your inbox and **SPAM** folder.'
       };
     } catch (error) {
-      console.error('Send verification email error:', error);
       return { success: false, error: error.message || 'Failed to send verification email.' };
     }
   };
 
   // Resend verification email by temporarily signing in
   const resendVerificationEmail = async (email, password) => {
-    try {
-      console.log('Attempting to resend verification email for:', email);
-
-      // Try to sign in to get user context
+    try {// Try to sign in to get user context
       const result = await signInWithEmailAndPassword(auth, email, password);
       const user = result.user;
 
@@ -238,8 +217,6 @@ const AuthProvider = ({ children }) => {
         message: 'Verification email sent! Please check your inbox and **SPAM** folder.'
       };
     } catch (error) {
-      console.error('Resend verification email error:', error);
-
       let errorMessage = 'Failed to resend verification email';
       switch (error.code) {
         case 'auth/user-not-found':
@@ -265,8 +242,6 @@ const AuthProvider = ({ children }) => {
   // Send password reset email
   const sendPasswordReset = async (email) => {
     try {
-      console.log('Sending password reset email to:', email);
-
       await sendPasswordResetEmail(auth, email, {
         url: `${window.location.origin}/login?passwordReset=true`,
         handleCodeInApp: false
@@ -277,8 +252,6 @@ const AuthProvider = ({ children }) => {
         message: 'If an account with this email exists, password reset instructions will be sent. Please check your inbox and **SPAM** folder.'
       };
     } catch (error) {
-      console.error('Password reset error:', error);
-
       let errorMessage = 'Failed to send password reset email';
       switch (error.code) {
         case 'auth/user-not-found':
@@ -301,19 +274,13 @@ const AuthProvider = ({ children }) => {
   // Verify email with action code (for handling email verification links)
   const verifyEmail = async (actionCode) => {
     try {
-      console.log('Verifying email with action code...');
-      await applyActionCode(auth, actionCode);
-      console.log('Action code applied successfully');
-
-      // Note: We don't need to reload or set user here since the user 
+      await applyActionCode(auth, actionCode);// Note: We don't need to reload or set user here since the user
       // should sign in after verification. Just return success.
       return {
         success: true,
         message: 'Email verified successfully! You can now sign in.'
       };
     } catch (error) {
-      console.error('Email verification error:', error);
-
       let errorMessage = 'Email verification failed';
       switch (error.code) {
         case 'auth/expired-action-code':
@@ -341,7 +308,6 @@ const AuthProvider = ({ children }) => {
       setUser(null);
       return { success: true };
     } catch (error) {
-      console.error('Logout error:', error);
       return { success: false, error: error.message };
     }
   };

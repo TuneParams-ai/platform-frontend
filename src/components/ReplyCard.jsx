@@ -49,12 +49,8 @@ const ReplyCard = ({ reply, onDelete, onLike }) => {
                 if (onLike) {
                     onLike(reply.id, result.liked, result.likeCount);
                 }
-            } else {
-                console.error('Failed to like reply:', result.error);
-            }
-        } catch (error) {
-            console.error('Error liking reply:', error);
-        } finally {
+            } else {}
+        } catch (error) {} finally {
             setIsLiking(false);
         }
     };

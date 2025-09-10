@@ -37,9 +37,7 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
                 ...doc.data()
             }));
             setUsers(usersData);
-        } catch (err) {
-            console.error('Error loading users:', err);
-            setError('Failed to load users');
+        } catch (err) {setError('Failed to load users');
         } finally {
             setLoadingUsers(false);
         }

@@ -79,11 +79,10 @@ export const recordPayment = async (paymentData, userId) => {
         // Store payment record
         const paymentRef = await addDoc(collection(db, 'payments'), payment);
 
-        console.log('Payment recorded with ID:', paymentRef.id);
         return { success: true, paymentRecordId: paymentRef.id };
 
     } catch (error) {
-        console.error('Error recording payment:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -156,7 +155,6 @@ export const enrollUserInCourse = async (userId, courseId, paymentData, userEmai
 
         await setDoc(enrollmentRef, enrollment);
 
-        console.log('User enrolled in course:', enrollmentId, 'Batch:', nextBatch.batchNumber);
         return {
             success: true,
             enrollmentId: enrollmentId,
@@ -169,7 +167,7 @@ export const enrollUserInCourse = async (userId, courseId, paymentData, userEmai
         };
 
     } catch (error) {
-        console.error('Error enrolling user in course:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -263,7 +261,7 @@ export const checkCourseAccess = async (userId, courseId, batchNumber = null) =>
         return { hasAccess: false, enrollment: null };
 
     } catch (error) {
-        console.error('Error checking course access:', error);
+
         return { hasAccess: false, error: error.message };
     }
 };
@@ -297,7 +295,7 @@ export const getUserEnrollments = async (userId) => {
         return { success: true, enrollments };
 
     } catch (error) {
-        console.error('Error getting user enrollments:', error);
+
         return { success: false, error: error.message, enrollments: [] };
     }
 };
@@ -331,7 +329,7 @@ export const getUserPayments = async (userId) => {
         return { success: true, payments };
 
     } catch (error) {
-        console.error('Error getting user payments:', error);
+
         return { success: false, error: error.message, payments: [] };
     }
 };
@@ -344,7 +342,6 @@ export const getUserPayments = async (userId) => {
  */
 export const processDirectEnrollment = async (enrollmentData, userId) => {
     try {
-        console.log('Starting direct enrollment process (100% off coupon)...', { enrollmentData, userId });
 
         // Step 1: Get user profile for email
         const userProfile = await getUserProfile(userId);
@@ -421,12 +418,12 @@ export const processDirectEnrollment = async (enrollmentData, userId) => {
         try {
             emailTrackingResult = await recordEnrollmentEmail(enrollmentEmailData, emailResult, userId);
             if (emailTrackingResult.success) {
-                console.log('Email tracking recorded with ID:', emailTrackingResult.emailRecordId);
+
             } else {
-                console.error('Failed to record email tracking:', emailTrackingResult.error);
+
             }
         } catch (trackingError) {
-            console.error('Error recording email tracking:', trackingError);
+
         }
 
         // Step 7: Record coupon usage if coupon was applied
@@ -440,14 +437,13 @@ export const processDirectEnrollment = async (enrollmentData, userId) => {
                     orderId: mockPaymentData.orderID,
                     enrollmentType: 'free_coupon'
                 });
-                console.log('Coupon usage recorded for 100% off coupon');
+
             } catch (couponError) {
-                console.error('Failed to record coupon usage:', couponError);
+
                 // Don't fail the enrollment for coupon recording errors
             }
         }
 
-        console.log('Direct enrollment completed successfully');
         return {
             success: true,
             enrollmentId: enrollmentResult.enrollmentId,
@@ -462,7 +458,7 @@ export const processDirectEnrollment = async (enrollmentData, userId) => {
         };
 
     } catch (error) {
-        console.error('Error in direct enrollment process:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -476,7 +472,6 @@ export const processDirectEnrollment = async (enrollmentData, userId) => {
  */
 export const processCompleteEnrollment = async (paymentData, userId) => {
     try {
-        console.log('Starting complete enrollment process...', { paymentData, userId });
 
         // Step 1: Get logged-in user profile for email (moved up to use in enrollment)
         const userProfile = await getUserProfile(userId);
@@ -538,21 +533,21 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
         try {
             emailTrackingResult = await recordEnrollmentEmail(enrollmentEmailData, emailResult, userId);
             if (emailTrackingResult.success) {
-                console.log('Email tracking recorded with ID:', emailTrackingResult.emailRecordId);
+
             } else {
-                console.error('Failed to record email tracking:', emailTrackingResult.error);
+
             }
         } catch (trackingError) {
-            console.error('Error recording email tracking:', trackingError);
+
         }
 
         // Log email result but don't fail the enrollment if email fails
         if (emailResult.success) {
-            console.log('Enrollment confirmation email sent successfully');
+
         } else if (emailResult.skipped) {
-            console.log('Email service not configured, skipping email');
+
         } else {
-            console.error('Failed to send enrollment confirmation email:', emailResult.error);
+
         }
 
         return {
@@ -568,7 +563,7 @@ export const processCompleteEnrollment = async (paymentData, userId) => {
         };
 
     } catch (error) {
-        console.error('Error in complete enrollment process:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -652,7 +647,7 @@ export const updateCourseProgress = async (userId, courseId, progress, batchNumb
         return { success: true, enrollmentId: enrollmentRef.id };
 
     } catch (error) {
-        console.error('Error updating course progress:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -745,7 +740,6 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
         // Create enrollment record
         await setDoc(existingEnrollmentRef, enrollment);
 
-        console.log('Manual enrollment created:', existingEnrollmentId);
         return {
             success: true,
             enrollmentId: existingEnrollmentId,
@@ -759,7 +753,7 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
         };
 
     } catch (error) {
-        console.error('Error in manual enrollment:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -829,7 +823,7 @@ export const checkUserTermsAcceptance = async (userId, courseId, batchNumber = n
         }
 
     } catch (error) {
-        console.error('Error checking terms acceptance:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -877,7 +871,7 @@ export const getTermsAcceptanceStats = async () => {
         };
 
     } catch (error) {
-        console.error('Error getting terms acceptance stats:', error);
+
         return { success: false, error: error.message };
     }
 };

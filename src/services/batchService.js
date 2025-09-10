@@ -36,7 +36,7 @@ export const getBatchEnrollmentCount = async (courseId, batchNumber) => {
         return { success: true, count: enrollmentCount };
 
     } catch (error) {
-        console.error('Error getting batch enrollment count:', error);
+
         return { success: false, error: error.message, count: 0 };
     }
 };
@@ -72,7 +72,7 @@ export const getBatchEnrollments = async (courseId, batchNumber) => {
         return { success: true, enrollments };
 
     } catch (error) {
-        console.error('Error getting batch enrollments:', error);
+
         return { success: false, error: error.message, enrollments: [] };
     }
 };
@@ -108,7 +108,7 @@ export const getCourseAllBatchStats = async (courseId) => {
         return { success: true, batchStats };
 
     } catch (error) {
-        console.error('Error getting course batch stats:', error);
+
         return { success: false, error: error.message, batchStats: {} };
     }
 };
@@ -143,7 +143,7 @@ export const getUserBatchEnrollment = async (userId, courseId, batchNumber) => {
         }
 
     } catch (error) {
-        console.error('Error getting user batch enrollment:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -182,7 +182,7 @@ export const getUserCourseEnrollments = async (userId, courseId) => {
         return { success: true, enrollments };
 
     } catch (error) {
-        console.error('Error getting user course enrollments:', error);
+
         return { success: false, error: error.message, enrollments: [] };
     }
 };
@@ -229,7 +229,7 @@ export const isBatchAvailableForEnrollment = async (courseId, batchNumber) => {
         };
 
     } catch (error) {
-        console.error('Error checking batch availability:', error);
+
         return { success: false, available: false, error: error.message };
     }
 };
@@ -262,7 +262,7 @@ export const getNextAvailableBatchWithCount = async (courseId) => {
         return { success: true, batch: batchWithCount };
 
     } catch (error) {
-        console.error('Error getting next available batch:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -300,7 +300,7 @@ export const getBatchClassLinks = async (userId, courseId, batchNumber) => {
         };
 
     } catch (error) {
-        console.error('Error getting batch class links:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -313,22 +313,14 @@ export const getBatchClassLinks = async (userId, courseId, batchNumber) => {
  * @returns {Promise<Object>} Update result
  */
 export const updateBatchStatus = async (courseId, batchNumber, newStatus) => {
-    try {
-        // Note: This would require updating the course data
-        // For now, this is a placeholder for future implementation
-        // In a production system, batch information might be stored in Firestore
+    // Note: This would require updating the course data
+    // For now, this is a placeholder for future implementation
+    // In a production system, batch information might be stored in Firestore
 
-        console.log(`Batch status update requested: Course ${courseId}, Batch ${batchNumber}, Status: ${newStatus}`);
-
-        return {
-            success: false,
-            error: 'Batch status updates not yet implemented. Batch data is currently static in coursesData.js'
-        };
-
-    } catch (error) {
-        console.error('Error updating batch status:', error);
-        return { success: false, error: error.message };
-    }
+    return {
+        success: false,
+        error: 'Batch status updates not yet implemented. Batch data is currently static in coursesData.js'
+    };
 };
 
 const batchService = {

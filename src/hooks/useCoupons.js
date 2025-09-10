@@ -26,9 +26,7 @@ export const useCoupons = (userId, courseId, orderAmount) => {
             if (result.success) {
                 setAvailableCoupons(result.coupons);
             }
-        } catch (err) {
-            console.error('Failed to load available coupons:', err);
-        }
+        } catch (err) {}
     };
 
     const applyCoupon = async (couponCode) => {
@@ -75,9 +73,7 @@ export const useCoupons = (userId, courseId, orderAmount) => {
                 paymentData
             );
             return result;
-        } catch (err) {
-            console.error('Failed to record coupon usage:', err);
-            return { success: false, error: err.message };
+        } catch (err) {return { success: false, error: err.message };
         }
     };
 

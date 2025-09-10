@@ -85,7 +85,7 @@ export const addOrUpdateReview = async ({
 
         return { success: true, reviewId };
     } catch (error) {
-        console.error('Error adding/updating review:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -105,7 +105,7 @@ export const getCourseReviews = async (courseId, { limit = 20 } = {}) => {
 
         return { success: true, reviews };
     } catch (error) {
-        console.error('Error fetching course reviews:', error);
+
         return { success: false, error: error.message, reviews: [] };
     }
 };
@@ -122,7 +122,7 @@ export const getRecentReviews = async ({ limit = 6 } = {}) => {
         const reviews = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
         return { success: true, reviews };
     } catch (error) {
-        console.error('Error fetching recent reviews:', error);
+
         return { success: false, error: error.message, reviews: [] };
     }
 };
@@ -135,7 +135,7 @@ export const getUserReviewForCourse = async (userId, courseId) => {
         if (snap.exists()) return { success: true, review: { id: snap.id, ...snap.data() } };
         return { success: true, review: null };
     } catch (error) {
-        console.error('Error getting user review:', error);
+
         return { success: false, error: error.message, review: null };
     }
 };
@@ -147,7 +147,7 @@ export const deleteReview = async (courseId, userId) => {
         await deleteDoc(ref);
         return { success: true };
     } catch (error) {
-        console.error('Error deleting review:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -160,7 +160,7 @@ export const deleteReviewByIdAsAdmin = async (reviewId) => {
         await deleteDoc(ref);
         return { success: true };
     } catch (error) {
-        console.error('Error deleting review as admin:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -168,7 +168,7 @@ export const deleteReviewByIdAsAdmin = async (reviewId) => {
 // Optional: real-time subscription helpers
 export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}) => {
     if (!db) {
-        console.warn('Firestore not initialized, returning empty subscription');
+
         callback({ reviews: [], error: 'Firestore not initialized' });
         return () => { };
     }
@@ -188,7 +188,7 @@ export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}
                 callback({ reviews: items, error: null });
             },
             (err) => {
-                console.error('Reviews subscription error:', err);
+
                 // Provide more detailed error information
                 let errorMessage = err.message;
                 if (err.code === 'permission-denied') {
@@ -200,7 +200,7 @@ export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}
             }
         );
     } catch (error) {
-        console.error('Error setting up reviews subscription:', error);
+
         callback({ reviews: [], error: error.message });
         return () => { };
     }
@@ -208,7 +208,7 @@ export const subscribeToCourseReviews = (courseId, callback, { limit = 20 } = {}
 
 export const subscribeToRecentReviews = (callback, { limit = 6 } = {}) => {
     if (!db) {
-        console.warn('Firestore not initialized, returning empty subscription');
+
         callback({ reviews: [], error: 'Firestore not initialized' });
         return () => { };
     }
@@ -223,7 +223,7 @@ export const subscribeToRecentReviews = (callback, { limit = 6 } = {}) => {
                 callback({ reviews: items, error: null });
             },
             (err) => {
-                console.error('Recent reviews subscription error:', err);
+
                 // Provide more detailed error information
                 let errorMessage = err.message;
                 if (err.code === 'permission-denied') {
@@ -235,7 +235,7 @@ export const subscribeToRecentReviews = (callback, { limit = 6 } = {}) => {
             }
         );
     } catch (error) {
-        console.error('Error setting up recent reviews subscription:', error);
+
         callback({ reviews: [], error: error.message });
         return () => { };
     }

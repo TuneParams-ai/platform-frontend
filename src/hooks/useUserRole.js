@@ -30,9 +30,7 @@ export const useUserRole = () => {
                 const roleData = await getUserRole(user.uid);
                 setUserRole(roleData);
             } catch (err) {
-                setError(err.message);
-                console.error('Error loading user role:', err);
-            } finally {
+                setError(err.message);} finally {
                 setLoading(false);
             }
         };

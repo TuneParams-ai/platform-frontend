@@ -12,27 +12,12 @@ const AdminSearch = () => {
     const [error, setError] = useState('');
 
     const testCouponsDirectly = async () => {
-        try {
-            console.log('Testing direct coupon access...');
-            const couponsSnapshot = await getDocs(collection(db, 'coupons'));
-            console.log('Direct coupon query result:', couponsSnapshot);
-            console.log('Number of coupon docs:', couponsSnapshot.size);
-
-            const coupons = [];
+        try {const couponsSnapshot = await getDocs(collection(db, 'coupons'));const coupons = [];
             couponsSnapshot.forEach((doc) => {
                 const data = doc.data();
-                coupons.push({ id: doc.id, ...data });
-                console.log('Coupon doc:', doc.id, data);
-                if (data.code) {
-                    console.log('Coupon code found:', data.code);
-                }
-            });
-
-            console.log('All coupons:', coupons);
-            return coupons;
-        } catch (error) {
-            console.error('Error accessing coupons directly:', error);
-            throw error;
+                coupons.push({ id: doc.id, ...data });if (data.code) {}
+            });return coupons;
+        } catch (error) {throw error;
         }
     };
 
@@ -45,24 +30,16 @@ const AdminSearch = () => {
         setLoading(true);
         setError('');
 
-        try {
-            console.log('Searching for:', searchTerm);
-
-            // First test direct access to coupons
+        try {// First test direct access to coupons
             await testCouponsDirectly();
 
             // Then do the global search
-            const result = await globalSearch(searchTerm);
-            console.log('Search result:', result);
-
-            if (result.success) {
+            const result = await globalSearch(searchTerm);if (result.success) {
                 setSearchResults(result.results);
             } else {
                 setError(result.error);
             }
-        } catch (err) {
-            console.error('Search error:', err);
-            setError('Search failed: ' + err.message);
+        } catch (err) {setError('Search failed: ' + err.message);
         } finally {
             setLoading(false);
         }

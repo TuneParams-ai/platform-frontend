@@ -8,20 +8,9 @@ import { assignUserRole, USER_ROLES } from '../services/roleService';
  */
 export const makeUserAdmin = async (userId, assignedByUserId = 'system') => {
     try {
-        console.log(`Setting up admin role for user: ${userId}`);
-
         const result = await assignUserRole(userId, USER_ROLES.ADMIN, assignedByUserId);
-
-        if (result.success) {
-            console.log('✅ Admin role assigned successfully!');
-            console.log('User now has admin permissions');
-            return true;
-        } else {
-            console.error('❌ Failed to assign admin role:', result.error);
-            return false;
-        }
+        return result.success;
     } catch (error) {
-        console.error('❌ Error setting up admin:', error);
         return false;
     }
 };

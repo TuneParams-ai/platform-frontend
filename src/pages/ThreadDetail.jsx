@@ -29,19 +29,13 @@ const ThreadDetail = () => {
                 const repliesResult = await getReplies(threadId);
                 if (repliesResult.success) {
                     setReplies(repliesResult.replies);
-                } else {
-                    console.error('Failed to load replies:', repliesResult.error);
-                    setError(`Failed to load replies: ${repliesResult.error}`);
+                } else {setError(`Failed to load replies: ${repliesResult.error}`);
                     setReplies([]); // Set empty array as fallback
                 }
-            } else {
-                console.error('Failed to load thread:', threadResult.error);
-                setError(`Failed to load thread: ${threadResult.error}`);
+            } else {setError(`Failed to load thread: ${threadResult.error}`);
                 // Don't automatically redirect - let user choose to go back
             }
-        } catch (err) {
-            console.error('Error in loadThreadAndReplies:', err);
-            setError('Failed to load thread data.');
+        } catch (err) {setError('Failed to load thread data.');
         } finally {
             setLoading(false);
         }
@@ -61,13 +55,9 @@ const ThreadDetail = () => {
                 const result = await deleteThread(threadId);
                 if (result.success) {
                     navigate('/forums');
-                } else {
-                    console.error('Failed to delete thread:', result.error);
-                    alert('Failed to delete thread. Please try again.');
+                } else {alert('Failed to delete thread. Please try again.');
                 }
-            } catch (error) {
-                console.error('Error deleting thread:', error);
-                alert('An error occurred while deleting the thread.');
+            } catch (error) {alert('An error occurred while deleting the thread.');
             }
         }
     };
@@ -83,13 +73,9 @@ const ThreadDetail = () => {
                     ...prevThread,
                     replyCount: Math.max(0, prevThread.replyCount - 1)
                 }));
-            } else {
-                console.error('Failed to delete reply:', result.error);
-                alert('Failed to delete reply. Please try again.');
+            } else {alert('Failed to delete reply. Please try again.');
             }
-        } catch (error) {
-            console.error('Error deleting reply:', error);
-            alert('An error occurred while deleting the reply.');
+        } catch (error) {alert('An error occurred while deleting the reply.');
         }
     };
 
@@ -108,12 +94,8 @@ const ThreadDetail = () => {
                         ? [...(prevThread.likedBy || []), user.uid]
                         : (prevThread.likedBy || []).filter(id => id !== user.uid)
                 }));
-            } else {
-                console.error('Failed to like thread:', result.error);
-            }
-        } catch (error) {
-            console.error('Error liking thread:', error);
-        }
+            } else {}
+        } catch (error) {}
     };
 
     const handleReplyLike = (replyId, liked, likeCount) => {

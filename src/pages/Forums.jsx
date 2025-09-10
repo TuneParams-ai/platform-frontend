@@ -17,9 +17,7 @@ class ForumsErrorBoundary extends React.Component {
         return { hasError: true, error };
     }
 
-    componentDidCatch(error, errorInfo) {
-        console.error('Forums Error:', error, errorInfo);
-    }
+    componentDidCatch(error, errorInfo) {}
 
     render() {
         if (this.state.hasError) {
@@ -76,15 +74,11 @@ const ForumsComponent = () => {
                 setThreads(prev => reset ? result.threads : [...prev, ...result.threads]);
                 setHasMore(result.hasMore);
                 setLastDoc(result.lastDoc);
-            } else {
-                console.error("Failed to load threads:", result.error);
-                setError(result.error);
+            } else {setError(result.error);
                 setThreads([]);
                 setHasMore(false);
             }
-        } catch (error) {
-            console.error('Error loading threads:', error);
-            setError(error.message);
+        } catch (error) {setError(error.message);
             setThreads([]);
             setHasMore(false);
         } finally {
@@ -141,15 +135,11 @@ const ForumsComponent = () => {
                     setThreads(result.threads);
                     setHasMore(result.hasMore);
                     setLastDoc(result.lastDoc);
-                } else {
-                    console.error("Failed to load threads:", result.error);
-                    setError(result.error);
+                } else {setError(result.error);
                     setThreads([]);
                     setHasMore(false);
                 }
-            } catch (error) {
-                console.error('Error loading threads:', error);
-                setError(error.message);
+            } catch (error) {setError(error.message);
                 setThreads([]);
                 setHasMore(false);
             } finally {
@@ -183,13 +173,9 @@ const ForumsComponent = () => {
             if (result.success) {
                 setThreads(result.threads);
                 setHasMore(false);
-            } else {
-                console.error("Failed to search threads:", result.error);
-                setError(result.error || 'Search failed');
+            } else {setError(result.error || 'Search failed');
             }
-        } catch (error) {
-            console.error('Error searching threads:', error);
-            setError(error.message || 'An error occurred during search');
+        } catch (error) {setError(error.message || 'An error occurred during search');
         } finally {
             setLoading(false);
         }
@@ -228,13 +214,9 @@ const ForumsComponent = () => {
             if (result.success) {
                 // Remove the deleted thread from the current list
                 setThreads(prevThreads => prevThreads.filter(thread => thread.id !== threadId));
-            } else {
-                console.error('Failed to delete thread:', result.error);
-                alert('Failed to delete thread. Please try again.');
+            } else {alert('Failed to delete thread. Please try again.');
             }
-        } catch (error) {
-            console.error('Error deleting thread:', error);
-            alert('An error occurred while deleting the thread.');
+        } catch (error) {alert('An error occurred while deleting the thread.');
         } finally {
             setLoading(false);
         }

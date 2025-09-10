@@ -46,7 +46,7 @@ export const createThread = async (threadData) => {
         });
         return { success: true, id: docRef.id };
     } catch (error) {
-        console.error("Error creating thread: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -97,7 +97,7 @@ export const getThreads = async (category = null, pageSize = 10, lastDoc = null)
             hasMore: querySnapshot.docs.length === pageSize
         };
     } catch (error) {
-        console.error("Error getting threads: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -114,7 +114,7 @@ export const getThread = async (threadId) => {
                     viewCount: increment(0.5)
                 });
             } catch (updateError) {
-                console.error('Error incrementing view count:', updateError);
+
             }
 
             return {
@@ -131,7 +131,7 @@ export const getThread = async (threadId) => {
             return { success: false, error: 'Thread not found' };
         }
     } catch (error) {
-        console.error("Error getting thread: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -165,7 +165,7 @@ export const getReplies = async (threadId) => {
 
         return { success: true, replies };
     } catch (error) {
-        console.error("Error getting replies: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -190,7 +190,7 @@ export const createReply = async (replyData) => {
 
         return { success: true, id: docRef.id };
     } catch (error) {
-        console.error("Error creating reply: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -237,7 +237,7 @@ export const searchThreads = async (searchTerm, category = null) => {
 
         return { success: true, threads: threads.slice(0, 20) };
     } catch (error) {
-        console.error("Error searching threads: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -260,7 +260,7 @@ export const deleteThread = async (threadId) => {
 
         return { success: true };
     } catch (error) {
-        console.error("Error deleting thread: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -278,7 +278,7 @@ export const deleteReply = async (replyId, threadId) => {
 
         return { success: true };
     } catch (error) {
-        console.error("Error deleting reply: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -308,7 +308,7 @@ export const likeThread = async (threadId, userId) => {
             return { success: true, liked: true, likeCount: updatedLikedBy.length };
         }
     } catch (error) {
-        console.error("Error liking thread: ", error);
+
         return { success: false, error: error.message };
     }
 };
@@ -337,7 +337,7 @@ export const likeReply = async (replyId, userId) => {
             return { success: true, liked: true, likeCount: updatedLikedBy.length };
         }
     } catch (error) {
-        console.error("Error liking reply: ", error);
+
         return { success: false, error: error.message };
     }
 };

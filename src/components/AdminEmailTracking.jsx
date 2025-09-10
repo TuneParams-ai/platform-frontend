@@ -30,9 +30,7 @@ const AdminEmailTracking = () => {
             if (result.success) {
                 setStatistics(result.statistics);
             }
-        } catch (error) {
-            console.error('Error loading email statistics:', error);
-        } finally {
+        } catch (error) {} finally {
             setLoading(false);
         }
     };
@@ -44,9 +42,7 @@ const AdminEmailTracking = () => {
             if (result.success) {
                 setEmails(result.emails);
             }
-        } catch (error) {
-            console.error('Error loading emails by type:', error);
-        } finally {
+        } catch (error) {} finally {
             setLoading(false);
         }
     };
@@ -60,9 +56,7 @@ const AdminEmailTracking = () => {
             if (result.success) {
                 setEmails(result.emails);
             }
-        } catch (error) {
-            console.error('Error searching emails:', error);
-        } finally {
+        } catch (error) {} finally {
             setLoading(false);
         }
     };
@@ -76,9 +70,7 @@ const AdminEmailTracking = () => {
             if (result.success) {
                 setEmails(result.emails);
             }
-        } catch (error) {
-            console.error('Error performing general search:', error);
-        } finally {
+        } catch (error) {} finally {
             setLoading(false);
         }
     };

@@ -49,9 +49,7 @@ const AdminRoleManager = () => {
             }
 
         } catch (err) {
-            setError(err.message);
-            console.error('Error loading users:', err);
-            // Fallback to old method
+            setError(err.message);// Fallback to old method
             await loadUsersFromTransactions();
         } finally {
             setLoading(false);
@@ -112,9 +110,7 @@ const AdminRoleManager = () => {
             setUserRoles(rolesMap);
 
         } catch (err) {
-            setError(err.message);
-            console.error('Error loading users from transactions:', err);
-        }
+            setError(err.message);}
     };
 
     const handleAssignRole = async () => {
@@ -148,9 +144,7 @@ const AdminRoleManager = () => {
                 setError(`Error: ${result.error}`);
             }
         } catch (err) {
-            setError(`Error assigning role: ${err.message}`);
-            console.error('Error assigning role:', err);
-        } finally {
+            setError(`Error assigning role: ${err.message}`);} finally {
             setLoading(false);
         }
     };
@@ -188,9 +182,7 @@ const AdminRoleManager = () => {
             await loadUsers();
 
         } catch (err) {
-            setError(`Error syncing user roles: ${err.message}`);
-            console.error('Error syncing user roles:', err);
-        } finally {
+            setError(`Error syncing user roles: ${err.message}`);} finally {
             setLoading(false);
         }
     };

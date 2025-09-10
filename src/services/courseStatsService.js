@@ -47,7 +47,7 @@ export const getCourseEnrollmentCount = async (courseId, batchNumber = null) => 
         return { success: true, count: enrollmentCount };
 
     } catch (error) {
-        console.error('Error getting course enrollment count:', error);
+
         return { success: false, error: error.message, count: 0 };
     }
 };
@@ -94,7 +94,7 @@ export const getCourseRatingStats = async (courseId) => {
         };
 
     } catch (error) {
-        console.error('Error getting course rating stats:', error);
+
         return {
             success: false,
             error: error.message,
@@ -140,7 +140,7 @@ export const getCourseBatchCounts = async (courseId) => {
         return { success: true, batchCounts };
 
     } catch (error) {
-        console.error('Error getting course batch counts:', error);
+
         return { success: false, error: error.message, batchCounts: {} };
     }
 };
@@ -175,7 +175,7 @@ export const getCourseStatsWithBatches = async (courseId) => {
         };
 
     } catch (error) {
-        console.error('Error getting combined course stats with batches:', error);
+
         return {
             success: false,
             error: error.message,
@@ -217,7 +217,7 @@ export const getCourseStats = async (courseId) => {
         };
 
     } catch (error) {
-        console.error('Error getting combined course stats:', error);
+
         return {
             success: false,
             error: error.message,
@@ -254,7 +254,7 @@ export const getMultipleCourseStats = async (courseIds) => {
         return { success: true, courseStats };
 
     } catch (error) {
-        console.error('Error getting multiple course stats:', error);
+
         return { success: false, error: error.message, courseStats: {} };
     }
 };
@@ -267,7 +267,7 @@ export const getMultipleCourseStats = async (courseIds) => {
  */
 export const subscribeToEnrollmentCount = (courseId, callback) => {
     if (!db) {
-        console.warn('Firestore not initialized, returning empty subscription');
+
         callback({ count: 0, error: 'Firestore not initialized' });
         return () => { };
     }
@@ -286,12 +286,12 @@ export const subscribeToEnrollmentCount = (courseId, callback) => {
                 callback({ count, error: null });
             },
             (error) => {
-                console.error('Enrollment count subscription error:', error);
+
                 callback({ count: 0, error: error.message });
             }
         );
     } catch (error) {
-        console.error('Error setting up enrollment count subscription:', error);
+
         callback({ count: 0, error: error.message });
         return () => { };
     }
@@ -305,7 +305,7 @@ export const subscribeToEnrollmentCount = (courseId, callback) => {
  */
 export const subscribeToRatingStats = (courseId, callback) => {
     if (!db) {
-        console.warn('Firestore not initialized, returning empty subscription');
+
         callback({ averageRating: 0, reviewCount: 0, hasReviews: false, error: 'Firestore not initialized' });
         return () => { };
     }
@@ -343,7 +343,7 @@ export const subscribeToRatingStats = (courseId, callback) => {
                 });
             },
             (error) => {
-                console.error('Rating stats subscription error:', error);
+
                 callback({
                     averageRating: 0,
                     reviewCount: 0,
@@ -353,7 +353,7 @@ export const subscribeToRatingStats = (courseId, callback) => {
             }
         );
     } catch (error) {
-        console.error('Error setting up rating stats subscription:', error);
+
         callback({
             averageRating: 0,
             reviewCount: 0,

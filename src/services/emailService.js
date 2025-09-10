@@ -64,10 +64,10 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
                 <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to ${COMPANY_NAME}!</h1>
                 <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Your AI learning journey starts now</p>
             </div>
-            
+
             <div style="background: #000000; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(29, 126, 153, 0.2);">
                 <p style="font-size: 16px; color: #ffffff; margin-bottom: 20px;">Hi ${firstName},</p>
-                
+
                 <p style="font-size: 16px; color: #ffffff; line-height: 1.6;">
                     Thank you for registering for our AI Training Course — we're excited to have you on board! 🚀
                 </p>
@@ -139,7 +139,7 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
                 </ul>
 
                 <p style="color: #ffffff; line-height: 1.6; margin-top: 25px;">
-                    We're thrilled to have you join our community of learners. If you have any questions, feel free to reply to this email or reach out at 
+                    We're thrilled to have you join our community of learners. If you have any questions, feel free to reply to this email or reach out at
                     <a href="mailto:${SUPPORT_EMAIL}" style="color: #1D7E99; text-decoration: none;">${SUPPORT_EMAIL}</a>.
                 </p>
 
@@ -152,7 +152,7 @@ const generateEnrollmentEmailContent = (enrollmentData) => {
                     <strong>TuneParams Team</strong>
                 </p>
             </div>
-            
+
             <div style="text-align: center; padding: 20px; color: #C3C7CA; font-size: 14px; background-color: #000000;">
                 <p>© 2025 ${COMPANY_NAME}. All rights reserved.</p>
                 <p>This email was sent to ${userEmail} regarding your course enrollment.</p>
@@ -229,14 +229,7 @@ This email was sent to ${userEmail} regarding your course enrollment.
 export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
     try {
         // Check if EmailJS is configured
-        if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-            console.warn('EmailJS not configured. Email will not be sent.');
-            console.warn('Missing values:', {
-                serviceId: !EMAILJS_SERVICE_ID,
-                templateId: !EMAILJS_TEMPLATE_ID,
-                publicKey: !EMAILJS_PUBLIC_KEY
-            });
-            return {
+        if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {return {
                 success: false,
                 error: 'Email service not configured',
                 skipped: true
@@ -280,8 +273,6 @@ export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
             templateParams
         );
 
-        console.log('Email sent successfully:', response);
-
         return {
             success: true,
             messageId: response.text,
@@ -290,7 +281,7 @@ export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
         };
 
     } catch (error) {
-        console.error('Error sending enrollment confirmation email:', error);
+
         return {
             success: false,
             error: error.message || 'Failed to send email'
@@ -465,7 +456,7 @@ export const downloadReceipt = (enrollmentData) => {
 
         return { success: true };
     } catch (error) {
-        console.error('Error downloading receipt:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -482,7 +473,6 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
 
     // Check if EmailJS is configured
     if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-        console.warn('EmailJS not configured. Coupon email would be sent if EmailJS was set up.');
 
         // Still record the attempt for tracking
         try {
@@ -504,7 +494,7 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
                 }
             });
         } catch (trackingError) {
-            console.error('Failed to record email tracking:', trackingError);
+
         }
 
         return {
@@ -520,15 +510,11 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
 
         const emailContent = generateCouponEmailContent(couponEmailData);
 
-        console.log('Sending coupon email with data:', emailContent);
-
         const response = await emailjs.send(
             EMAILJS_SERVICE_ID,
             EMAILJS_TEMPLATE_ID, // You might want a separate template for coupons
             emailContent
         );
-
-        console.log('Coupon email sent successfully:', response);
 
         // Record successful email sending
         try {
@@ -554,7 +540,7 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
                 }
             });
         } catch (trackingError) {
-            console.error('Failed to record email tracking:', trackingError);
+
         }
 
         return {
@@ -564,7 +550,6 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
         };
 
     } catch (error) {
-        console.error('Failed to send coupon email:', error);
 
         // Record failed email attempt
         try {
@@ -586,7 +571,7 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
                 }
             });
         } catch (trackingError) {
-            console.error('Failed to record email tracking:', trackingError);
+
         }
 
         return {

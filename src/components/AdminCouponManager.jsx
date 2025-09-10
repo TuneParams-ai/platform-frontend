@@ -2,7 +2,6 @@
 // Admin component for managing coupons and discount codes
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { db } from '../config/firebase';
 import {
     createCoupon,
     getAllCoupons,
@@ -82,9 +81,7 @@ const AdminCouponManager = () => {
             if (result.success) {
                 setUsers(result.users);
             }
-        } catch (err) {
-            console.error('Failed to load users:', err);
-        }
+        } catch (err) { }
     };
 
     const loadUsageStats = async () => {
@@ -93,9 +90,7 @@ const AdminCouponManager = () => {
             if (result.success) {
                 setUsageStats(result.stats);
             }
-        } catch (err) {
-            console.error('Failed to load usage stats:', err);
-        }
+        } catch (err) { }
     };
 
     const handleFormChange = (field, value) => {
@@ -259,7 +254,6 @@ const AdminCouponManager = () => {
                             setError('Coupon created but failed to send email: ' + emailResult.error);
                         }
                     } catch (emailError) {
-                        console.error('Email sending error:', emailError);
                         setError('Coupon created but failed to send email');
                     }
                 }
@@ -378,22 +372,7 @@ const AdminCouponManager = () => {
 
         try {
             // Use current user or generate a test user ID
-            const testUserId = user?.uid || `test_user_${Date.now()}`;
-
-            console.log('Testing coupon usage with details:', {
-                couponCode,
-                testUserId,
-                isUserAuthenticated: !!user,
-                userUid: user?.uid,
-                userEmail: user?.email,
-                dbInitialized: !!db
-            });
-
-            const result = await testCouponUsageRecording(couponCode, testUserId);
-
-            console.log('Full test result:', result);
-
-            if (result.success) {
+            const testUserId = user?.uid || `test_user_${Date.now()}`; const result = await testCouponUsageRecording(couponCode, testUserId); if (result.success) {
                 setSuccess(`✅ Test successful for ${couponCode}!\n\nBefore: ${result.before.usageCount} uses, ${result.before.historyLength} history records\nAfter: ${result.after.usageCount} uses, ${result.after.historyLength} history records\n\nUsage Log ID: ${result.usageLogId}\n\nTest User ID: ${testUserId}`);
                 loadCoupons(); // Refresh to see updated counts
                 loadUsageStats();
@@ -402,7 +381,6 @@ const AdminCouponManager = () => {
                 setError(`❌ Test failed: ${result.error}${errorDetails}`);
             }
         } catch (err) {
-            console.error('Test error details:', err);
             setError(`❌ Test error: ${err.message}\n\nStack: ${err.stack}`);
         } finally {
             setLoading(false);

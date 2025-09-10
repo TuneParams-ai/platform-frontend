@@ -57,16 +57,12 @@ const CourseDetail = () => {
                 setShowSuccessModal(true);
                 setShowPayPal(false);
             }
-        } catch (error) {
-            console.error('Enrollment processing failed:', error);
-            alert(`Enrollment failed: ${error.message}. Please contact support with your payment details.`);
+        } catch (error) {alert(`Enrollment failed: ${error.message}. Please contact support with your payment details.`);
             setShowPayPal(false);
         }
     }, [processEnrollment]);
 
-    const handlePaymentError = useCallback((error) => {
-        console.error('Payment error:', error);
-        alert('Payment failed. Please try again or contact support.');
+    const handlePaymentError = useCallback((error) => {alert('Payment failed. Please try again or contact support.');
         setShowPayPal(false);
     }, []);
 

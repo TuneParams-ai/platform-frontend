@@ -83,7 +83,7 @@ export const assignUserRole = async (userId, role, assignedBy) => {
         return { success: true, role: userRoleData };
 
     } catch (error) {
-        console.error('Error assigning user role:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -115,7 +115,7 @@ export const getUserRole = async (userId) => {
         }
 
     } catch (error) {
-        console.error('Error getting user role:', error);
+
         return { role: USER_ROLES.STUDENT, permissions: [] };
     }
 };/**
@@ -129,7 +129,7 @@ export const userHasPermission = async (userId, permission) => {
         const userRole = await getUserRole(userId);
         return userRole.permissions?.includes(permission) || false;
     } catch (error) {
-        console.error('Error checking user permission:', error);
+
         return false;
     }
 };
@@ -145,7 +145,7 @@ export const isUserAdmin = async (userId) => {
         const isAdmin = userRole.role === USER_ROLES.ADMIN && userRole.isActive;
         return isAdmin;
     } catch (error) {
-        console.error('Error checking admin status:', error);
+
         return false;
     }
 };/**
@@ -168,6 +168,6 @@ export const logRoleAction = async (action, targetUserId, performedBy, details =
 
         await addDoc(collection(db, 'role_audit_log'), logEntry);
     } catch (error) {
-        console.error('Error logging role action:', error);
+
     }
 };

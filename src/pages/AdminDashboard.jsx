@@ -37,9 +37,7 @@ const AdminDashboard = () => {
                 } else {
                     setIsAdmin(false);
                 }
-            } catch (err) {
-                console.error('Error checking admin status:', err);
-                setIsAdmin(false);
+            } catch (err) {setIsAdmin(false);
             } finally {
                 setAdminLoading(false);
             }

@@ -160,13 +160,9 @@ function Contact() {
                 setErrors({});
                 setTouched({});
             } else {
-                // Get error details from response
-                const errorData = await response.text();
-                console.error('Formspree error:', errorData);
                 setSubmitStatus('error');
             }
         } catch (error) {
-            console.error('Form submission error:', error);
             setSubmitStatus('error');
         } finally {
             setIsSubmitting(false);

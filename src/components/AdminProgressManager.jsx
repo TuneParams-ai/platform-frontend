@@ -54,9 +54,7 @@ const AdminProgressManager = () => {
             if (result.success) {
                 setUsers(result.users);
             }
-        } catch (err) {
-            console.error('Error loading users:', err);
-        }
+        } catch (err) {}
     };
 
     const handleUpdateProgress = async (enrollment) => {

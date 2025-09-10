@@ -87,11 +87,10 @@ export const recordEmailSent = async (emailData) => {
         // Store email record
         const emailRef = await addDoc(collection(db, 'emails_sent'), emailRecord);
 
-        console.log('Email record saved with ID:', emailRef.id);
         return { success: true, emailRecordId: emailRef.id };
 
     } catch (error) {
-        console.error('Error recording email:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -128,7 +127,7 @@ export const getUserEmails = async (userId, limitCount = 50) => {
         return { success: true, emails };
 
     } catch (error) {
-        console.error('Error getting user emails:', error);
+
         return { success: false, error: error.message, emails: [] };
     }
 };
@@ -165,7 +164,7 @@ export const getEmailsByRecipient = async (email, limitCount = 50) => {
         return { success: true, emails };
 
     } catch (error) {
-        console.error('Error getting emails by recipient:', error);
+
         return { success: false, error: error.message, emails: [] };
     }
 };
@@ -188,7 +187,7 @@ export const searchEmails = async (searchTerm, limitCount = 100) => {
 
         const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
-        // Get all emails and filter client-side since Firestore doesn't support 
+        // Get all emails and filter client-side since Firestore doesn't support
         // full-text search across multiple fields
         const emailsQuery = query(
             collection(db, 'emails_sent'),
@@ -229,7 +228,7 @@ export const searchEmails = async (searchTerm, limitCount = 100) => {
         return { success: true, emails: limitedResults };
 
     } catch (error) {
-        console.error('Error searching emails:', error);
+
         return { success: false, error: error.message, emails: [] };
     }
 };
@@ -266,7 +265,7 @@ export const getEmailsByCourse = async (courseId, limitCount = 100) => {
         return { success: true, emails };
 
     } catch (error) {
-        console.error('Error getting emails by course:', error);
+
         return { success: false, error: error.message, emails: [] };
     }
 };
@@ -303,7 +302,7 @@ export const getEmailsByType = async (emailType, limitCount = 100) => {
         return { success: true, emails };
 
     } catch (error) {
-        console.error('Error getting emails by type:', error);
+
         return { success: false, error: error.message, emails: [] };
     }
 };
@@ -383,7 +382,7 @@ export const getEmailStatistics = async (filters = {}) => {
         };
 
     } catch (error) {
-        console.error('Error getting email statistics:', error);
+
         return { success: false, error: error.message };
     }
 };
@@ -474,7 +473,7 @@ export const getAllEmails = async (options = {}) => {
         return { success: true, emails };
 
     } catch (error) {
-        console.error('Error getting all emails:', error);
+
         return { success: false, error: error.message, emails: [] };
     }
 };

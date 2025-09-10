@@ -34,9 +34,7 @@ const ReviewsSection = ({ courseId, courseTitle }) => {
             } else {
                 alert(`Failed to delete review: ${result.error}`);
             }
-        } catch (error) {
-            console.error('Error deleting review:', error);
-            alert('Failed to delete review. Please try again.');
+        } catch (error) {alert('Failed to delete review. Please try again.');
         }
     }, [isAdminUser]);
 
