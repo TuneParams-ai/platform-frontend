@@ -176,7 +176,24 @@ const ThreadDetail = () => {
                 <h1>{thread.title}</h1>
                 <div className="thread-meta">
                     <div className="author-info-detail">
-                        <img src={thread.authorAvatar || '/default-avatar.png'} alt={thread.authorName} className="author-avatar-detail" />
+                        <div className="author-avatar-detail">
+                            {thread.authorAvatar ? (
+                                <img
+                                    src={thread.authorAvatar}
+                                    alt={thread.authorName}
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                />
+                            ) : null}
+                            <div
+                                className="default-avatar-detail"
+                                style={{ display: thread.authorAvatar ? 'none' : 'flex' }}
+                            >
+                                {thread.authorName?.charAt(0)?.toUpperCase() || 'A'}
+                            </div>
+                        </div>
                         <span>By {thread.authorName}</span>
                     </div>
                     <span>&bull;</span>

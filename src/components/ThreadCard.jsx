@@ -95,12 +95,21 @@ const ThreadCard = ({ thread, onClick, onDelete, onLike }) => {
                 <div className="thread-author">
                     <div className="author-avatar">
                         {thread.authorAvatar ? (
-                            <img src={thread.authorAvatar} alt={thread.authorName} />
-                        ) : (
-                            <div className="default-avatar">
-                                {thread.authorName?.charAt(0)?.toUpperCase()}
-                            </div>
-                        )}
+                            <img
+                                src={thread.authorAvatar}
+                                alt={thread.authorName}
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.parentNode.nextSibling.style.display = 'flex';
+                                }}
+                            />
+                        ) : null}
+                    </div>
+                    <div
+                        className="default-avatar"
+                        style={{ display: thread.authorAvatar ? 'none' : 'flex' }}
+                    >
+                        {thread.authorName?.charAt(0)?.toUpperCase()}
                     </div>
                     <div className="author-info">
                         <span className="author-name">{thread.authorName}</span>

@@ -65,12 +65,21 @@ const ReplyCard = ({ reply, onDelete, onLike }) => {
                 <div className="reply-author">
                     <div className="author-avatar-reply">
                         {reply.authorAvatar ? (
-                            <img src={reply.authorAvatar} alt={reply.authorName} />
-                        ) : (
-                            <div className="default-avatar-reply">
-                                {reply.authorName?.charAt(0)?.toUpperCase() || 'A'}
-                            </div>
-                        )}
+                            <img
+                                src={reply.authorAvatar}
+                                alt={reply.authorName}
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.parentNode.nextSibling.style.display = 'flex';
+                                }}
+                            />
+                        ) : null}
+                    </div>
+                    <div
+                        className="default-avatar-reply"
+                        style={{ display: reply.authorAvatar ? 'none' : 'flex' }}
+                    >
+                        {reply.authorName?.charAt(0)?.toUpperCase() || 'A'}
                     </div>
                     <div className="author-info-reply">
                         <span className="author-name-reply">{reply.authorName || 'Anonymous'}</span>
