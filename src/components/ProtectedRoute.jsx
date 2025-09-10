@@ -27,8 +27,17 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   }
 
   // Check role if required
-  if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/dashboard" replace />;
+  if (requiredRole) {
+    // Admins can access all features (including instructor features)
+    if (user.role === 'admin') {
+      // Admin has access to everything
+    } else if (requiredRole === 'instructor' && user.role !== 'instructor') {
+      return <Navigate to="/dashboard" replace />;
+    } else if (requiredRole === 'admin' && user.role !== 'admin') {
+      return <Navigate to="/dashboard" replace />;
+    } else if (requiredRole !== 'instructor' && requiredRole !== 'admin' && user.role !== requiredRole) {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return children;

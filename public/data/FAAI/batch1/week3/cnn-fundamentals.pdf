@@ -1,0 +1,98 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<<
+/Length 300
+>>
+stream
+BT
+/F1 24 Tf
+50 700 Td
+(Convolutional Neural Networks) Tj
+0 -50 Td
+/F1 16 Tf
+(Week 3: Advanced Deep Learning) Tj
+0 -30 Td
+(TuneParams.ai - FAAI Course) Tj
+0 -50 Td
+(Topics Covered:) Tj
+0 -20 Td
+(- Convolution operation and filters) Tj
+0 -20 Td
+(- Pooling layers and dimensionality reduction) Tj
+0 -20 Td
+(- CNN architectures (LeNet, AlexNet, VGG)) Tj
+0 -20 Td
+(- Transfer learning and pre-trained models) Tj
+0 -20 Td
+(- Applications in computer vision) Tj
+0 -30 Td
+(Practical Lab:) Tj
+0 -20 Td
+(- Build an image classifier using PyTorch) Tj
+0 -20 Td
+(- Work with real image datasets) Tj
+0 -20 Td
+(- Implement data augmentation techniques) Tj
+0 -20 Td
+(- Evaluate model performance) Tj
+0 -30 Td
+(Next Week Preview:) Tj
+0 -20 Td
+(Introduction to Natural Language Processing) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000274 00000 n 
+0000000626 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+723
+%%EOF

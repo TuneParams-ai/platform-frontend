@@ -340,15 +340,13 @@ const CourseDashboard = () => {
                                 <div className="access-card materials-card">
                                     <div className="card-icon">📚</div>
                                     <h3>Course Materials</h3>
-                                    {getAvailableAccessLinks(selectedBatch).materials ? (
-                                        <a
-                                            href={getAvailableAccessLinks(selectedBatch).materials}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                    {selectedBatch ? (
+                                        <Link
+                                            to={`/materials/${courseId}/${selectedBatch.batchNumber}`}
                                             className="access-link"
                                         >
                                             Access Materials
-                                        </a>
+                                        </Link>
                                     ) : (
                                         <span className="link-unavailable">Materials will be available soon</span>
                                     )}

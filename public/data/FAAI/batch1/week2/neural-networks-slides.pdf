@@ -1,0 +1,90 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<<
+/Length 250
+>>
+stream
+BT
+/F1 24 Tf
+50 700 Td
+(Neural Networks Deep Dive) Tj
+0 -50 Td
+/F1 16 Tf
+(Week 2: Understanding Neural Architecture) Tj
+0 -30 Td
+(TuneParams.ai - FAAI Course) Tj
+0 -50 Td
+(Learning Objectives:) Tj
+0 -20 Td
+(- Understand perceptrons and neural nodes) Tj
+0 -20 Td
+(- Learn about activation functions) Tj
+0 -20 Td
+(- Grasp backpropagation algorithm) Tj
+0 -20 Td
+(- Implement your first neural network) Tj
+0 -30 Td
+(Prerequisites:) Tj
+0 -20 Td
+(- Basic linear algebra knowledge) Tj
+0 -20 Td
+(- Python programming basics) Tj
+0 -20 Td
+(- Completion of Week 1 materials) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000274 00000 n 
+0000000576 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+673
+%%EOF

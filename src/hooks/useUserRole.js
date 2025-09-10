@@ -5,7 +5,6 @@ import { useAuth } from './useAuth';
 import {
     getUserRole,
     userHasPermission,
-    isUserAdmin,
     USER_ROLES,
 } from '../services/roleService';
 
@@ -30,7 +29,8 @@ export const useUserRole = () => {
                 const roleData = await getUserRole(user.uid);
                 setUserRole(roleData);
             } catch (err) {
-                setError(err.message);} finally {
+                setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -44,11 +44,6 @@ export const useUserRole = () => {
         return await userHasPermission(user.uid, permission);
     };
 
-    const isAdmin = async () => {
-        if (!user) return false;
-        return await isUserAdmin(user.uid);
-    };
-
     const hasRole = (role) => {
         return userRole?.role === role;
     };
@@ -58,12 +53,14 @@ export const useUserRole = () => {
         loading,
         error,
         hasPermission,
-        isAdmin,
         hasRole,
         // Convenience checks
         isAdminUser: userRole?.role === USER_ROLES.ADMIN,
         isInstructorUser: userRole?.role === USER_ROLES.INSTRUCTOR,
         isStudentUser: userRole?.role === USER_ROLES.STUDENT,
+        // Treat admins as instructors for material management
+        isInstructor: userRole?.role === USER_ROLES.INSTRUCTOR || userRole?.role === USER_ROLES.ADMIN,
+        isAdmin: userRole?.role === USER_ROLES.ADMIN,
         permissions: userRole?.permissions || []
     };
 };

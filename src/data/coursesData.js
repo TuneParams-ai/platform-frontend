@@ -63,7 +63,7 @@ export const coursesData = [
                 classLinks: {
                     zoom: "https://zoom.us/j/batch1-faai",
                     discord: "https://discord.gg/batch1-faai",
-                    materials: "/batch1/materials"
+                    materials: "/materials/FAAI/1"
                 },
                 schedule: []
             },
@@ -78,7 +78,7 @@ export const coursesData = [
                 classLinks: {
                     zoom: "https://zoom.us/j/batch2-faai",
                     discord: "https://discord.gg/batch2-faai",
-                    materials: "/batch2/materials"
+                    materials: "/materials/FAAI/2"
                 },
                 schedule: [
                     {
@@ -222,7 +222,7 @@ export const coursesData = [
                 classLinks: {
                     zoom: "TBD",
                     discord: "TBD",
-                    materials: "TBD"
+                    materials: "/materials/RLAI/1"
                 },
                 schedule: [] // Empty schedule for courses not yet scheduled
             }

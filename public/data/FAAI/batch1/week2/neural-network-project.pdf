@@ -1,0 +1,96 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Contents 4 0 R
+/Resources <<
+/Font <<
+/F1 5 0 R
+>>
+>>
+>>
+endobj
+
+4 0 obj
+<<
+/Length 280
+>>
+stream
+BT
+/F1 20 Tf
+50 700 Td
+(Week 2 Project: Build Your First Neural Network) Tj
+0 -40 Td
+/F1 14 Tf
+(Due Date: September 23, 2025) Tj
+0 -30 Td
+(Project Overview:) Tj
+0 -20 Td
+(Create a neural network from scratch using Python) Tj
+0 -20 Td
+(to classify handwritten digits (MNIST dataset)) Tj
+0 -30 Td
+(Requirements:) Tj
+0 -20 Td
+(1. Implement a multi-layer perceptron) Tj
+0 -20 Td
+(2. Use sigmoid or ReLU activation functions) Tj
+0 -20 Td
+(3. Implement backpropagation algorithm) Tj
+0 -20 Td
+(4. Train on MNIST training set) Tj
+0 -20 Td
+(5. Achieve at least 85% accuracy on test set) Tj
+0 -30 Td
+(Deliverables:) Tj
+0 -20 Td
+(- Python code (.py file)) Tj
+0 -20 Td
+(- Training results and accuracy plots) Tj
+0 -20 Td
+(- Brief report explaining your approach) Tj
+ET
+endstream
+endobj
+
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000274 00000 n 
+0000000606 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+703
+%%EOF
