@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import {
     findCourseById,
     getCurrentBatch,
@@ -10,10 +10,16 @@ import {
     hasAccessLinks,
     getAvailableAccessLinks
 } from '../data/coursesData';
+import { useAuth } from '../hooks/useAuth';
+import { useCourseAccess } from '../hooks/useCourseAccess';
+import { useUserRole } from '../hooks/useUserRole';
 import '../styles/course-dashboard.css';
 
 const CourseDashboard = () => {
     const { courseId } = useParams();
+    const { user, loading: authLoading } = useAuth();
+    const { hasAccess, enrollment, loading: accessLoading } = useCourseAccess(courseId);
+    const { isAdminUser, loading: roleLoading } = useUserRole();
     const [course, setCourse] = useState(null);
     const [selectedBatch, setSelectedBatch] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,13 +28,91 @@ const CourseDashboard = () => {
         const foundCourse = findCourseById(courseId);
         if (foundCourse) {
             setCourse(foundCourse);
-            // Set the current active batch as default
-            const currentBatch = getCurrentBatch(foundCourse);
-            const activeBatches = getActiveBatches(foundCourse);
-            setSelectedBatch(currentBatch || (activeBatches.length > 0 ? activeBatches[0] : foundCourse.batches?.[0]));
+
+            // For regular users: use their enrolled batch or default to first available
+            // For admins: show current active batch or first batch
+            if (!roleLoading && !accessLoading && !authLoading) {
+                if (isAdminUser) {
+                    // Admin can see all batches - set default to current batch
+                    const currentBatch = getCurrentBatch(foundCourse);
+                    const activeBatches = getActiveBatches(foundCourse);
+                    setSelectedBatch(currentBatch || (activeBatches.length > 0 ? activeBatches[0] : foundCourse.batches?.[0]));
+                } else if (enrollment) {
+                    // Regular user: find their enrolled batch
+                    const userBatch = foundCourse.batches?.find(batch => batch.batchNumber === enrollment.batchNumber);
+                    setSelectedBatch(userBatch);
+                } else {
+                    // For development: if no enrollment found, default to current active batch
+                    const currentBatch = getCurrentBatch(foundCourse);
+                    const activeBatches = getActiveBatches(foundCourse);
+                    setSelectedBatch(currentBatch || (activeBatches.length > 0 ? activeBatches[0] : foundCourse.batches?.[0]));
+                }
+            }
         }
         setLoading(false);
-    }, [courseId]);
+    }, [courseId, enrollment, isAdminUser, roleLoading, accessLoading, authLoading]);
+
+    // Show loading while checking authentication, access, and role
+    if (loading || accessLoading || roleLoading || authLoading) {
+        return (
+            <div className="course-dashboard-container">
+                <div className="loading-state">
+                    <div className="loading-spinner"></div>
+                    <h2>Loading dashboard...</h2>
+                    <p>Please wait while we verify your access...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Redirect if user is not logged in (only after auth loading is complete)
+    if (!authLoading && !user) {
+        return <Navigate to="/login" replace />;
+    }
+
+    // Show loading if access is still being verified
+    if (!authLoading && user && accessLoading) {
+        return (
+            <div className="course-dashboard-container">
+                <div className="loading-state">
+                    <div className="loading-spinner"></div>
+                    <h2>Verifying enrollment...</h2>
+                    <p>Checking your course access...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Simplified access control for development
+    // Allow access for: 1) Admins (all courses), 2) Users with proper enrollment
+    const shouldAllowAccess = isAdminUser || (user && hasAccess);
+
+    if (!authLoading && !roleLoading && !accessLoading && user && !shouldAllowAccess) {
+        return (
+            <div className="course-dashboard-container">
+                <div className="access-denied">
+                    <h2>Access Denied</h2>
+                    <p>You need to be enrolled in this course to access the dashboard.</p>
+                    <Link to={`/course/${courseId}`} className="back-to-course-btn">
+                        View Course Details
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (!course) {
+        return (
+            <div className="course-dashboard-container">
+                <div className="error-state">
+                    <h2>Course not found</h2>
+                    <Link to="/courses" className="back-to-courses-btn">
+                        Back to Courses
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     // Function to determine class status based on current date and time
     const getClassStatus = (scheduleItem) => {
@@ -39,10 +123,12 @@ const CourseDashboard = () => {
 
         const now = new Date();
 
-        // Parse the class date and time
-        const classDate = new Date(scheduleItem.date);
-        const [hours, minutes] = scheduleItem.time.split(':');
-        classDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        // Parse date components to avoid timezone issues
+        const [year, month, day] = scheduleItem.date.split('-').map(Number);
+        const [hours, minutes] = scheduleItem.time.split(':').map(Number);
+
+        // Create date in local timezone to avoid UTC conversion issues
+        const classDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
         // Calculate the class end time using duration
         const classDuration = scheduleItem.duration || 90; // default 90 minutes
@@ -69,9 +155,12 @@ const CourseDashboard = () => {
     const formatScheduleDateTime = (scheduleItem) => {
         if (!scheduleItem.date || !scheduleItem.time) return 'TBD';
 
-        const classDate = new Date(scheduleItem.date);
-        const [hours, minutes] = scheduleItem.time.split(':');
-        classDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        // Parse date components to avoid timezone issues
+        const [year, month, day] = scheduleItem.date.split('-').map(Number);
+        const [hours, minutes] = scheduleItem.time.split(':').map(Number);
+
+        // Create date in local timezone to avoid UTC conversion issues
+        const classDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
 
         const dateStr = classDate.toLocaleDateString('en-US', {
             weekday: 'long',
@@ -188,23 +277,25 @@ const CourseDashboard = () => {
                     </div>
                 </div>
 
-                {/* Batch Selector */}
-                <div className="batch-selector">
-                    <h2>Select Batch</h2>
-                    <div className="batch-tabs">
-                        {course.batches.map((batch) => (
-                            <button
-                                key={batch.batchNumber}
-                                className={`batch-tab ${selectedBatch?.batchNumber === batch.batchNumber ? 'active' : ''}`}
-                                onClick={() => setSelectedBatch(batch)}
-                            >
-                                <span className="batch-name">{getBatchDisplayName(batch)}</span>
-                                <span className="batch-dates">{formatBatchDateRange(batch)}</span>
-                                {getStatusBadge(batch)}
-                            </button>
-                        ))}
+                {/* Batch Selector - Admin Only */}
+                {isAdminUser && (
+                    <div className="batch-selector">
+                        <h2>Select Batch</h2>
+                        <div className="batch-tabs">
+                            {course.batches.map((batch) => (
+                                <button
+                                    key={batch.batchNumber}
+                                    className={`batch-tab ${selectedBatch?.batchNumber === batch.batchNumber ? 'active' : ''}`}
+                                    onClick={() => setSelectedBatch(batch)}
+                                >
+                                    <span className="batch-name">{getBatchDisplayName(batch)}</span>
+                                    <span className="batch-dates">{formatBatchDateRange(batch)}</span>
+                                    {getStatusBadge(batch)}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {selectedBatch && (
                     <div className="dashboard-content">
@@ -222,7 +313,7 @@ const CourseDashboard = () => {
                                             rel="noopener noreferrer"
                                             className="access-link"
                                         >
-                                            Join Live Class
+                                            Join Class
                                         </a>
                                     ) : (
                                         <span className="link-unavailable">Link will be shared soon</span>
@@ -291,7 +382,7 @@ const CourseDashboard = () => {
                                                             rel="noopener noreferrer"
                                                             className="join-now-btn"
                                                         >
-                                                            Join Live Class
+                                                            Join Class
                                                         </a>
                                                     )}
                                                 </div>
@@ -317,28 +408,30 @@ const CourseDashboard = () => {
                             )}
                         </div>
 
-                        {/* Batch Information */}
-                        <div className="batch-info-section">
-                            <h2>Batch Information</h2>
-                            <div className="batch-info-grid">
-                                <div className="info-card">
-                                    <h4>Batch Name</h4>
-                                    <p>{getBatchDisplayName(selectedBatch)}</p>
-                                </div>
-                                <div className="info-card">
-                                    <h4>Duration</h4>
-                                    <p>{formatBatchDateRange(selectedBatch)}</p>
-                                </div>
-                                <div className="info-card">
-                                    <h4>Status</h4>
-                                    <p>{getStatusBadge(selectedBatch)}</p>
-                                </div>
-                                <div className="info-card">
-                                    <h4>Capacity</h4>
-                                    <p>{selectedBatch.enrollmentCount || 0} / {selectedBatch.maxCapacity} students</p>
+                        {/* Batch Information - Admin Only */}
+                        {isAdminUser && (
+                            <div className="batch-info-section">
+                                <h2>Batch Information</h2>
+                                <div className="batch-info-grid">
+                                    <div className="info-card">
+                                        <h4>Batch Name</h4>
+                                        <p>{getBatchDisplayName(selectedBatch)}</p>
+                                    </div>
+                                    <div className="info-card">
+                                        <h4>Duration</h4>
+                                        <p>{formatBatchDateRange(selectedBatch)}</p>
+                                    </div>
+                                    <div className="info-card">
+                                        <h4>Status</h4>
+                                        <p>{getStatusBadge(selectedBatch)}</p>
+                                    </div>
+                                    <div className="info-card">
+                                        <h4>Capacity</h4>
+                                        <p>{selectedBatch.enrollmentCount || 0} / {selectedBatch.maxCapacity} students</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 )}
             </div>

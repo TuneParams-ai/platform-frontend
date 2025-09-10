@@ -199,18 +199,22 @@ const CourseDetail = () => {
                                 </div>
                             </div>
                             <div className="course-enrollment">
-                                <div className="course-price-detail">
-                                    {courseData.originalPrice && !comingSoon && (
-                                        <span className="original-price-detail">${courseData.originalPrice}</span>
-                                    )}
-                                    <span className="current-price-detail">
-                                        {comingSoon ? "Price TBD" : (courseData.price ? `$${courseData.price}` : "Price N/A")}
-                                    </span>
-                                </div>
+                                {/* Only show pricing for non-enrolled users */}
+                                {!hasAccess && !accessLoading && (
+                                    <div className="course-price-detail">
+                                        {courseData.originalPrice && !comingSoon && (
+                                            <span className="original-price-detail">${courseData.originalPrice}</span>
+                                        )}
+                                        <span className="current-price-detail">
+                                            {comingSoon ? "Price TBD" : (courseData.price ? `$${courseData.price}` : "Price N/A")}
+                                        </span>
+                                    </div>
+                                )}
 
                                 {/* Show loading state */}
                                 {accessLoading && (
                                     <div className="enrollment-loading">
+                                        <div className="loading-spinner"></div>
                                         <p>Checking enrollment status...</p>
                                     </div>
                                 )}
@@ -238,10 +242,10 @@ const CourseDetail = () => {
                                             <div className="enrollment-success">
                                                 <div className="course-detail-enrollment-success">
                                                     <p className="course-detail-success-title">
-                                                        ✅ You're enrolled!
+                                                        ✅ Enrolled
                                                     </p>
                                                     {progressTrackingEnabled && enrollment && (
-                                                        <p className="course-detail-success-text">
+                                                        <p className="course-detail-progress-text">
                                                             Progress: {enrollment.progress || 0}%
                                                         </p>
                                                     )}
@@ -250,7 +254,7 @@ const CourseDetail = () => {
                                                     className="btn enroll-btn-detail"
                                                     onClick={() => navigate(`/course/${courseId}/dashboard`)}
                                                 >
-                                                    Go to Course Dashboard
+                                                    Go to Dashboard →
                                                 </button>
                                             </div>
                                         ) : (
@@ -297,7 +301,8 @@ const CourseDetail = () => {
                                         );
                                     })()
                                 )} */}
-                                {(() => {
+                                {/* Only show next batch info for non-enrolled users */}
+                                {!hasAccess && !accessLoading && (() => {
                                     const nextBatch = getNextAvailableBatch(courseData);
                                     return nextBatch && !comingSoon && (
                                         <div className="next-batch-info">

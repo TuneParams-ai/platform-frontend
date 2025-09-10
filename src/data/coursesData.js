@@ -90,17 +90,17 @@ export const coursesData = [
                     },
                     {
                         date: "2025-09-09",
-                        time: "14:30",
-                        duration: 90,
-                        timezone: "CT",
-                        topic: "Live Demo - AI in Action"
-                    },
-                    {
-                        date: "2025-09-09",
                         time: "20:00",
                         duration: 90,
                         timezone: "CT",
                         topic: "Foundation Week"
+                    },
+                    {
+                        date: "2025-09-09",
+                        time: "22:30",
+                        duration: 90,
+                        timezone: "CT",
+                        topic: "Live Demo - AI in Action"
                     },
                     {
                         date: "2025-09-12",
