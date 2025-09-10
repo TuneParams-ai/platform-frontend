@@ -238,9 +238,6 @@
     font-weight: 500;
     font-size: 0.9rem;
     flex-shrink: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 .author-info {

@@ -61,58 +61,58 @@ const ReplyCard = ({ reply, onDelete, onLike }) => {
 
     return (
         <div className="reply-card">
-            <div className="reply-header">
-                <div className="reply-author">
-                    <div className="author-avatar-reply">
-                        {reply.authorAvatar ? (
-                            <img
-                                src={reply.authorAvatar}
-                                alt={reply.authorName}
-                                onError={(e) => {
-                                    e.target.style.display = 'none';
-                                    e.target.parentNode.nextSibling.style.display = 'flex';
-                                }}
-                            />
-                        ) : null}
-                    </div>
+            <div className="reply-author">
+                <div className="author-avatar-reply">
+                    {reply.authorAvatar ? (
+                        <img
+                            src={reply.authorAvatar}
+                            alt={reply.authorName}
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextElementSibling.style.display = 'flex';
+                            }}
+                        />
+                    ) : null}
                     <div
                         className="default-avatar-reply"
                         style={{ display: reply.authorAvatar ? 'none' : 'flex' }}
                     >
                         {reply.authorName?.charAt(0)?.toUpperCase() || 'A'}
                     </div>
-                    <div className="author-info-reply">
-                        <span className="author-name-reply">{reply.authorName || 'Anonymous'}</span>
-                        <span
-                            className="post-date-reply"
-                            title={dateInfo.tooltip}
-                        >
-                            {dateInfo.display}
-                        </span>
-                    </div>
+                </div>
+                <div className="author-info-reply">
+                    <span className="author-name-reply">{reply.authorName || 'Anonymous'}</span>
+                    <span
+                        className="post-date-reply"
+                        title={dateInfo.tooltip}
+                    >
+                        {dateInfo.display}
+                    </span>
                 </div>
             </div>
-            <div className="reply-content" dangerouslySetInnerHTML={{ __html: reply.content }}>
-            </div>
-            <div className="reply-footer">
-                <button
-                    className={`like-btn reply-like-btn ${isLiked ? 'liked' : ''}`}
-                    onClick={handleLike}
-                    disabled={isLiking}
-                    title={isLiked ? 'Unlike' : 'Like'}
-                >
-                    <span className="like-icon">👍</span>
-                    <span className="like-count">{likeCount}</span>
-                </button>
-                {canDelete && (
+            <div className="reply-content-wrapper">
+                <div className="reply-content" dangerouslySetInnerHTML={{ __html: reply.content }}>
+                </div>
+                <div className="reply-footer">
                     <button
-                        className="delete-btn reply-delete-btn"
-                        onClick={handleDelete}
-                        title="Delete reply"
+                        className={`like-btn reply-like-btn ${isLiked ? 'liked' : ''}`}
+                        onClick={handleLike}
+                        disabled={isLiking}
+                        title={isLiked ? 'Unlike' : 'Like'}
                     >
-                        🗑️
+                        <span className="like-icon">👍</span>
+                        <span className="like-count">{likeCount}</span>
                     </button>
-                )}
+                    {canDelete && (
+                        <button
+                            className="delete-btn reply-delete-btn"
+                            onClick={handleDelete}
+                            title="Delete reply"
+                        >
+                            🗑️
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );
