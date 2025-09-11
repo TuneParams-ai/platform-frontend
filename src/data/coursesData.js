@@ -42,7 +42,7 @@ export const coursesData = [
         lessons: 25,
         maxCapacity: 30,
         nextBatchDate: "2025-10-1",
-        price: 699,
+        price: 899,
         originalPrice: 1199,
         icon: "🤖",
         image: "/data/FAAI/FAAI_thumbnail.png",
