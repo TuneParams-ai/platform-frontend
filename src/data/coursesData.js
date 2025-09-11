@@ -33,6 +33,7 @@ export const coursesData = [
     //     ],
     //     downloadUrl: "/data/sample-math-course-info.pdf"
     // },
+    
     {
         id: "FAAI",
         title: "Foundations to Frontiers of AI",
