@@ -565,28 +565,174 @@ const PayPalCheckout = ({
                         </div>
                         <div className="modal-body">
                             <div className="terms-content">
-                                <h3>Course Enrollment Terms</h3>
-                                <p><strong>Effective Date:</strong> [TO BE UPDATED]</p>
+                                <h3>Terms and Conditions for Foundations to Frontiers of AI Course Offered by TuneParams</h3>
+                                <p><strong>Effective Date:</strong> September 1, 2025</p>
 
-                                <h4>1. Course Access and Duration</h4>
-                                <p>Upon successful enrollment and payment, you will gain access to the course materials for the duration specified in the course description. Access begins on the batch start date and continues through the course completion.</p>
+                                <p>These Terms and Conditions ("Agreement") govern your registration and participation in the AI Online Live Course (the "Course") provided by TuneParams ("we," "us," "our"). By registering for the Course, you agree to be legally bound by this Agreement.</p>
 
-                                <h4>2. Payment and Refund Policy</h4>
-                                <p>[PLACEHOLDER] - Refund terms and conditions to be defined. Generally, refunds may be available within the first 7 days of course start, subject to specific conditions.</p>
+                                <h4>1. Acceptance of Terms</h4>
+                                <p>By accessing or using TuneParams.ai's platform, services, or content, users acknowledge that they have read, understood, and agree to be bound by these Terms and Conditions. If users do not agree with any part of these Terms, they must refrain from using the platform.</p>
 
-                                <h4>3. Course Completion and Certification</h4>
-                                <p>Course completion requirements will be communicated during the course. Certificates may be provided upon successful completion of all course requirements.</p>
+                                <h4>2. Fees and Payment</h4>
+                                <ul>
+                                    <li>Full payment of the advertised course fee is required at registration.</li>
+                                    <li>Accepted payment methods: PayPal, debit card, credit card, or other methods introduced by us.</li>
+                                    <li>All fees are in USD unless otherwise noted. Currency conversion, bank, or transaction fees are your responsibility.</li>
+                                    <li>Access to the Course is granted only after successful payment.</li>
+                                    <li>Fees are non-transferable and non-refundable except as outlined in Section 7 (Cancellations and Refunds).</li>
+                                    <li>If payment is disputed, reversed, or charged back, your enrollment and access will be suspended immediately. We reserve the right to pursue remedies for fraudulent chargebacks.</li>
+                                </ul>
 
-                                <h4>4. Code of Conduct</h4>
-                                <p>Students are expected to maintain respectful and professional conduct in all course interactions, including live sessions, forums, and group activities.</p>
+                                <h4>3. Eligibility</h4>
+                                <p>To register, you must:</p>
+                                <ul>
+                                    <li>Be at least 16 years of age. Minors must provide written parental/guardian consent.</li>
+                                    <li>Have access to a functioning computer, microphone, camera, and reliable internet.</li>
+                                    <li>Be proficient in English (spoken and written).</li>
+                                    <li>Ensure participation is lawful under the regulations of your country of residence.</li>
+                                </ul>
 
-                                <h4>5. Intellectual Property</h4>
-                                <p>All course materials, including videos, slides, and assignments, are proprietary to TuneParams.ai and are for personal educational use only.</p>
+                                <h4>4. User Obligations</h4>
+                                <p>Users agree to provide accurate, complete, and current information during registration and throughout their use of the platform. Users are responsible for maintaining the confidentiality of their login credentials and for all activities conducted under their account. Misuse, fraudulent activity, or sharing of accounts is strictly prohibited.</p>
 
-                                <h4>6. Technical Requirements</h4>
-                                <p>Students are responsible for ensuring they have the necessary technical requirements and stable internet connection to participate in online sessions.</p>
+                                <h4>5. Roles and Access</h4>
+                                <ul>
+                                    <li>Users may be Students, Instructors, or Administrators, each with specific access rights.</li>
+                                    <li>Instructors may not promise specific outcomes, certifications, or employment opportunities.</li>
+                                    <li>Administrators retain final authority on account management, course access, refunds, and dispute resolution.</li>
+                                </ul>
 
-                                <p><em>Note: These terms are subject to updates. Full terms and conditions will be provided upon enrollment completion.</em></p>
+                                <h4>6. Intellectual Property</h4>
+                                <ul>
+                                    <li>All materials (videos, slides, assignments, recordings, notes, graphics, software, and others) are the exclusive property of TuneParams or its licensors.</li>
+                                    <li>You are granted a limited, personal, non-transferable license to access content only during your enrollment.</li>
+                                    <li>You may not:
+                                        <ul>
+                                            <li>Copy, reproduce, share, resell, or distribute any material.</li>
+                                            <li>Record live sessions or create derivative works.</li>
+                                            <li>Use the content for commercial, non-commercial, educational, or research purposes outside this Course.</li>
+                                        </ul>
+                                    </li>
+                                    <li>Unauthorized use may result in immediate removal without refund and potential legal action.</li>
+                                </ul>
+
+                                <h4>7. Intellectual Property</h4>
+                                <p>All content, including but not limited to text, software, code, graphics, images, trademarks, service marks, and logos provided on TuneParams.ai is the exclusive property of TuneParams.ai or its licensors. Unauthorized use, reproduction, modification, distribution, or exploitation of this content without express permission is prohibited.</p>
+
+                                <h4>8. Technology Requirements</h4>
+                                <ul>
+                                    <li>You are responsible for ensuring your equipment and internet meet minimum requirements.</li>
+                                    <li>Installing required apps/software, platform updates, or compatibility issues on your side do not qualify for refunds.</li>
+                                    <li>Missed sessions due to personal or technical issues are your responsibility. Recordings, if available, may substitute but are not guaranteed.</li>
+                                </ul>
+
+                                <h4>9. Cancellations and Refunds</h4>
+                                <p><strong>Student Cancellations:</strong></p>
+                                <ul>
+                                    <li>Full (100%) refund within 7 calendar days of the official course start date, provided you have not attended more than one (1) live session.</li>
+                                    <li>No refunds after 7 days or if more than one session has been attended.</li>
+                                </ul>
+                                <p><strong>Provider Cancellations:</strong></p>
+                                <ul>
+                                    <li>If canceled before start: full refund.</li>
+                                    <li>If canceled after start:
+                                        <ul>
+                                            <li>Less than 60% delivered → 100% refund.</li>
+                                            <li>60% or more delivered → 50% refund.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <p><strong>Partial Cancellations / Rescheduling:</strong></p>
+                                <ul>
+                                    <li>Instructor substitutions, schedule adjustments, or rescheduling do not entitle refunds.</li>
+                                    <li>Postponed sessions will be rescheduled without additional cost.</li>
+                                </ul>
+
+                                <h4>10. Termination of Access</h4>
+                                <p>TuneParams.ai reserves the right to suspend or terminate user accounts or restrict access to services at its sole discretion, without prior notice, if users violate these Terms, engage in unlawful activity, or compromise the platform's integrity. Users may also terminate their accounts by following the platform's account deletion procedures.</p>
+
+                                <h4>11. Community Forums, Reviews, and Communication</h4>
+                                <ul>
+                                    <li>Forums and community spaces are for educational discussion only. Prohibited uses include spam, illegal content, and copyright infringement.</li>
+                                    <li>We reserve the right to remove posts, suspend access, or ban users.</li>
+                                    <li>Reviews must be from verified students and must be respectful, accurate, and relevant. We may edit or remove reviews that violate these conditions.</li>
+                                    <li>By submitting reviews or feedback, you grant us the right to display them, including for promotional purposes.</li>
+                                    <li>You consent to receive service-related communications (confirmations, updates, receipts). Marketing communications require opt-in.</li>
+                                </ul>
+
+                                <h4>12. Platform Availability and Technical Limitations</h4>
+                                <ul>
+                                    <li>We do not guarantee uninterrupted or error-free operation of the platform.</li>
+                                    <li>Temporary downtime may occur due to maintenance, upgrades, or external factors.</li>
+                                    <li>We are not liable for outages of third-party services (Zoom, PayPal, Firebase, EmailJS, etc.).</li>
+                                </ul>
+
+                                <h4>13. Data Protection and Privacy</h4>
+                                <p>TuneParams.ai collects and processes personal data in accordance with its Privacy Policy, which forms an integral part of these Terms. We employ reasonable safeguards to protect user data but cannot guarantee absolute security. Users are responsible for ensuring their devices and networks are secure when accessing the platform.</p>
+
+                                <h4>14. Limitation of Liability</h4>
+                                <ul>
+                                    <li>We make no guarantees regarding outcomes (employment, certification, skills, or opportunities).</li>
+                                    <li>We are not liable for technical issues, missed sessions, or indirect damages (income loss, reputation harm, or opportunities).</li>
+                                    <li>Our maximum liability is limited to the total course fee paid.</li>
+                                </ul>
+
+                                <h4>15. Certificates</h4>
+                                <ul>
+                                    <li>Certificates are awarded only upon:
+                                        <ul>
+                                            <li>Attending at least 95% of sessions.</li>
+                                            <li>Completing all required assignments and assessments.</li>
+                                        </ul>
+                                    </li>
+                                    <li>Certificates are digital only.</li>
+                                    <li>Certificates may be revoked in cases of academic dishonesty or issuance error.</li>
+                                </ul>
+
+                                <h4>16. Third-Party Links and Content</h4>
+                                <p>The platform may include links to external websites or resources. TuneParams.ai is not responsible for the content, accuracy, or practices of third-party sites. Accessing third-party content is at the user's own risk, and users are encouraged to review the respective terms and policies of such sites.</p>
+
+                                <h4>17. Governing Law and Jurisdiction</h4>
+                                <ul>
+                                    <li>This Agreement is governed by the laws of the United States of America.</li>
+                                    <li>Disputes are subject to the exclusive jurisdiction of U.S. courts unless local law requires otherwise.</li>
+                                </ul>
+
+                                <h4>18. Data Privacy and Confidentiality</h4>
+                                <ul>
+                                    <li>We collect necessary personal data (name, email, payment details, assignments, attendance, and communications).</li>
+                                    <li>Data is used to manage enrollment, deliver the Course, issue certificates, and provide support.</li>
+                                    <li>Session recordings may include your participation. Enrollment constitutes consent.</li>
+                                    <li>We do not sell or rent your data. Data may be shared with trusted service providers under confidentiality agreements or with authorities if required by law.</li>
+                                    <li>Student submissions may be used anonymously for academic, research, or promotional purposes unless you opt out in writing.</li>
+                                    <li>We comply with applicable data privacy laws (including GDPR/CCPA principles).</li>
+                                </ul>
+
+                                <h4>19. Dispute Resolution</h4>
+                                <p>Any disputes arising out of or relating to these Terms or the use of TuneParams.ai services shall first be attempted to be resolved amicably through informal negotiations. If unresolved, disputes shall be subject to binding arbitration under the rules of the American Arbitration Association, with the place of arbitration being Dallas, Texas. Users agree to waive any right to a jury trial or participation in class action lawsuits.</p>
+
+                                <h4>20. Entire Agreement</h4>
+                                <ul>
+                                    <li>This Agreement constitutes the full understanding between you and TuneParams and supersedes all prior communications.</li>
+                                    <li>If any provision is deemed invalid, the remaining provisions remain enforceable.</li>
+                                </ul>
+
+                                <h4>21. Instructor Status and Disclaimer</h4>
+                                <ul>
+                                    <li>Instructors, mentors, guest speakers, or teaching assistants may participate on a voluntary basis.</li>
+                                    <li>Such individuals are not employees, contractors, or representatives of TuneParams.</li>
+                                    <li>No agency, partnership, or employment relationship is created.</li>
+                                </ul>
+
+                                <h4>22. Professional Disclaimer and Risk Acknowledgment</h4>
+                                <ul>
+                                    <li>The Course is educational only and does not constitute professional, legal, medical, financial, or career advice.</li>
+                                    <li>No guarantees of results, employment, or success are made.</li>
+                                    <li>You are solely responsible for how you apply the information and skills learned.</li>
+                                    <li>By enrolling, you assume all associated risks.</li>
+                                </ul>
+
+                                <p><strong>By completing your registration, you confirm that you have read, understood, and agreed to these Terms and Conditions.</strong></p>
                             </div>
                         </div>
                         <div className="modal-footer">
