@@ -132,6 +132,18 @@
     color: white;
 }
 
+.btn-tertiary {
+    background: transparent;
+    color: var(--secondary-text-color);
+    border: 1px solid rgba(160, 160, 160, 0.3);
+}
+
+.btn-tertiary:hover {
+    background: rgba(160, 160, 160, 0.1);
+    color: var(--text-color);
+    border-color: rgba(160, 160, 160, 0.5);
+}
+
 .btn-small {
     padding: 10px 16px;
     font-size: 0.9rem;
@@ -538,9 +550,63 @@
     font-weight: 500;
 }
 
+/* Review Form Container Styles */
+.review-form-container {
+    margin: 20px 0;
+}
+
+.review-form-toggle {
+    margin-bottom: 16px;
+}
+
+.review-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.review-toggle-btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Collapsible Form Animation */
+.review-form {
+    animation: slideDown 0.3s ease-out;
+    transform-origin: top;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 1000px;
+    }
+}
+
 .review-form-actions {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
+}
+
+.review-form-actions .btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+.review-form-actions .btn:last-child {
+    flex: 0 0 auto;
+    min-width: 80px;
 }
 
 .review-error {
@@ -630,6 +696,22 @@
 
     .card {
         padding: 15px;
+    }
+
+    /* Review form mobile adjustments */
+    .review-form-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .review-form-actions .btn {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .review-toggle-btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .card-title {

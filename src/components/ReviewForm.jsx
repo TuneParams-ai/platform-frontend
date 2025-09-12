@@ -32,6 +32,7 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
     const [error, setError] = useState(null);
     const [hasExisting, setHasExisting] = useState(false);
     const [userDisplayName, setUserDisplayName] = useState('');
+    const [isFormVisible, setIsFormVisible] = useState(false);
 
     // Get user display name from profile
     useEffect(() => {
@@ -115,25 +116,28 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
         setLoading(false);
         if (!res.success) {
             setError(res.error || 'Failed to submit review');
+            return false;
         } else {
             setHasExisting(true);
-            onSubmitted && onSubmitted();
+            return true;
         }
     };
 
     const handleDelete = async () => {
-        if (!userId) return;
-        if (!window.confirm('Delete your review?')) return;
+        if (!userId) return false;
+        if (!window.confirm('Delete your review?')) return false;
         setLoading(true);
         setError(null);
         const res = await deleteReview(courseId, userId);
         setLoading(false);
-        if (!res.success) setError(res.error || 'Failed to delete review');
-        else {
+        if (!res.success) {
+            setError(res.error || 'Failed to delete review');
+            return false;
+        } else {
             setRating(0);
             setComment('');
             setHasExisting(false);
-            onSubmitted && onSubmitted();
+            return true;
         }
     };
 
@@ -141,40 +145,105 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
         return <div className="review-form-login">Log in to write a review.</div>;
     }
 
+    const handleFormToggle = () => {
+        setIsFormVisible(!isFormVisible);
+        if (!isFormVisible) {
+            // Reset error when opening form
+            setError(null);
+        }
+    };
+
+    const handleSubmitSuccess = () => {
+        // Close form after successful submission
+        setIsFormVisible(false);
+        onSubmitted && onSubmitted();
+    };
+
+    const handleDeleteSuccess = () => {
+        // Close form after successful deletion
+        setIsFormVisible(false);
+        onSubmitted && onSubmitted();
+    };
+
     return (
-        <form className="review-form" onSubmit={handleSubmit}>
-            <div className="review-form-header">
-                <h4>{hasExisting ? 'Edit your review' : 'Write a review'}</h4>
-            </div>
-            <StarInput value={rating} onChange={setRating} />
-            <div className="review-textarea-container">
-                <textarea
-                    className="review-textarea"
-                    value={comment}
-                    maxLength={3000}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Share your experience..."
-                    rows={4}
-                    required
-                />
-                <div className="character-counter">
-                    <span className={comment.length > 2700 ? 'character-counter-warning' : ''}>
-                        {comment.length}/3000 characters
-                    </span>
-                </div>
-            </div>
-            {error && <div className="review-error">{error}</div>}
-            <div className="review-form-actions">
-                <button className="btn" type="submit" disabled={loading || rating < 1}>
-                    {loading ? 'Saving...' : hasExisting ? 'Update Review' : 'Submit Review'}
+        <div className="review-form-container">
+            {/* Toggle Button */}
+            <div className="review-form-toggle">
+                <button
+                    className={`btn ${hasExisting ? 'btn-secondary' : 'btn-primary'} review-toggle-btn`}
+                    onClick={handleFormToggle}
+                    type="button"
+                >
+                    {isFormVisible ? (
+                        '✕ Cancel'
+                    ) : hasExisting ? (
+                        'Edit Review'
+                    ) : (
+                        'Write a Review'
+                    )}
                 </button>
-                {hasExisting && (
-                    <button className="btn btn-secondary" type="button" onClick={handleDelete} disabled={loading}>
-                        Delete
-                    </button>
-                )}
             </div>
-        </form>
+
+            {/* Review Form - Collapsible */}
+            {isFormVisible && (
+                <form className="review-form" onSubmit={async (e) => {
+                    e.preventDefault();
+                    const success = await handleSubmit(e);
+                    if (success) {
+                        handleSubmitSuccess();
+                    }
+                }}>
+                    <div className="review-form-header">
+                        <h4>{hasExisting ? 'Edit your review' : 'Write a review'}</h4>
+                    </div>
+                    <StarInput value={rating} onChange={setRating} />
+                    <div className="review-textarea-container">
+                        <textarea
+                            className="review-textarea"
+                            value={comment}
+                            maxLength={3000}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="Share your experience..."
+                            rows={4}
+                            required
+                        />
+                        <div className="character-counter">
+                            <span className={comment.length > 2700 ? 'character-counter-warning' : ''}>
+                                {comment.length}/3000 characters
+                            </span>
+                        </div>
+                    </div>
+                    {error && <div className="review-error">{error}</div>}
+                    <div className="review-form-actions">
+                        <button className="btn" type="submit" disabled={loading || rating < 1}>
+                            {loading ? 'Saving...' : hasExisting ? 'Update Review' : 'Submit Review'}
+                        </button>
+                        {hasExisting && (
+                            <button
+                                className="btn btn-secondary"
+                                type="button"
+                                onClick={async () => {
+                                    const success = await handleDelete();
+                                    if (success) {
+                                        handleDeleteSuccess();
+                                    }
+                                }}
+                                disabled={loading}
+                            >
+                                Delete
+                            </button>
+                        )}
+                        <button
+                            className="btn btn-tertiary"
+                            type="button"
+                            onClick={handleFormToggle}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            )}
+        </div>
     );
 };
 
