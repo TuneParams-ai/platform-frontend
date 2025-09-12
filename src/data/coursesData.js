@@ -23,7 +23,8 @@ export const coursesData = [
                 day: "Thursday",
                 time: "5:30 - 6:30 PM ET",
                 duration: "1 hour",
-                type: "Live Session"
+                type: "Optional TA Session",
+                note: "Scheduled with 1 week prior notice based on requirement/availability"
             },
             {
                 day: "Saturday",

@@ -447,25 +447,24 @@ const CourseDetail = () => {
                             <h2>Weekly Schedule</h2>
                             {courseData.weeklySchedule && courseData.weeklySchedule.length > 0 ? (
                                 <div className="weekly-schedule-container">
-                                    <p className="schedule-description">
-                                        Join us for live sessions throughout the week. All times are in Eastern Time (ET).
-                                    </p>
                                     <div className="weekly-schedule-list">
                                         {courseData.weeklySchedule.map((session, index) => (
                                             <div key={index} className="schedule-item">
-                                                <div className="schedule-day">
+                                                <div className="schedule-info">
                                                     <span className="day-name">{session.day}</span>
                                                     <span className="session-type">{session.type}</span>
-                                                </div>
-                                                <div className="schedule-details">
                                                     <span className="schedule-time">{session.time}</span>
-                                                    <span className="schedule-duration">{session.duration}</span>
                                                 </div>
+                                                {session.note && (
+                                                    <div className="session-note">
+                                                        <small>{session.note}</small>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
                                     <p className="schedule-note">
-                                        <strong>Note:</strong> Detailed session-by-session schedules will be provided after enrollment.
+                                        <strong>Note:</strong> All times are in Eastern Time (ET). Detailed schedules provided after enrollment.
                                     </p>
                                 </div>
                             ) : (
@@ -597,7 +596,12 @@ const CurriculumSection = ({ curriculum }) => {
                         onClick={() => toggleSection(sectionIndex)}
                     >
                         <div className="section-title-container">
-                            <h3>{section.section}</h3>
+                            <div className="section-title-with-count">
+                                <h3>{section.section}</h3>
+                                <span className="topic-count">
+                                    {section.topics ? section.topics.length : 0} topics
+                                </span>
+                            </div>
                             <span className={`expand-icon ${expandedSections[sectionIndex] ? 'expanded' : ''}`}>
                                 ▼
                             </span>
@@ -605,11 +609,6 @@ const CurriculumSection = ({ curriculum }) => {
                         {section.description && (
                             <p className="section-description">{section.description}</p>
                         )}
-                        <div className="section-stats">
-                            <span className="topic-count">
-                                {section.topics ? section.topics.length : 0} topics
-                            </span>
-                        </div>
                     </div>
 
                     {expandedSections[sectionIndex] && section.topics && section.topics.length > 0 && (
