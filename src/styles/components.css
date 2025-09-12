@@ -104,8 +104,7 @@
 
 .star-rating.clickable:hover {
     background: rgba(255, 193, 7, 0.05);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(255, 193, 7, 0.2);
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.15);
 }
 
 .star-rating.clickable:hover::before {

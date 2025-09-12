@@ -21,6 +21,7 @@ const CourseDetail = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
     const [enrollmentResult, setEnrollmentResult] = useState(null);
+    const [isScrolling, setIsScrolling] = useState(false);
 
     // Check if progress tracking is enabled
     const progressTrackingEnabled = isProgressTrackingEnabled();
@@ -84,9 +85,12 @@ const CourseDetail = () => {
 
     // Handle hash navigation on page load
     useEffect(() => {
+        let hasScrolledToHash = false;
+
         const handleHashNavigation = () => {
             const hash = window.location.hash;
-            if (hash === '#reviews-section') {
+            if (hash === '#reviews-section' && !hasScrolledToHash) {
+                hasScrolledToHash = true;
                 // Small delay to ensure the component is fully rendered
                 setTimeout(() => {
                     let target = document.getElementById('reviews-section');
@@ -106,13 +110,13 @@ const CourseDetail = () => {
                         });
 
                         // Add temporary highlight effect
-                        target.style.transition = 'box-shadow 0.5s ease';
-                        target.style.boxShadow = '0 0 20px rgba(255, 193, 7, 0.5)';
+                        target.style.transition = 'box-shadow 0.3s ease';
+                        target.style.boxShadow = '0 0 15px rgba(255, 193, 7, 0.4)';
                         setTimeout(() => {
                             target.style.boxShadow = '';
-                        }, 2000);
+                        }, 1500);
                     }
-                }, 300);
+                }, 200);
             }
         };
 
@@ -120,10 +124,15 @@ const CourseDetail = () => {
         handleHashNavigation();
 
         // Handle hash changes (e.g., when navigating with back/forward)
-        window.addEventListener('hashchange', handleHashNavigation);
+        const handleHashChange = () => {
+            hasScrolledToHash = false;
+            handleHashNavigation();
+        };
+
+        window.addEventListener('hashchange', handleHashChange);
 
         return () => {
-            window.removeEventListener('hashchange', handleHashNavigation);
+            window.removeEventListener('hashchange', handleHashChange);
         };
     }, []);
 
@@ -237,7 +246,12 @@ const CourseDetail = () => {
                                                     showNumeric={true}
                                                     clickable={true}
                                                     onClick={() => {
-                                                        // Multiple strategies to find and scroll to reviews
+                                                        // Prevent multiple scroll operations
+                                                        if (isScrolling) return;
+
+                                                        setIsScrolling(true);
+
+                                                        // Find and scroll to reviews section
                                                         const scrollToReviews = () => {
                                                             // Strategy 1: By ID
                                                             let target = document.getElementById('reviews-section');
@@ -267,17 +281,19 @@ const CourseDetail = () => {
                                                                 });
 
                                                                 // Add temporary highlight
+                                                                target.style.transition = 'box-shadow 0.3s ease';
                                                                 target.style.boxShadow = '0 0 0 3px rgba(255, 193, 7, 0.5)';
                                                                 setTimeout(() => {
                                                                     target.style.boxShadow = '';
-                                                                }, 2000);
+                                                                    setIsScrolling(false);
+                                                                }, 1500);
                                                             } else {
+                                                                setIsScrolling(false);
                                                                 alert('Reviews section not found. Please scroll down manually to see reviews.');
                                                             }
                                                         };
 
-                                                        // Try immediately and also with a small delay
-                                                        scrollToReviews();
+                                                        // Execute scroll after a brief delay to avoid conflicts
                                                         setTimeout(scrollToReviews, 100);
                                                     }}
                                                 />
