@@ -1,39 +1,6 @@
 // Shared course data for the application
 
 export const coursesData = [
-    // {
-    //     id: "MathAI",
-    //     title: "Math Fundamentals for AI",
-    //     description: "Essential mathematical foundations for artificial intelligence and machine learning. Master linear algebra, calculus, probability, and statistics needed for AI success.",
-    //     level: "Beginner",
-    //     duration: "3 weeks",
-    //     lessons: 9,
-    //     students: 5,
-    //     maxCapacity: 25,
-    //     nextBatchDate: "2025-09-1",
-    //     rating: 4.8,
-    //     price: 99,
-    //     originalPrice: 259,
-    //     icon: "📐",
-    //     image: "/data/MathAI/MathAI_thumbnail.png",
-    //     category: "Mathematics",
-    //     instructor: "NA",
-    //     instructorBio: "NA",
-    //     curriculum: [
-    //         { week: 1, title: "Linear Algebra: Vectors, Matrices, and Operations", lessons: 3 },
-    //         { week: 2, title: "Calculus: Derivatives, Gradients, and Optimization", lessons: 3 },
-    //         { week: 3, title: "Probability & Statistics: Distributions, Bayes' Theorem, Statistical Inference", lessons: 3 }
-    //     ],
-    //     prerequisites: ["High school algebra", "Basic calculus knowledge helpful but not required"],
-    //     outcomes: [
-    //         "Master vector and matrix operations essential for ML",
-    //         "Understand derivatives and gradients for optimization",
-    //         "Apply probability and statistics to data analysis",
-    //         "Build mathematical intuition for AI algorithms"
-    //     ],
-    //     downloadUrl: "/data/sample-math-course-info.pdf"
-    // },
-
     {
         id: "FAAI",
         title: "Foundations to Frontiers of AI",
@@ -50,6 +17,27 @@ export const coursesData = [
         category: "Artificial Intelligence",
         instructor: "NA",
         instructorBio: "NA",
+        // Weekly Schedule Information
+        weeklySchedule: [
+            {
+                day: "Thursday",
+                time: "5:30 - 6:30 PM ET",
+                duration: "1 hour",
+                type: "Live Session"
+            },
+            {
+                day: "Saturday",
+                time: "9:30 AM - 12:00 PM ET",
+                duration: "2.5 hours (with 15 min break)",
+                type: "Live Session"
+            },
+            {
+                day: "Sunday",
+                time: "9:30 AM - 12:00 PM ET",
+                duration: "2.5 hours (with 15 min break)",
+                type: "Live Session"
+            }
+        ],
         // Batch information
         currentBatch: 1,
         batches: [
@@ -121,63 +109,193 @@ export const coursesData = [
         curriculum: [
             {
                 section: "Foundation",
+                description: "Build essential mathematical and programming foundations needed for AI development",
                 topics: [
-                    "Introduction to Machine Learning",
-                    "Vectors and Matrices for ML",
-                    "Basic Python for Machine Learning"
+                    {
+                        title: "Introduction to Machine Learning",
+                        description: "Understand core ML concepts, types of learning (supervised, unsupervised, reinforcement), and real-world applications across industries.",
+                        keyPoints: ["ML fundamentals", "Problem types", "Industry applications"]
+                    },
+                    {
+                        title: "Vectors and Matrices for ML",
+                        description: "Master linear algebra concepts essential for understanding ML algorithms, including vector operations, matrix multiplication, and eigenvalues.",
+                        keyPoints: ["Vector operations", "Matrix algebra", "Eigenvalues & eigenvectors"]
+                    },
+                    {
+                        title: "Basic Python for Machine Learning",
+                        description: "Learn Python programming fundamentals with focus on NumPy, Pandas, and data manipulation techniques for ML workflows.",
+                        keyPoints: ["NumPy basics", "Pandas for data", "ML libraries setup"]
+                    }
                 ]
             },
             {
                 section: "Neural Networks",
+                description: "Deep dive into neural network architectures from linear models to multi-layer perceptrons",
                 topics: [
-                    "Linear Regression",
-                    "Closed-Form Solution for Linear Regression",
-                    "Polynomial Regression",
-                    "Loss Functions",
-                    "Optimization Methods",
-                    "Hyperparameter Tuning: Overfitting, Regularization, Model Selection",
-                    "Logistic Regression & Classification",
-                    "Multi layer perceptron (MLP)",
-                    "Mini Project: Regression and Classification"
+                    {
+                        title: "Linear Regression",
+                        description: "Understand the foundation of predictive modeling with linear regression, cost functions, and gradient descent optimization.",
+                        keyPoints: ["Cost functions", "Gradient descent", "Model evaluation"]
+                    },
+                    {
+                        title: "Closed-Form Solution for Linear Regression",
+                        description: "Learn mathematical derivation of normal equation and compare analytical vs iterative solutions for linear regression.",
+                        keyPoints: ["Normal equation", "Matrix calculus", "Computational complexity"]
+                    },
+                    {
+                        title: "Polynomial Regression",
+                        description: "Extend linear models to capture non-linear relationships using polynomial features and regularization techniques.",
+                        keyPoints: ["Feature engineering", "Overfitting prevention", "Model complexity"]
+                    },
+                    {
+                        title: "Loss Functions",
+                        description: "Explore different loss functions for regression and classification, understanding their mathematical properties and use cases.",
+                        keyPoints: ["MSE vs MAE", "Cross-entropy", "Custom loss functions"]
+                    },
+                    {
+                        title: "Optimization Methods",
+                        description: "Master gradient descent variants including SGD, Adam, and advanced optimization techniques for neural network training.",
+                        keyPoints: ["SGD variants", "Adam optimizer", "Learning rate scheduling"]
+                    },
+                    {
+                        title: "Hyperparameter Tuning: Overfitting, Regularization, Model Selection",
+                        description: "Learn systematic approaches to prevent overfitting using regularization (L1/L2) and cross-validation for model selection.",
+                        keyPoints: ["Cross-validation", "L1/L2 regularization", "Grid search"]
+                    },
+                    {
+                        title: "Logistic Regression & Classification",
+                        description: "Transition from regression to classification using logistic regression, sigmoid function, and classification metrics.",
+                        keyPoints: ["Sigmoid function", "Classification metrics", "Decision boundaries"]
+                    },
+                    {
+                        title: "Multi layer perceptron (MLP)",
+                        description: "Build your first neural network with multiple layers, understanding forward/backward propagation and activation functions.",
+                        keyPoints: ["Backpropagation", "Activation functions", "Network architecture"]
+                    },
+                    {
+                        title: "Mini Project: Regression and Classification",
+                        description: "Apply learned concepts in a hands-on project implementing both regression and classification models on real datasets.",
+                        keyPoints: ["End-to-end pipeline", "Model comparison", "Performance analysis"]
+                    }
                 ]
             },
             {
                 section: "Convolutional Neural Networks",
+                description: "Master computer vision with CNNs and learn to build models that can see and understand images",
                 topics: [
-                    "Convolutional Neural Networks (CNNs)",
-                    "Applications of CNNs",
-                    "Project: Application of CNNs"
+                    {
+                        title: "Convolutional Neural Networks (CNNs)",
+                        description: "Understand convolution operations, pooling layers, and CNN architectures for image processing and pattern recognition.",
+                        keyPoints: ["Convolution operations", "Pooling layers", "Feature maps"]
+                    },
+                    {
+                        title: "Applications of CNNs",
+                        description: "Explore real-world CNN applications including image classification, object detection, and medical image analysis.",
+                        keyPoints: ["Image classification", "Object detection", "Medical imaging"]
+                    },
+                    {
+                        title: "Project: Application of CNNs",
+                        description: "Build and train a CNN model for image classification using popular datasets and evaluate its performance.",
+                        keyPoints: ["Dataset preparation", "Model training", "Performance evaluation"]
+                    }
                 ]
             },
             {
                 section: "Natural Language Processing",
+                description: "Dive into language understanding with RNNs, attention mechanisms, and transformer architectures",
                 topics: [
-                    "Introduction to NLP",
-                    "Recurrent Neural Networks (RNNs)",
-                    "Limitations of RNNs",
-                    "Attention Mechanism",
-                    "Self-Attention",
-                    "Transformer Architecture"
+                    {
+                        title: "Introduction to NLP",
+                        description: "Learn text preprocessing, tokenization, and fundamental NLP concepts for machine understanding of language.",
+                        keyPoints: ["Text preprocessing", "Tokenization", "Language modeling"]
+                    },
+                    {
+                        title: "Recurrent Neural Networks (RNNs)",
+                        description: "Understand sequence modeling with RNNs and LSTMs for processing sequential data like text and time series.",
+                        keyPoints: ["Sequence modeling", "LSTM architecture", "Vanishing gradients"]
+                    },
+                    {
+                        title: "Limitations of RNNs",
+                        description: "Explore computational and architectural limitations of RNNs that led to the development of attention mechanisms.",
+                        keyPoints: ["Sequential bottlenecks", "Long-range dependencies", "Training difficulties"]
+                    },
+                    {
+                        title: "Attention Mechanism",
+                        description: "Learn how attention mechanisms solve RNN limitations by allowing models to focus on relevant parts of input sequences.",
+                        keyPoints: ["Attention weights", "Context vectors", "Alignment models"]
+                    },
+                    {
+                        title: "Self-Attention",
+                        description: "Master self-attention mechanisms that enable parallel processing and better capture of long-range dependencies.",
+                        keyPoints: ["Query-key-value", "Multi-head attention", "Positional encoding"]
+                    },
+                    {
+                        title: "Transformer Architecture",
+                        description: "Deep dive into the transformer model that revolutionized NLP, understanding encoder-decoder architecture and applications.",
+                        keyPoints: ["Encoder-decoder", "Layer normalization", "Feed-forward networks"]
+                    }
                 ]
             },
             {
                 section: "Large Language Models (LLMs)",
+                description: "Explore the cutting-edge world of large language models and their training methodologies",
                 topics: [
-                    "LLM Pre-Training",
-                    "Continual Pre-Training",
-                    "Supervised Fine-Tuning",
-                    "Alignment of LLMs",
-                    "LLM Inference",
-                    "Introduction to Hugging Face"
+                    {
+                        title: "LLM Pre-Training",
+                        description: "Understand how large language models are pre-trained on vast text corpora using self-supervised learning techniques.",
+                        keyPoints: ["Self-supervised learning", "Scaling laws", "Training dynamics"]
+                    },
+                    {
+                        title: "Continual Pre-Training",
+                        description: "Learn techniques for continuing pre-training of existing models on new domains or updated data while preserving knowledge.",
+                        keyPoints: ["Domain adaptation", "Catastrophic forgetting", "Knowledge retention"]
+                    },
+                    {
+                        title: "Supervised Fine-Tuning",
+                        description: "Master fine-tuning techniques to adapt pre-trained models for specific tasks and domains with labeled data.",
+                        keyPoints: ["Task adaptation", "Learning rates", "Evaluation metrics"]
+                    },
+                    {
+                        title: "Alignment of LLMs",
+                        description: "Explore techniques like RLHF to align language models with human preferences and improve their safety and helpfulness.",
+                        keyPoints: ["RLHF", "Human feedback", "Safety alignment"]
+                    },
+                    {
+                        title: "LLM Inference",
+                        description: "Learn optimization techniques for efficient LLM inference including quantization, pruning, and serving strategies.",
+                        keyPoints: ["Quantization", "Pruning", "Serving optimization"]
+                    },
+                    {
+                        title: "Introduction to Hugging Face",
+                        description: "Get hands-on experience with Hugging Face ecosystem for loading, fine-tuning, and deploying transformer models.",
+                        keyPoints: ["Model hub", "Transformers library", "Fine-tuning workflows"]
+                    }
                 ]
             },
             {
                 section: "Advanced Topics",
+                description: "Cutting-edge AI topics including distributed computing, prompt engineering, and agentic systems",
                 topics: [
-                    "Distributed Computing for LLMs",
-                    "Prompt Engineering",
-                    "Retrieval-Augmented Generation (RAG)",
-                    "Agentic AI"
+                    {
+                        title: "Distributed Computing for LLMs",
+                        description: "Learn techniques for training and serving large models across multiple GPUs and machines using distributed computing.",
+                        keyPoints: ["Model parallelism", "Data parallelism", "Distributed training"]
+                    },
+                    {
+                        title: "Prompt Engineering",
+                        description: "Master the art and science of crafting effective prompts to get desired outputs from large language models.",
+                        keyPoints: ["Prompt design", "Chain-of-thought", "In-context learning"]
+                    },
+                    {
+                        title: "Retrieval-Augmented Generation (RAG)",
+                        description: "Build systems that combine language models with external knowledge retrieval for more accurate and up-to-date responses.",
+                        keyPoints: ["Vector databases", "Retrieval systems", "Knowledge integration"]
+                    },
+                    {
+                        title: "Agentic AI",
+                        description: "Explore autonomous AI agents that can plan, reason, and take actions to accomplish complex tasks in dynamic environments.",
+                        keyPoints: ["Agent architectures", "Planning algorithms", "Tool integration"]
+                    }
                 ]
             }
         ],
@@ -207,6 +325,27 @@ export const coursesData = [
         category: "Reinforcement Learning",
         instructor: "TBD",
         instructorBio: "Course will be taught by leading experts in reinforcement learning and AI agents with extensive research and industry experience.",
+        // Weekly Schedule Information
+        weeklySchedule: [
+            {
+                day: "Thursday",
+                time: "5:30 - 6:30 PM ET",
+                duration: "1 hour",
+                type: "Live Session"
+            },
+            {
+                day: "Saturday",
+                time: "9:30 AM - 12:00 PM ET",
+                duration: "2.5 hours (with 15 min break)",
+                type: "Live Session"
+            },
+            {
+                day: "Sunday",
+                time: "9:30 AM - 12:00 PM ET",
+                duration: "2.5 hours (with 15 min break)",
+                type: "Live Session"
+            }
+        ],
         // Batch information
         currentBatch: 1,
         batches: [

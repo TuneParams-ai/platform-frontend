@@ -444,24 +444,41 @@ const CourseDetail = () => {
                         </section>
 
                         <section className="course-section">
+                            <h2>Weekly Schedule</h2>
+                            {courseData.weeklySchedule && courseData.weeklySchedule.length > 0 ? (
+                                <div className="weekly-schedule-container">
+                                    <p className="schedule-description">
+                                        Join us for live sessions throughout the week. All times are in Eastern Time (ET).
+                                    </p>
+                                    <div className="weekly-schedule-list">
+                                        {courseData.weeklySchedule.map((session, index) => (
+                                            <div key={index} className="schedule-item">
+                                                <div className="schedule-day">
+                                                    <span className="day-name">{session.day}</span>
+                                                    <span className="session-type">{session.type}</span>
+                                                </div>
+                                                <div className="schedule-details">
+                                                    <span className="schedule-time">{session.time}</span>
+                                                    <span className="schedule-duration">{session.duration}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p className="schedule-note">
+                                        <strong>Note:</strong> Detailed session-by-session schedules will be provided after enrollment.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="na-message">
+                                    <p>Weekly schedule information will be available closer to the course start date.</p>
+                                </div>
+                            )}
+                        </section>
+
+                        <section className="course-section">
                             <h2>Course Content</h2>
                             {courseData.curriculum && courseData.curriculum.length > 0 ? (
-                                <div className="curriculum-list">
-                                    {courseData.curriculum.map((section, index) => (
-                                        <div key={index} className="curriculum-item">
-                                            <div className="section-header">
-                                                <h3>{section.section}</h3>
-                                            </div>
-                                            {section.topics && section.topics.length > 0 && (
-                                                <ul className="topics-list">
-                                                    {section.topics.map((topic, topicIndex) => (
-                                                        <li key={topicIndex} className="topic-item">{topic}</li>
-                                                    ))}
-                                                </ul>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
+                                <CurriculumSection curriculum={courseData.curriculum} />
                             ) : (
                                 <div className="na-message">
                                     <p>Detailed curriculum information is not available at this time.</p>
@@ -470,7 +487,6 @@ const CourseDetail = () => {
                             )}
                         </section>
 
-                        {/* Student Reviews moved to sidebar */}
                     </div>
 
                     <div className="course-sidebar">
@@ -549,6 +565,109 @@ const CourseDetail = () => {
                 onGoToDashboard={handleGoToDashboard}
             />
         </>
+    );
+};
+
+// Collapsible Curriculum Component
+const CurriculumSection = ({ curriculum }) => {
+    const [expandedSections, setExpandedSections] = useState({});
+    const [expandedTopics, setExpandedTopics] = useState({});
+
+    const toggleSection = (sectionIndex) => {
+        setExpandedSections(prev => ({
+            ...prev,
+            [sectionIndex]: !prev[sectionIndex]
+        }));
+    };
+
+    const toggleTopic = (sectionIndex, topicIndex) => {
+        const key = `${sectionIndex}-${topicIndex}`;
+        setExpandedTopics(prev => ({
+            ...prev,
+            [key]: !prev[key]
+        }));
+    };
+
+    return (
+        <div className="curriculum-list">
+            {curriculum.map((section, sectionIndex) => (
+                <div key={sectionIndex} className="curriculum-item">
+                    <div
+                        className="section-header clickable"
+                        onClick={() => toggleSection(sectionIndex)}
+                    >
+                        <div className="section-title-container">
+                            <h3>{section.section}</h3>
+                            <span className={`expand-icon ${expandedSections[sectionIndex] ? 'expanded' : ''}`}>
+                                ▼
+                            </span>
+                        </div>
+                        {section.description && (
+                            <p className="section-description">{section.description}</p>
+                        )}
+                        <div className="section-stats">
+                            <span className="topic-count">
+                                {section.topics ? section.topics.length : 0} topics
+                            </span>
+                        </div>
+                    </div>
+
+                    {expandedSections[sectionIndex] && section.topics && section.topics.length > 0 && (
+                        <ul className="topics-list expanded">
+                            {section.topics.map((topic, topicIndex) => {
+                                const topicKey = `${sectionIndex}-${topicIndex}`;
+                                const isTopicExpanded = expandedTopics[topicKey];
+
+                                // Handle both old format (strings) and new format (objects)
+                                const topicTitle = typeof topic === 'string' ? topic : topic.title;
+                                const hasDetails = typeof topic === 'object' && (topic.description || topic.duration || topic.keyPoints);
+
+                                return (
+                                    <li key={topicIndex} className="topic-item">
+                                        <div
+                                            className={`topic-header ${hasDetails ? 'clickable' : ''}`}
+                                            onClick={() => hasDetails && toggleTopic(sectionIndex, topicIndex)}
+                                        >
+                                            <span className="topic-title">{topicTitle}</span>
+                                            {hasDetails && (
+                                                <span className={`topic-expand-icon ${isTopicExpanded ? 'expanded' : ''}`}>
+                                                    ▼
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {hasDetails && isTopicExpanded && (
+                                            <div className="topic-details">
+                                                {topic.description && (
+                                                    <p className="topic-description">{topic.description}</p>
+                                                )}
+                                                <div className="topic-meta">
+                                                    {topic.duration && (
+                                                        <span className="topic-duration">
+                                                            ⏱️ {topic.duration}
+                                                        </span>
+                                                    )}
+                                                    {topic.keyPoints && topic.keyPoints.length > 0 && (
+                                                        <div className="key-points">
+                                                            <strong>Key Points:</strong>
+                                                            <ul className="key-points-list">
+                                                                {topic.keyPoints.map((point, pointIndex) => (
+                                                                    <li key={pointIndex}>{point}</li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+                </div>
+            ))}
+        </div>
     );
 };
 
