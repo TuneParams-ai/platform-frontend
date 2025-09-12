@@ -53,7 +53,8 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
                     // Fallback to email username as last resort
                     setUserDisplayName(user?.email?.split('@')[0] || 'User');
                 }
-            } catch (error) {setUserDisplayName(user?.email?.split('@')[0] || 'User');
+            } catch (error) {
+                setUserDisplayName(user?.email?.split('@')[0] || 'User');
             }
         };
 
@@ -98,7 +99,7 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
                 if (userProfile.success && userProfile.userData?.photoURL) {
                     photoURL = userProfile.userData.photoURL;
                 }
-            } catch (error) {}
+            } catch (error) { }
         }
 
         const res = await addOrUpdateReview({
@@ -146,15 +147,22 @@ const ReviewForm = ({ courseId, courseTitle, onSubmitted }) => {
                 <h4>{hasExisting ? 'Edit your review' : 'Write a review'}</h4>
             </div>
             <StarInput value={rating} onChange={setRating} />
-            <textarea
-                className="review-textarea"
-                value={comment}
-                maxLength={2000}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Share your experience..."
-                rows={4}
-                required
-            />
+            <div className="review-textarea-container">
+                <textarea
+                    className="review-textarea"
+                    value={comment}
+                    maxLength={3000}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Share your experience..."
+                    rows={4}
+                    required
+                />
+                <div className="character-counter">
+                    <span className={comment.length > 2700 ? 'character-counter-warning' : ''}>
+                        {comment.length}/3000 characters
+                    </span>
+                </div>
+            </div>
             {error && <div className="review-error">{error}</div>}
             <div className="review-form-actions">
                 <button className="btn" type="submit" disabled={loading || rating < 1}>

@@ -504,6 +504,11 @@
     margin-bottom: 8px;
 }
 
+.review-textarea-container {
+    position: relative;
+    margin-bottom: 8px;
+}
+
 .review-textarea {
     width: 100%;
     border: 1px solid rgba(29, 126, 153, 0.3);
@@ -511,10 +516,26 @@
     color: var(--text-color);
     border-radius: 8px;
     padding: 10px;
+    padding-bottom: 35px;
     resize: vertical;
-    margin-bottom: 8px;
-    min-height: 80px;
-    max-height: 150px;
+    margin-bottom: 0;
+    min-height: 100px;
+    max-height: 300px;
+}
+
+.character-counter {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 12px;
+    color: var(--secondary-text-color);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.character-counter-warning {
+    color: #f59e0b !important;
+    font-weight: 500;
 }
 
 .review-form-actions {

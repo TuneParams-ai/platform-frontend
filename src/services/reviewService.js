@@ -38,7 +38,7 @@ export const addOrUpdateReview = async ({
         if (!Number.isFinite(r) || r < 1 || r > 5) throw new Error('Rating must be between 1 and 5');
         const c = (comment || '').trim();
         if (c.length === 0) throw new Error('Comment is required');
-        if (c.length > 2000) throw new Error('Comment too long (max 2000 characters)');
+        if (c.length > 3000) throw new Error('Comment too long (max 3000 characters)');
 
         // Use the userEmail passed directly from the component
         // If not provided, fallback to fetching from user profile
