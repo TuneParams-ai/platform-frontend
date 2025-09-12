@@ -10,7 +10,9 @@ const StarRating = ({
     reviewCount = 0,
     showReviewCount = true,
     size = 'medium',
-    readonly = true
+    readonly = true,
+    onClick = null,
+    clickable = false
 }) => {
     // Ensure rating is a valid number
     const numericRating = parseFloat(rating) || 0;
@@ -40,8 +42,28 @@ const StarRating = ({
         );
     }
 
+    const handleClick = (e) => {
+        if (clickable && onClick) {
+            e.preventDefault();
+            e.stopPropagation();
+            onClick();
+        }
+    };
+
+    const Component = clickable ? 'button' : 'div';
+    const componentProps = clickable ? {
+        onClick: handleClick,
+        type: 'button',
+        'aria-label': `${numericRating.toFixed(1)} out of ${maxRating} stars. Click to view reviews.`,
+        title: 'Click to view reviews',
+        style: { cursor: 'pointer' } // Ensure cursor is always pointer when clickable
+    } : {};
+
     return (
-        <div className={`star-rating ${size} ${readonly ? 'readonly' : ''}`}>
+        <Component
+            className={`star-rating ${size} ${readonly ? 'readonly' : ''} ${clickable ? 'clickable' : ''}`}
+            {...componentProps}
+        >
             <div className="stars-container">
                 {stars}
             </div>
@@ -55,7 +77,7 @@ const StarRating = ({
                     ({reviewCount} review{reviewCount !== 1 ? 's' : ''})
                 </span>
             )}
-        </div>
+        </Component>
     );
 };
 

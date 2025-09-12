@@ -34,12 +34,13 @@ const ReviewsSection = ({ courseId, courseTitle }) => {
             } else {
                 alert(`Failed to delete review: ${result.error}`);
             }
-        } catch (error) {alert('Failed to delete review. Please try again.');
+        } catch (error) {
+            alert('Failed to delete review. Please try again.');
         }
     }, [isAdminUser]);
 
     return (
-        <section className="course-section">
+        <section className="course-section" id="reviews-section">
             <h3>Student Reviews</h3>
             <div className="course-reviews-summary">
                 {reviewsLoading ? (
@@ -70,7 +71,7 @@ const ReviewsSection = ({ courseId, courseTitle }) => {
             )}
 
             {/* Reviews List - show regardless of auth state */}
-            <div className="course-reviews-list">
+            <div className="course-reviews-list" id="reviews-list">
                 <ReviewList
                     reviews={reviews}
                     loading={reviewsLoading}

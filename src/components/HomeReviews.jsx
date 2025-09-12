@@ -34,7 +34,8 @@ const HomeReviews = () => {
             } else {
                 alert(`Failed to delete review: ${result.error}`);
             }
-        } catch (error) {alert('Failed to delete review. Please try again.');
+        } catch (error) {
+            alert('Failed to delete review. Please try again.');
         }
     };
 
@@ -65,7 +66,7 @@ const HomeReviews = () => {
                     <div className="home-reviews-row" role="list">
                         {displayedReviews.map((r) => {
                             const needsMore = (r.comment || '').length > 220;
-                            const href = `/courses/${r.courseId}#review-${r.id}`;
+                            const href = `/courses/${r.courseId}#reviews-section`;
                             const shouldShowImage = r.userPhotoURL && !imageErrors.has(r.id);
 
                             return (
@@ -95,7 +96,17 @@ const HomeReviews = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <span className="review-stars">{'★'.repeat(Math.round(r.rating || 0)).padEnd(5, '☆')}</span>
+                                        <button
+                                            className="review-stars clickable-stars"
+                                            onClick={() => {
+                                                // Navigate to the course page and scroll to reviews
+                                                window.location.href = `/courses/${r.courseId}#reviews-section`;
+                                            }}
+                                            title="Click to view all reviews for this course"
+                                            aria-label={`${r.rating} out of 5 stars. Click to view reviews for ${r.courseTitle}`}
+                                        >
+                                            {'★'.repeat(Math.round(r.rating || 0)).padEnd(5, '☆')}
+                                        </button>
                                     </div>
                                     <div className="review-course-chip">{r.courseTitle || r.courseId}</div>
                                     <p className="home-review-comment">{clamp(r.comment)}</p>

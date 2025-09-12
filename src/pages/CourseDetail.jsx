@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useCourseStats } from "../hooks/useCourseStats";
@@ -81,6 +81,51 @@ const CourseDetail = () => {
     const handleGoBack = useCallback(() => {
         navigate('/courses');
     }, [navigate]);
+
+    // Handle hash navigation on page load
+    useEffect(() => {
+        const handleHashNavigation = () => {
+            const hash = window.location.hash;
+            if (hash === '#reviews-section') {
+                // Small delay to ensure the component is fully rendered
+                setTimeout(() => {
+                    let target = document.getElementById('reviews-section');
+
+                    if (!target) {
+                        // Fallback searches if main ID not found
+                        target = document.querySelector('.reviews-section') ||
+                            document.querySelector('[id*="review"]') ||
+                            document.querySelector('.home-reviews-section');
+                    }
+
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+
+                        // Add temporary highlight effect
+                        target.style.transition = 'box-shadow 0.5s ease';
+                        target.style.boxShadow = '0 0 20px rgba(255, 193, 7, 0.5)';
+                        setTimeout(() => {
+                            target.style.boxShadow = '';
+                        }, 2000);
+                    }
+                }, 300);
+            }
+        };
+
+        // Handle hash on initial load
+        handleHashNavigation();
+
+        // Handle hash changes (e.g., when navigating with back/forward)
+        window.addEventListener('hashchange', handleHashNavigation);
+
+        return () => {
+            window.removeEventListener('hashchange', handleHashNavigation);
+        };
+    }, []);
 
     // Reviews handling moved to ReviewsSection component
 
@@ -190,6 +235,51 @@ const CourseDetail = () => {
                                                     showReviewCount={!statsLoading && stats.hasReviews}
                                                     size="small"
                                                     showNumeric={true}
+                                                    clickable={true}
+                                                    onClick={() => {
+                                                        // Multiple strategies to find and scroll to reviews
+                                                        const scrollToReviews = () => {
+                                                            // Strategy 1: By ID
+                                                            let target = document.getElementById('reviews-section');
+
+                                                            // Strategy 2: By heading text
+                                                            if (!target) {
+                                                                const headings = document.querySelectorAll('h3');
+                                                                const reviewHeading = Array.from(headings).find(h =>
+                                                                    h.textContent.includes('Student Reviews') || h.textContent.includes('Reviews')
+                                                                );
+                                                                target = reviewHeading?.closest('section') || reviewHeading?.parentElement;
+                                                            }
+
+                                                            // Strategy 3: By class and text content
+                                                            if (!target) {
+                                                                const sections = document.querySelectorAll('.course-section');
+                                                                target = Array.from(sections).find(section =>
+                                                                    section.textContent.includes('Student Reviews')
+                                                                );
+                                                            }
+
+                                                            if (target) {
+                                                                target.scrollIntoView({
+                                                                    behavior: 'smooth',
+                                                                    block: 'start',
+                                                                    inline: 'nearest'
+                                                                });
+
+                                                                // Add temporary highlight
+                                                                target.style.boxShadow = '0 0 0 3px rgba(255, 193, 7, 0.5)';
+                                                                setTimeout(() => {
+                                                                    target.style.boxShadow = '';
+                                                                }, 2000);
+                                                            } else {
+                                                                alert('Reviews section not found. Please scroll down manually to see reviews.');
+                                                            }
+                                                        };
+
+                                                        // Try immediately and also with a small delay
+                                                        scrollToReviews();
+                                                        setTimeout(scrollToReviews, 100);
+                                                    }}
                                                 />
                                             )}
                                         </div>

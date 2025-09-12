@@ -672,6 +672,38 @@
     margin: 0;
 }
 
+/* Hero section clickable star rating - desktop */
+.course-rating-detail .star-rating.clickable {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.course-rating-detail .star-rating.clickable:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.course-rating-detail .star-rating.clickable .rating-numeric,
+.course-rating-detail .star-rating.clickable .review-count {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.course-rating-detail .star-rating.clickable:hover .rating-numeric {
+    color: #ffca28;
+    font-weight: 700;
+}
+
+.course-rating-detail .star-rating.clickable:hover .review-count {
+    color: white;
+}
+
 /* Responsive Design */
 /* Tablet View (768px - 1024px) */
 @media (max-width: 1024px) and (min-width: 769px) {
@@ -791,6 +823,36 @@
 
     .course-sidebar .review-stars {
         font-size: 14px;
+    }
+
+    /* Hero section clickable star rating for mobile */
+    .course-rating-detail .star-rating.clickable {
+        padding: 8px 12px;
+        border-radius: 12px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+    }
+
+    .course-rating-detail .star-rating.clickable:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .course-rating-detail .star-rating.clickable .rating-numeric,
+    .course-rating-detail .star-rating.clickable .review-count {
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .course-rating-detail .star-rating.clickable:hover .rating-numeric {
+        color: #ffca28;
     }
 
     .back-btn {
