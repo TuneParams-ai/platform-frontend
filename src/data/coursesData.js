@@ -6,10 +6,10 @@ export const coursesData = [
         title: "Foundations to Frontiers of AI",
         description: "This beginner-friendly course takes you from the mathematical foundations of AI to hands-on implementation of modern machine learning and generative AI models.",
         level: "Beginner level",
-        duration: "15 weeks",
+        duration: "Approximately 15 weeks",
         lessons: 25,
         maxCapacity: 30,
-        nextBatchDate: "2025-10-1",
+        nextBatchDate: "2025-10-18",
         price: 899,
         originalPrice: 1199,
         icon: "🤖",
@@ -59,7 +59,7 @@ export const coursesData = [
             {
                 batchNumber: 2,
                 batchName: "Beta",
-                startDate: "2025-10-4",
+                startDate: "2025-10-18",
                 endDate: "2026-01-15",
                 status: "active",
                 maxCapacity: 30,
@@ -68,43 +68,7 @@ export const coursesData = [
                     zoom: "https://zoom.us/j/batch2-faai",
                     discord: "https://discord.gg/batch2-faai"
                 },
-                schedule: [
-                    {
-                        date: "2025-09-02",
-                        time: "20:00",
-                        duration: 90, // minutes
-                        timezone: "CT",
-                        topic: "Introduction to Machine Learning"
-                    },
-                    {
-                        date: "2025-09-09",
-                        time: "20:00",
-                        duration: 90,
-                        timezone: "CT",
-                        topic: "Foundation Week"
-                    },
-                    {
-                        date: "2025-09-09",
-                        time: "22:30",
-                        duration: 90,
-                        timezone: "CT",
-                        topic: "Live Demo - AI in Action"
-                    },
-                    {
-                        date: "2025-09-12",
-                        time: "20:00",
-                        duration: 90,
-                        timezone: "CT",
-                        topic: "Neural Networks"
-                    },
-                    {
-                        date: "2025-09-15",
-                        time: "11:00",
-                        duration: 90,
-                        timezone: "CT",
-                        topic: "Hands-on Session"
-                    }
-                ]
+                schedule: []
             }
         ],
         curriculum: [
