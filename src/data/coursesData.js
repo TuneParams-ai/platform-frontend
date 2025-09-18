@@ -530,16 +530,17 @@ export const getBatchStatusText = (batch) => {
 
 // Format batch date range for display
 export const formatBatchDateRange = (batch) => {
-    const startDate = new Date(batch.startDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-    });
-    const endDate = new Date(batch.endDate).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-    });
+    // Parse dates and format them directly without timezone conversions
+    const formatDate = (dateString) => {
+        const [year, month, day] = dateString.split('-');
+        const date = new Date(year, month - 1, day);
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+    };
+
+    const startDate = formatDate(batch.startDate);
+    const endDate = formatDate(batch.endDate);
     return `${startDate} - ${endDate}`;
 };
 
@@ -597,8 +598,8 @@ export const hasLiveClasses = (batch) => {
 export const formatScheduleTime = (scheduleItem) => {
     if (!scheduleItem.time || scheduleItem.time === 'TBD') return 'TBD';
 
-    const timezone = scheduleItem.timezone ? ` (${scheduleItem.timezone})` : '';
-    return `${scheduleItem.time}${timezone}`;
+    // Just return the time as provided, times are already in ET format
+    return scheduleItem.time;
 };
 
 // Get next live class for a batch

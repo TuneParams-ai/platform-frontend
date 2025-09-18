@@ -412,11 +412,13 @@ const CourseDetail = () => {
                                         <div className="next-batch-info">
                                             <span className="next-batch-label">Next Batch Starts:</span>
                                             <span className="next-batch-date">
-                                                {new Date(nextBatch.startDate).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric'
-                                                })}
+                                                {(() => {
+                                                    const [year, month, day] = nextBatch.startDate.split('-');
+                                                    const date = new Date(year, month - 1, day);
+                                                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                                                                       'July', 'August', 'September', 'October', 'November', 'December'];
+                                                    return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+                                                })()}
                                             </span>
                                         </div>
                                     );
@@ -533,12 +535,13 @@ const CourseDetail = () => {
                                 <div className="info-item">
                                     <strong>Next Batch:</strong> {(() => {
                                         const nextBatch = getNextAvailableBatch(courseData);
-                                        return nextBatch ?
-                                            new Date(nextBatch.startDate).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric'
-                                            }) : "N/A";
+                                        return nextBatch ? (() => {
+                                            const [year, month, day] = nextBatch.startDate.split('-');
+                                            const date = new Date(year, month - 1, day);
+                                            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                            return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+                                        })() : "N/A";
                                     })()}
                                 </div>
                             </div>
