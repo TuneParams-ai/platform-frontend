@@ -416,7 +416,7 @@ const CourseDetail = () => {
                                                     const [year, month, day] = nextBatch.startDate.split('-');
                                                     const date = new Date(year, month - 1, day);
                                                     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                                                                       'July', 'August', 'September', 'October', 'November', 'December'];
+                                                        'July', 'August', 'September', 'October', 'November', 'December'];
                                                     return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
                                                 })()}
                                             </span>
@@ -539,7 +539,7 @@ const CourseDetail = () => {
                                             const [year, month, day] = nextBatch.startDate.split('-');
                                             const date = new Date(year, month - 1, day);
                                             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                                             return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
                                         })() : "N/A";
                                     })()}
