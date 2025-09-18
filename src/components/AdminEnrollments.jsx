@@ -1,7 +1,7 @@
 // src/components/AdminEnrollments.jsx
 // Component for managing enrollment records
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { findCourseById, getBatchByNumber, getBatchShortName } from '../data/coursesData';
 import { isProgressTrackingEnabled } from '../utils/configUtils';
@@ -15,6 +15,8 @@ const AdminEnrollments = () => {
     const [selectedBatch, setSelectedBatch] = useState('all');
     const [selectedCourse, setSelectedCourse] = useState('all');
     const [showManualEnrollmentModal, setShowManualEnrollmentModal] = useState(false);
+    const [deletingEnrollment, setDeletingEnrollment] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     // Check if progress tracking is enabled
     const progressTrackingEnabled = isProgressTrackingEnabled();
@@ -69,6 +71,38 @@ const AdminEnrollments = () => {
     const handleManualEnrollmentSuccess = (result) => {
         // Reload enrollments to show the new enrollment
         loadEnrollments();
+    };
+
+    // Handle delete enrollment
+    const handleDeleteEnrollment = (enrollment) => {
+        setDeletingEnrollment(enrollment);
+        setShowDeleteConfirm(true);
+    };
+
+    // Confirm delete enrollment
+    const confirmDeleteEnrollment = async () => {
+        if (!deletingEnrollment) return;
+
+        try {
+            setLoading(true);
+            await deleteDoc(doc(db, 'enrollments', deletingEnrollment.id));
+
+            // Remove from local state
+            setEnrollments(prev => prev.filter(e => e.id !== deletingEnrollment.id));
+
+            setShowDeleteConfirm(false);
+            setDeletingEnrollment(null);
+        } catch (err) {
+            setError('Failed to delete enrollment: ' + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Cancel delete
+    const cancelDelete = () => {
+        setShowDeleteConfirm(false);
+        setDeletingEnrollment(null);
     };
 
     // Filter enrollments based on selected filters
@@ -146,6 +180,53 @@ const AdminEnrollments = () => {
             </div>
 
             {error && <p className="admin-error">Error: {error}</p>}
+
+            {/* Quick Statistics */}
+            {!loading && (
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '15px',
+                    margin: '20px 0',
+                    padding: '15px',
+                    background: 'rgba(29, 126, 153, 0.05)',
+                    border: '1px solid rgba(29, 126, 153, 0.2)',
+                    borderRadius: '8px'
+                }}>
+                    <div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--text-color)' }}>
+                            {filteredEnrollments.length}
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--secondary-text-color)' }}>
+                            Total Enrollments
+                        </div>
+                    </div>
+                    <div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--text-color)' }}>
+                            ${filteredEnrollments.reduce((sum, e) => sum + (e.amountPaid || 0), 0)}
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--secondary-text-color)' }}>
+                            Total Revenue
+                        </div>
+                    </div>
+                    <div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--text-color)' }}>
+                            {new Set(filteredEnrollments.map(e => e.userId)).size}
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--secondary-text-color)' }}>
+                            Unique Users
+                        </div>
+                    </div>
+                    <div>
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--text-color)' }}>
+                            {filteredEnrollments.filter(e => e.paymentMethod === 'paypal').length}
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--secondary-text-color)' }}>
+                            PayPal Payments
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Filters */}
             <div className="admin-filters">
@@ -231,19 +312,49 @@ const AdminEnrollments = () => {
                             {progressTrackingEnabled && <th>Progress</th>}
                             <th>Status</th>
                             <th>Amount Paid</th>
+                            <th>Payment Method</th>
+                            <th>Notes</th>
+                            <th>Enrollment ID</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredEnrollments.map(enrollment => (
                             <tr key={enrollment.id}>
                                 <td>
-                                    {enrollment.enrolledAt?.toDate?.()?.toLocaleDateString() || 'N/A'}
+                                    <div>
+                                        <div style={{ fontWeight: '600', color: 'var(--text-color)' }}>
+                                            {enrollment.enrolledAt?.toDate?.()?.toLocaleDateString() || 'N/A'}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--secondary-text-color)' }}>
+                                            {enrollment.enrolledAt?.toDate?.()?.toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            }) || ''}
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
                                     <div>
-                                        <strong>{enrollment.courseTitle}</strong>
-                                        <br />
-                                        <small style={{ color: '#666' }}>({enrollment.courseId})</small>
+                                        <div style={{ fontWeight: '600', color: 'var(--text-color)', marginBottom: '2px' }}>
+                                            {enrollment.courseTitle}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: 'var(--secondary-text-color)' }}>
+                                            ID: {enrollment.courseId}
+                                        </div>
+                                        {enrollment.couponCode && (
+                                            <div style={{
+                                                fontSize: '10px',
+                                                color: '#10b981',
+                                                background: 'rgba(16, 185, 129, 0.1)',
+                                                padding: '1px 4px',
+                                                borderRadius: '3px',
+                                                marginTop: '2px',
+                                                display: 'inline-block'
+                                            }}>
+                                                Coupon: {enrollment.couponCode}
+                                            </div>
+                                        )}
                                     </div>
                                 </td>
                                 <td>
@@ -303,7 +414,64 @@ const AdminEnrollments = () => {
                                     </span>
                                 </td>
                                 <td>
-                                    ${enrollment.amountPaid}
+                                    ${enrollment.amountPaid || 0}
+                                </td>
+                                <td>
+                                    <span style={{
+                                        fontSize: '12px',
+                                        color: 'var(--secondary-text-color)',
+                                        textTransform: 'capitalize'
+                                    }}>
+                                        {enrollment.paymentMethod || 'Manual'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style={{
+                                        fontSize: '11px',
+                                        color: 'var(--secondary-text-color)',
+                                        maxWidth: '150px',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap'
+                                    }} title={enrollment.notes}>
+                                        {enrollment.notes || enrollment.adminNotes || '-'}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style={{
+                                        fontSize: '11px',
+                                        fontFamily: 'monospace',
+                                        color: 'var(--secondary-text-color)',
+                                        background: 'rgba(29, 126, 153, 0.1)',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px'
+                                    }}>
+                                        {enrollment.id}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button
+                                        onClick={() => handleDeleteEnrollment(enrollment)}
+                                        style={{
+                                            background: 'rgba(220, 38, 38, 0.2)',
+                                            border: '1px solid rgba(220, 38, 38, 0.3)',
+                                            color: '#dc2626',
+                                            padding: '4px 8px',
+                                            borderRadius: '4px',
+                                            fontSize: '12px',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.background = 'rgba(220, 38, 38, 0.3)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.background = 'rgba(220, 38, 38, 0.2)';
+                                        }}
+                                        disabled={loading}
+                                    >
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -366,6 +534,41 @@ const AdminEnrollments = () => {
                     margin-bottom: 15px;
                     color: #333;
                 }
+
+                /* Responsive table styles */
+                @media (max-width: 1200px) {
+                    .admin-table-container {
+                        overflow-x: auto;
+                    }
+                    
+                    .admin-table th:nth-child(8),
+                    .admin-table td:nth-child(8) {
+                        display: none; /* Hide Payment Method on smaller screens */
+                    }
+                }
+
+                @media (max-width: 968px) {
+                    .admin-table th:nth-child(9),
+                    .admin-table td:nth-child(9) {
+                        display: none; /* Hide Notes on smaller screens */
+                    }
+                    
+                    .admin-table th:nth-child(10),
+                    .admin-table td:nth-child(10) {
+                        display: none; /* Hide Enrollment ID on smaller screens */
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .admin-table {
+                        font-size: 12px;
+                    }
+                    
+                    .admin-table th,
+                    .admin-table td {
+                        padding: 6px;
+                    }
+                }
             `}</style>
 
             {/* Manual Enrollment Modal */}
@@ -374,6 +577,131 @@ const AdminEnrollments = () => {
                 onClose={() => setShowManualEnrollmentModal(false)}
                 onSuccess={handleManualEnrollmentSuccess}
             />
+
+            {/* Delete Confirmation Modal */}
+            {showDeleteConfirm && deletingEnrollment && (
+                <div className="modal-overlay" style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.8)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    backdropFilter: 'blur(4px)'
+                }}>
+                    <div style={{
+                        background: 'var(--background-color)',
+                        border: '1px solid rgba(220, 38, 38, 0.3)',
+                        borderRadius: '12px',
+                        width: '90%',
+                        maxWidth: '500px',
+                        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(220, 38, 38, 0.2)'
+                    }}>
+                        <div style={{
+                            padding: '20px 25px',
+                            borderBottom: '1px solid rgba(220, 38, 38, 0.3)',
+                            background: 'linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(185, 28, 28, 0.8))',
+                            color: 'white',
+                            borderRadius: '12px 12px 0 0'
+                        }}>
+                            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: '600' }}>
+                                Confirm Delete Enrollment
+                            </h2>
+                        </div>
+
+                        <div style={{ padding: '25px' }}>
+                            <p style={{ margin: '0 0 20px 0', color: 'var(--text-color)' }}>
+                                Are you sure you want to delete this enrollment?
+                            </p>
+
+                            <div style={{
+                                background: 'rgba(220, 38, 38, 0.1)',
+                                border: '1px solid rgba(220, 38, 38, 0.2)',
+                                borderRadius: '8px',
+                                padding: '15px',
+                                marginBottom: '20px'
+                            }}>
+                                <p style={{ margin: '0 0 8px 0', fontWeight: '600', color: 'var(--text-color)' }}>
+                                    <strong>User:</strong> {users[deletingEnrollment.userId]?.name || 'Unknown User'}
+                                </p>
+                                <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: 'var(--secondary-text-color)' }}>
+                                    <strong>Email:</strong> {users[deletingEnrollment.userId]?.email || deletingEnrollment.userId}
+                                </p>
+                                <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: 'var(--secondary-text-color)' }}>
+                                    <strong>Course:</strong> {deletingEnrollment.courseTitle || findCourseById(deletingEnrollment.courseId)?.title}
+                                </p>
+                                <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: 'var(--secondary-text-color)' }}>
+                                    <strong>Batch:</strong> {(() => {
+                                        if (!deletingEnrollment.batchNumber) return 'Legacy';
+                                        const course = findCourseById(deletingEnrollment.courseId);
+                                        if (course) {
+                                            const batch = getBatchByNumber(course, deletingEnrollment.batchNumber);
+                                            if (batch) {
+                                                return getBatchShortName(batch);
+                                            }
+                                        }
+                                        return `Batch ${deletingEnrollment.batchNumber}`;
+                                    })()}
+                                </p>
+                                <p style={{ margin: '0', fontSize: '14px', color: 'var(--secondary-text-color)' }}>
+                                    <strong>Amount Paid:</strong> ${deletingEnrollment.amountPaid || 0}
+                                </p>
+                            </div>
+
+                            <p style={{
+                                margin: '0 0 20px 0',
+                                color: '#dc2626',
+                                fontSize: '14px',
+                                fontWeight: '500'
+                            }}>
+                                ⚠️ This action cannot be undone.
+                            </p>
+
+                            <div style={{
+                                display: 'flex',
+                                gap: '10px',
+                                justifyContent: 'flex-end'
+                            }}>
+                                <button
+                                    onClick={cancelDelete}
+                                    disabled={loading}
+                                    style={{
+                                        padding: '10px 20px',
+                                        border: '1px solid rgba(29, 126, 153, 0.3)',
+                                        background: 'transparent',
+                                        color: 'var(--text-color)',
+                                        borderRadius: '6px',
+                                        cursor: 'pointer',
+                                        fontSize: '14px'
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmDeleteEnrollment}
+                                    disabled={loading}
+                                    style={{
+                                        padding: '10px 20px',
+                                        border: '1px solid #dc2626',
+                                        background: '#dc2626',
+                                        color: 'white',
+                                        borderRadius: '6px',
+                                        cursor: loading ? 'not-allowed' : 'pointer',
+                                        fontSize: '14px',
+                                        opacity: loading ? 0.7 : 1
+                                    }}
+                                >
+                                    {loading ? 'Deleting...' : 'Delete Enrollment'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

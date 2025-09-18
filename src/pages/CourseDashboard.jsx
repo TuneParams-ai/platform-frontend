@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../config/firebase';
 import {
     findCourseById,
     getCurrentBatch,
@@ -23,6 +25,7 @@ const CourseDashboard = () => {
     const [course, setCourse] = useState(null);
     const [selectedBatch, setSelectedBatch] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [batchEnrollmentCounts, setBatchEnrollmentCounts] = useState({});
 
     useEffect(() => {
         const foundCourse = findCourseById(courseId);
@@ -51,6 +54,47 @@ const CourseDashboard = () => {
         }
         setLoading(false);
     }, [courseId, enrollment, isAdminUser, roleLoading, accessLoading, authLoading]);
+
+    // Load enrollment counts for all batches
+    useEffect(() => {
+        const loadEnrollmentCounts = async () => {
+            if (!course) return;
+
+            try {
+                // Get all enrollments for this course
+                const enrollmentsQuery = query(
+                    collection(db, 'enrollments'),
+                    where('courseId', '==', courseId)
+                );
+                const enrollmentsSnapshot = await getDocs(enrollmentsQuery);
+                const enrollments = enrollmentsSnapshot.docs.map(doc => doc.data());
+
+                // Count enrollments by batch
+                const counts = {};
+                course.batches?.forEach(batch => {
+                    // Handle different ways batch numbers might be stored
+                    const batchEnrollments = enrollments.filter(e => {
+                        return e.batchNumber === batch.batchNumber ||
+                            parseInt(e.batchNumber) === parseInt(batch.batchNumber) ||
+                            String(e.batchNumber) === String(batch.batchNumber);
+                    });
+                    counts[batch.batchNumber] = batchEnrollments.length;
+                });
+
+                // Also count legacy enrollments (those without batch numbers)
+                const legacyEnrollments = enrollments.filter(e => !e.batchNumber);
+                if (legacyEnrollments.length > 0) {
+                    counts['legacy'] = legacyEnrollments.length;
+                }
+
+                setBatchEnrollmentCounts(counts);
+            } catch (error) {
+                console.error('Failed to load enrollment counts:', error);
+            }
+        };
+
+        loadEnrollmentCounts();
+    }, [course, courseId]);
 
     // Show loading while checking authentication, access, and role
     if (loading || accessLoading || roleLoading || authLoading) {
@@ -290,6 +334,16 @@ const CourseDashboard = () => {
                                 >
                                     <span className="batch-name">{getBatchDisplayName(batch)}</span>
                                     <span className="batch-dates">{formatBatchDateRange(batch)}</span>
+                                    <span className="batch-capacity" style={{
+                                        fontSize: '12px',
+                                        color: 'var(--secondary-text-color)',
+                                        background: 'rgba(29, 126, 153, 0.1)',
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        margin: '2px 0'
+                                    }}>
+                                        {batchEnrollmentCounts[batch.batchNumber] || 0} / {batch.maxCapacity} enrolled
+                                    </span>
                                     {getStatusBadge(batch)}
                                 </button>
                             ))}
@@ -416,7 +470,7 @@ const CourseDashboard = () => {
                                     </div>
                                     <div className="info-card">
                                         <h4>Capacity</h4>
-                                        <p>{selectedBatch.enrollmentCount || 0} / {selectedBatch.maxCapacity} students</p>
+                                        <p>{batchEnrollmentCounts[selectedBatch?.batchNumber] || 0} / {selectedBatch.maxCapacity} students</p>
                                     </div>
                                 </div>
                             </div>
