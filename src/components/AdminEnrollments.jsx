@@ -9,6 +9,7 @@ import ManualEnrollmentModal from './ManualEnrollmentModal';
 
 const AdminEnrollments = () => {
     const [enrollments, setEnrollments] = useState([]);
+    const [users, setUsers] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [selectedBatch, setSelectedBatch] = useState('all');
@@ -23,6 +24,7 @@ const AdminEnrollments = () => {
         setError(null);
 
         try {
+            // Load enrollments
             const enrollmentsQuery = query(
                 collection(db, 'enrollments'),
                 orderBy('enrolledAt', 'desc')
@@ -33,7 +35,25 @@ const AdminEnrollments = () => {
                 ...doc.data()
             }));
 
+            // Load user data for all enrolled users
+            const userIds = [...new Set(enrollmentsData.map(e => e.userId))];
+            const usersData = {};
+
+            if (userIds.length > 0) {
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+                usersSnapshot.docs.forEach(doc => {
+                    const userData = doc.data();
+                    if (userIds.includes(doc.id)) {
+                        usersData[doc.id] = {
+                            name: userData.name || userData.displayName || 'Unknown User',
+                            email: userData.email || 'No email'
+                        };
+                    }
+                });
+            }
+
             setEnrollments(enrollmentsData);
+            setUsers(usersData);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -48,7 +68,8 @@ const AdminEnrollments = () => {
     // Handle successful manual enrollment
     const handleManualEnrollmentSuccess = (result) => {
         // Reload enrollments to show the new enrollment
-        loadEnrollments();};
+        loadEnrollments();
+    };
 
     // Filter enrollments based on selected filters
     const filteredEnrollments = enrollments.filter(enrollment => {
@@ -206,7 +227,7 @@ const AdminEnrollments = () => {
                             <th>Enrolled Date</th>
                             <th>Course</th>
                             <th>Batch</th>
-                            <th>User ID</th>
+                            <th>User</th>
                             {progressTrackingEnabled && <th>Progress</th>}
                             <th>Status</th>
                             <th>Amount Paid</th>
@@ -240,8 +261,15 @@ const AdminEnrollments = () => {
                                         })()}
                                     </span>
                                 </td>
-                                <td className="user-id">
-                                    {enrollment.userId}
+                                <td className="user-info">
+                                    <div>
+                                        <div style={{ fontWeight: '600', color: 'var(--text-color)' }}>
+                                            {users[enrollment.userId]?.name || 'Unknown User'}
+                                        </div>
+                                        <div style={{ fontSize: '12px', color: 'var(--secondary-text-color)' }}>
+                                            {users[enrollment.userId]?.email || enrollment.userId}
+                                        </div>
+                                    </div>
                                 </td>
                                 {progressTrackingEnabled && (
                                     <td>
