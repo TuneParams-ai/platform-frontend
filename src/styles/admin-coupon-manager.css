@@ -229,6 +229,12 @@
     background-color: rgba(29, 126, 153, 0.1);
 }
 
+.form-group select option {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 8px 12px;
+}
+
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: var(--secondary-text-color);
@@ -826,4 +832,62 @@
 
 .empty-state p {
     color: var(--secondary-text-color);
+}
+
+/* User Search Styles */
+.user-search-container {
+    position: relative;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--background-color);
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1001;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.user-option {
+    padding: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(29, 126, 153, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.user-option:hover {
+    background: rgba(29, 126, 153, 0.1);
+}
+
+.user-option:last-child {
+    border-bottom: none;
+}
+
+.user-name {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 2px;
+}
+
+.user-email {
+    font-size: 12px;
+    color: var(--secondary-text-color);
+}
+
+.selected-user-info {
+    margin-top: 8px;
+    padding: 12px;
+    background: rgba(29, 126, 153, 0.05);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 6px;
+}
+
+.selected-user-info p {
+    margin: 4px 0;
+    font-size: 14px;
 }

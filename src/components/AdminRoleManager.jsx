@@ -18,10 +18,37 @@ const AdminRoleManager = () => {
     const [selectedRole, setSelectedRole] = useState(USER_ROLES.STUDENT);
     const [message, setMessage] = useState('');
 
+    // User search functionality
+    const [userSearchTerm, setUserSearchTerm] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [selectedUserData, setSelectedUserData] = useState(null);
+    const [showUserDropdown, setShowUserDropdown] = useState(false);
+
     useEffect(() => {
         loadUsers();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // Filter users based on search term
+    useEffect(() => {
+        if (!userSearchTerm.trim()) {
+            setFilteredUsers(users);
+            return;
+        }
+
+        const filtered = users.filter(user => {
+            const displayName = user.displayName || '';
+            const email = user.email || '';
+            const searchLower = userSearchTerm.toLowerCase();
+
+            return (
+                displayName.toLowerCase().includes(searchLower) ||
+                email.toLowerCase().includes(searchLower)
+            );
+        });
+
+        setFilteredUsers(filtered);
+    }, [userSearchTerm, users]);
 
     const loadUsers = async () => {
         setLoading(true);
@@ -110,7 +137,8 @@ const AdminRoleManager = () => {
             setUserRoles(rolesMap);
 
         } catch (err) {
-            setError(err.message);}
+            setError(err.message);
+        }
     };
 
     const handleAssignRole = async () => {
@@ -144,7 +172,8 @@ const AdminRoleManager = () => {
                 setError(`Error: ${result.error}`);
             }
         } catch (err) {
-            setError(`Error assigning role: ${err.message}`);} finally {
+            setError(`Error assigning role: ${err.message}`);
+        } finally {
             setLoading(false);
         }
     };
@@ -182,9 +211,27 @@ const AdminRoleManager = () => {
             await loadUsers();
 
         } catch (err) {
-            setError(`Error syncing user roles: ${err.message}`);} finally {
+            setError(`Error syncing user roles: ${err.message}`);
+        } finally {
             setLoading(false);
         }
+    };
+
+    // Handle user search functionality
+    const handleUserSearchChange = (e) => {
+        setUserSearchTerm(e.target.value);
+        setShowUserDropdown(true);
+        if (!e.target.value.trim()) {
+            setSelectedUserData(null);
+            setSelectedUser('');
+        }
+    };
+
+    const handleUserSelect = (user) => {
+        setSelectedUserData(user);
+        setSelectedUser(user.id || user.uid);
+        setUserSearchTerm(user.displayName || user.email);
+        setShowUserDropdown(false);
     };
 
     return (
@@ -196,19 +243,57 @@ const AdminRoleManager = () => {
             {message && <p className="admin-role-success">✅ {message}</p>}
 
             <div className="admin-role-form">
-                <select
-                    value={selectedUser}
-                    onChange={(e) => setSelectedUser(e.target.value)}
-                    className="admin-role-select"
-                >
-                    <option value="">Select User</option>
-                    {users.map(user => (
-                        <option key={user.id || user.uid} value={user.id || user.uid}>
-                            {user.displayName || user.email} {user.email ? `(${user.email})` : ''}
-                            {userRoles.get(user.id || user.uid) ? ` - Current: ${userRoles.get(user.id || user.uid)}` : ''}
-                        </option>
-                    ))}
-                </select>
+                <div className="form-group">
+                    <label htmlFor="user-search">Search User *</label>
+                    <div className="user-search-container">
+                        <input
+                            type="text"
+                            id="user-search"
+                            value={userSearchTerm}
+                            onChange={handleUserSearchChange}
+                            onFocus={() => setShowUserDropdown(true)}
+                            placeholder="Search by name or email..."
+                            className="admin-role-input"
+                            required
+                        />
+
+                        {showUserDropdown && filteredUsers.length > 0 && (
+                            <div className="user-dropdown">
+                                {filteredUsers.slice(0, 10).map(user => (
+                                    <div
+                                        key={user.id || user.uid}
+                                        className="user-option"
+                                        onClick={() => handleUserSelect(user)}
+                                    >
+                                        <div className="user-name">
+                                            {user.displayName || 'No Name'}
+                                        </div>
+                                        <div className="user-email">
+                                            {user.email}
+                                        </div>
+                                        {userRoles.get(user.id || user.uid) && (
+                                            <div className="user-current-role">
+                                                Current: {userRoles.get(user.id || user.uid)}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Selected User Info */}
+                    {selectedUserData && (
+                        <div className="selected-user-info">
+                            <p><strong>Selected User:</strong></p>
+                            <p><strong>Name:</strong> {selectedUserData.displayName || 'No Name'}</p>
+                            <p><strong>Email:</strong> {selectedUserData.email}</p>
+                            {userRoles.get(selectedUserData.id || selectedUserData.uid) && (
+                                <p><strong>Current Role:</strong> {userRoles.get(selectedUserData.id || selectedUserData.uid)}</p>
+                            )}
+                        </div>
+                    )}
+                </div>
 
                 <select
                     value={selectedRole}

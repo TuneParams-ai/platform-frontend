@@ -74,6 +74,113 @@
     min-height: 45px;
 }
 
+/* PayPal iframe content visibility fixes */
+.paypal-button-container iframe,
+.paypal-button-container iframe *,
+.paypal-button-container [data-testid*="paypal"],
+.paypal-button-container [class*="paypal"],
+.paypal-button-container [id*="paypal"] {
+    color: #000 !important;
+    background-color: #fff !important;
+}
+
+/* Override global styles for PayPal container */
+.paypal-button-container,
+.paypal-button-container * {
+    color: #000 !important;
+}
+
+/* Specific PayPal form element styling */
+.paypal-button-container div[data-funding-source="paypal"] {
+    background: #fff !important;
+}
+
+/* PayPal form elements */
+.paypal-button-container input,
+.paypal-button-container label,
+.paypal-button-container span,
+.paypal-button-container p,
+.paypal-button-container div,
+.paypal-button-container form,
+.paypal-button-container fieldset,
+.paypal-button-container legend {
+    color: #000 !important;
+    background-color: transparent !important;
+}
+
+/* PayPal form inputs with better contrast */
+.paypal-button-container input[type="text"],
+.paypal-button-container input[type="tel"],
+.paypal-button-container input[type="email"],
+.paypal-button-container input[type="password"],
+.paypal-button-container select,
+.paypal-button-container textarea {
+    color: #000 !important;
+    background-color: #fff !important;
+    border: 1px solid #ccc !important;
+    padding: 8px !important;
+}
+
+/* PayPal button styling override */
+.paypal-button-container .paypal-button,
+.paypal-button-container button[data-funding-source] {
+    background-color: #0070ba !important;
+    color: #fff !important;
+}
+
+/* Force text color on all PayPal elements */
+.paypal-button-container *:not(button):not([data-funding-source]) {
+    color: #000 !important;
+}
+
+/* PayPal credit card form specific styling */
+.paypal-button-container [data-testid*="credit-card"],
+.paypal-button-container [class*="credit-card"],
+.paypal-button-container [class*="card-field"] {
+    background: #fff !important;
+    color: #000 !important;
+}
+
+/* Ensure PayPal container has light background */
+.paypal-checkout-container .paypal-button-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+}
+
+/* Additional CSS reset for PayPal components */
+.paypal-button-container,
+.paypal-button-container div,
+.paypal-button-container span,
+.paypal-button-container p,
+.paypal-button-container label,
+.paypal-button-container input {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+}
+
+/* Force visibility for all text elements in PayPal */
+.paypal-button-container *[class*="text"],
+.paypal-button-container *[class*="label"],
+.paypal-button-container *[class*="field"],
+.paypal-button-container *[data-testid],
+.paypal-button-container .sr-only {
+    color: #000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Override any hidden or transparent text */
+.paypal-button-container *:not(button) {
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* PayPal SDK iframe content fixes */
+iframe[src*="paypal"],
+iframe[name*="paypal"] {
+    background: #fff !important;
+}
+
 /* Loading states */
 .paypal-loading {
     display: flex;

@@ -26,6 +26,12 @@ const AdminCouponManager = () => {
     const [success, setSuccess] = useState('');
     const [usageStats, setUsageStats] = useState(null);
 
+    // User search functionality
+    const [userSearchTerm, setUserSearchTerm] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [showUserDropdown, setShowUserDropdown] = useState(false);
+
     // Check if coupons are enabled
     const couponsEnabled = areCouponsEnabled();
 
@@ -58,6 +64,27 @@ const AdminCouponManager = () => {
         loadUsers();
         loadUsageStats();
     }, []);
+
+    // Filter users based on search term
+    useEffect(() => {
+        if (!userSearchTerm.trim()) {
+            setFilteredUsers(users);
+            return;
+        }
+
+        const filtered = users.filter(user => {
+            const displayName = user.displayName || '';
+            const email = user.email || '';
+            const searchLower = userSearchTerm.toLowerCase();
+
+            return (
+                displayName.toLowerCase().includes(searchLower) ||
+                email.toLowerCase().includes(searchLower)
+            );
+        });
+
+        setFilteredUsers(filtered);
+    }, [userSearchTerm, users]);
 
     const loadCoupons = async () => {
         setLoading(true);
@@ -136,6 +163,27 @@ const AdminCouponManager = () => {
                 }));
             }
         }
+    };
+
+    // Handle user search functionality
+    const handleUserSearchChange = (e) => {
+        setUserSearchTerm(e.target.value);
+        setShowUserDropdown(true);
+        if (!e.target.value.trim()) {
+            setSelectedUser(null);
+            setCouponForm(prev => ({ ...prev, targetUserId: '', targetUserEmail: '' }));
+        }
+    };
+
+    const handleUserSelect = (user) => {
+        setSelectedUser(user);
+        setUserSearchTerm(user.displayName || user.email);
+        setShowUserDropdown(false);
+        setCouponForm(prev => ({
+            ...prev,
+            targetUserId: user.id,
+            targetUserEmail: user.email
+        }));
     };
 
     const handleCreateCoupon = async (e) => {
@@ -579,18 +627,44 @@ const AdminCouponManager = () => {
                 {couponForm.targetType === 'user_specific' && (
                     <div className="form-group">
                         <label>Target User *</label>
-                        <select
-                            value={couponForm.targetUserId}
-                            onChange={(e) => handleFormChange('targetUserId', e.target.value)}
-                            required
-                        >
-                            <option value="">Select a user...</option>
-                            {users.map(user => (
-                                <option key={user.id} value={user.id}>
-                                    {user.displayName || user.email} ({user.email})
-                                </option>
-                            ))}
-                        </select>
+                        <div className="user-search-container">
+                            <input
+                                type="text"
+                                value={userSearchTerm}
+                                onChange={handleUserSearchChange}
+                                onFocus={() => setShowUserDropdown(true)}
+                                placeholder="Search by name or email..."
+                                required
+                            />
+
+                            {showUserDropdown && filteredUsers.length > 0 && (
+                                <div className="user-dropdown">
+                                    {filteredUsers.slice(0, 10).map(user => (
+                                        <div
+                                            key={user.id}
+                                            className="user-option"
+                                            onClick={() => handleUserSelect(user)}
+                                        >
+                                            <div className="user-name">
+                                                {user.displayName || 'No Name'}
+                                            </div>
+                                            <div className="user-email">
+                                                {user.email}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Selected User Info */}
+                        {selectedUser && (
+                            <div className="selected-user-info">
+                                <p><strong>Selected User:</strong></p>
+                                <p><strong>Name:</strong> {selectedUser.displayName || 'No Name'}</p>
+                                <p><strong>Email:</strong> {selectedUser.email}</p>
+                            </div>
+                        )}
                     </div>
                 )}
 

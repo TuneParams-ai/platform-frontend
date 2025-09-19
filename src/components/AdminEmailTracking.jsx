@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import {
     getEmailStatistics,
     getEmailsByType,
-    getEmailsByRecipient,
     searchEmails
 } from '../services/emailTrackingService';
 import '../styles/admin-email-tracking.css';
@@ -14,7 +13,6 @@ const AdminEmailTracking = () => {
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
-    const [searchEmail, setSearchEmail] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedType, setSelectedType] = useState('enrollment_confirmation');
 
@@ -30,7 +28,7 @@ const AdminEmailTracking = () => {
             if (result.success) {
                 setStatistics(result.statistics);
             }
-        } catch (error) {} finally {
+        } catch (error) { } finally {
             setLoading(false);
         }
     };
@@ -42,21 +40,7 @@ const AdminEmailTracking = () => {
             if (result.success) {
                 setEmails(result.emails);
             }
-        } catch (error) {} finally {
-            setLoading(false);
-        }
-    };
-
-    const searchByEmail = async () => {
-        if (!searchEmail.trim()) return;
-
-        setLoading(true);
-        try {
-            const result = await getEmailsByRecipient(searchEmail.trim());
-            if (result.success) {
-                setEmails(result.emails);
-            }
-        } catch (error) {} finally {
+        } catch (error) { } finally {
             setLoading(false);
         }
     };
@@ -70,7 +54,7 @@ const AdminEmailTracking = () => {
             if (result.success) {
                 setEmails(result.emails);
             }
-        } catch (error) {} finally {
+        } catch (error) { } finally {
             setLoading(false);
         }
     };
@@ -189,33 +173,6 @@ const AdminEmailTracking = () => {
                     <div>
                         <div className="search-section">
                             <h3 className="search-title">
-                                📧 Search by Email Address
-                            </h3>
-                            <div className="search-form">
-                                <div className="form-group">
-                                    <label className="form-label">
-                                        Email Address
-                                    </label>
-                                    <input
-                                        type="email"
-                                        placeholder="Enter email address to search..."
-                                        value={searchEmail}
-                                        onChange={(e) => setSearchEmail(e.target.value)}
-                                        className="form-input"
-                                    />
-                                </div>
-                                <button
-                                    onClick={searchByEmail}
-                                    disabled={loading}
-                                    className="search-button primary"
-                                >
-                                    {loading ? 'Searching...' : '🔍 Search by Email'}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="search-section">
-                            <h3 className="search-title">
                                 🔍 General Search
                             </h3>
                             <div className="search-form">
@@ -248,7 +205,7 @@ const AdminEmailTracking = () => {
                                 </h3>
                                 <EmailTable emails={emails} formatDate={formatDate} />
                             </div>
-                        ) : searchEmail.trim() || searchTerm.trim() ? (
+                        ) : searchTerm.trim() ? (
                             <div className="empty-state">
                                 <div className="empty-state-icon">🔍</div>
                                 <h3 className="empty-state-title">

@@ -255,7 +255,7 @@
     padding: 12px 16px;
     border: 2px solid rgba(29, 126, 153, 0.3);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(0, 0, 0, 0.4);
     color: var(--text-color);
     font-size: 14px;
     outline: none;
@@ -265,7 +265,7 @@
 
 .form-input:focus {
     border-color: var(--primary-color);
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .form-input::placeholder {
