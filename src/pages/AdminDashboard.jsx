@@ -11,6 +11,7 @@ import AdminEmailTracking from '../components/AdminEmailTracking';
 import AdminCouponManager from '../components/AdminCouponManager';
 import AdminProgressManager from '../components/AdminProgressManager';
 import AdminSearch from '../components/AdminSearch';
+import AdminAuditLogs from '../components/AdminAuditLogs';
 import '../styles/admin-dashboard.css';
 
 const AdminDashboard = () => {
@@ -37,7 +38,8 @@ const AdminDashboard = () => {
                 } else {
                     setIsAdmin(false);
                 }
-            } catch (err) {setIsAdmin(false);
+            } catch (err) {
+                setIsAdmin(false);
             } finally {
                 setAdminLoading(false);
             }
@@ -134,6 +136,12 @@ const AdminDashboard = () => {
                 >
                     👑 Role Management
                 </button>
+                <button
+                    onClick={() => setActiveTab('audit')}
+                    className={`admin-tab-button ${activeTab === 'audit' ? 'active' : ''}`}
+                >
+                    📋 Audit Logs
+                </button>
             </div>
 
             <div className="admin-content">
@@ -145,6 +153,7 @@ const AdminDashboard = () => {
                 {activeTab === 'progress' && <AdminProgressManager />}
                 {activeTab === 'search' && <AdminSearch />}
                 {activeTab === 'roles' && <AdminRoleManager />}
+                {activeTab === 'audit' && <AdminAuditLogs />}
             </div>
         </div>
     );
