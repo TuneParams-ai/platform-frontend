@@ -204,8 +204,14 @@ const PayPalCheckout = ({
                                         orderId: order.id
                                     });
 
-                                    if (couponUsageResult.success) { } else { }
-                                } catch (couponError) {// Don't fail the payment for coupon recording errors
+                                    if (couponUsageResult.success) {
+                                        console.log('Coupon usage recorded successfully');
+                                    } else {
+                                        console.error('Failed to record coupon usage:', couponUsageResult.error);
+                                    }
+                                } catch (couponError) {
+                                    console.error('Error recording coupon usage:', couponError);
+                                    // Don't fail the payment for coupon recording errors
                                 }
                             }
                         }

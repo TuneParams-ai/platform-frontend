@@ -119,8 +119,8 @@ export const createCoupon = async (couponData, adminUserId) => {
 
             // Admin information
             createdBy: adminUserId,
-            createdByEmail: adminProfile.data?.email || null,
-            createdByName: adminProfile.data?.displayName || adminProfile.data?.email?.split('@')[0] || 'Unknown Admin',
+            createdByEmail: adminProfile.userData?.email || null,
+            createdByName: adminProfile.userData?.displayName || adminProfile.userData?.name || adminProfile.userData?.email?.split('@')[0] || 'Unknown Admin',
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
 
@@ -298,11 +298,18 @@ export const recordCouponUsage = async (couponId, userId, courseId, usageData) =
 
         // Update coupon document with explicit values
         const currentUsageCount = coupon.usageCount || 0;
+        const newUsageCount = currentUsageCount + 1;
+
         const updateData = {
-            usageCount: currentUsageCount + 1, // Use explicit increment instead of increment()
+            usageCount: newUsageCount,
             usageHistory: updatedHistory,
             updatedAt: new Date() // Use new Date() instead of serverTimestamp()
         };
+
+        // Check if coupon should be deactivated after use (for one-time use coupons)
+        if (coupon.usageLimit && newUsageCount >= coupon.usageLimit) {
+            updateData.status = 'inactive';
+        }
 
         // Remove any undefined fields
         Object.keys(updateData).forEach(key => {
@@ -310,7 +317,7 @@ export const recordCouponUsage = async (couponId, userId, courseId, usageData) =
 
                 delete updateData[key];
             }
-        });await updateDoc(couponRef, updateData);
+        }); await updateDoc(couponRef, updateData);
 
         // Create separate usage record for detailed tracking
 
@@ -319,7 +326,7 @@ export const recordCouponUsage = async (couponId, userId, courseId, usageData) =
             couponCode: coupon.code,
             ...usageRecord,
             createdAt: new Date() // Use new Date() instead of serverTimestamp()
-        });return { success: true, usageLogId: usageLogRef.id };
+        }); return { success: true, usageLogId: usageLogRef.id };
 
     } catch (error) {
 
@@ -641,7 +648,7 @@ export const testCouponUsageRecording = async (couponCode, userId) => {
             // Verify the update worked
             const updatedCouponResult = await getCouponByCode(couponCode);
             if (updatedCouponResult.success) {
-                const updatedCoupon = updatedCouponResult.coupon;return {
+                const updatedCoupon = updatedCouponResult.coupon; return {
                     success: true,
                     message: 'Test coupon usage recorded successfully',
                     before: {
