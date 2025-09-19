@@ -55,15 +55,52 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="about-section">
-        <div className="about-content">
-          <h2>Why TuneParams.ai?</h2>
-          <p>
-            At TuneParams.ai, we believe that anyone can become master of Artificial Intelligence with the right guidance.
-            Our Courses simplifies complex topics and helps you build an intuitive and practical understanding
-            of core AI concepts, with no math background required.
-          </p>
+      {/* Merged Audience & About Section */}
+      <section className="merged-info-section">
+        <div className="merged-info-container">
+          <div className="about-content-merged">
+            <h2>Why TuneParams.ai?</h2>
+            <p>
+              At TuneParams.ai, we believe that anyone can become master of Artificial Intelligence with the right guidance.
+              Our Courses simplifies complex topics and helps you build an intuitive and practical understanding
+              of core AI concepts, with no math background required.
+            </p>
+          </div>
+          <div className="audience-content-merged">
+            <h2>Who Should Take This Course?</h2>
+            <div className="audience-grid-compact">
+              <div className="audience-item-compact">
+                <div className="audience-icon">🎓</div>
+                <h4>Beginners</h4>
+                <p>Looking to enter the field of AI</p>
+              </div>
+              <div className="audience-item-compact">
+                <div className="audience-icon">📚</div>
+                <h4>Students</h4>
+                <p>High school students seeking an applied introduction to AI</p>
+              </div>
+              <div className="audience-item-compact">
+                <div className="audience-icon">💼</div>
+                <h4>Professionals</h4>
+                <p>Experienced IT professionals wanting to upskill</p>
+              </div>
+              <div className="audience-item-compact">
+                <div className="audience-icon">👨‍💻</div>
+                <h4>Developers</h4>
+                <p>Software developers looking to integrate AI into their applications</p>
+              </div>
+              <div className="audience-item-compact">
+                <div className="audience-icon">📊</div>
+                <h4>Data Analysts</h4>
+                <p>Data professionals wanting to advance to machine learning roles</p>
+              </div>
+              <div className="audience-item-compact">
+                <div className="audience-icon">🔍</div>
+                <h4>Curious Minds</h4>
+                <p>Anyone curious about how AI works behind the scenes</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -100,43 +137,6 @@ const Landing = () => {
           <div className="curriculum-item">
             <h3>NLP and LLMs</h3>
             <p>Explore the world of Natural Language Processing and Large Language Models.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Who Should Take This Course */}
-      <section className="audience-section">
-        <h2>Who Should Take This Course?</h2>
-        <div className="audience-grid">
-          <div className="audience-item">
-            <div className="audience-icon">🎓</div>
-            <h3>Beginners</h3>
-            <p>Looking to enter the field of AI</p>
-          </div>
-          <div className="audience-item">
-            <div className="audience-icon">📚</div>
-            <h3>Students</h3>
-            <p>High school students seeking an applied introduction to AI</p>
-          </div>
-          <div className="audience-item">
-            <div className="audience-icon">💼</div>
-            <h3>Professionals</h3>
-            <p>Experienced IT professionals wanting to upskill</p>
-          </div>
-          <div className="audience-item">
-            <div className="audience-icon">👨‍💻</div>
-            <h3>Developers</h3>
-            <p>Software developers looking to integrate AI into their applications</p>
-          </div>
-          <div className="audience-item">
-            <div className="audience-icon">📊</div>
-            <h3>Data Analysts</h3>
-            <p>Data professionals wanting to advance to machine learning roles</p>
-          </div>
-          <div className="audience-item">
-            <div className="audience-icon">🔍</div>
-            <h3>Curious Minds</h3>
-            <p>Anyone curious about how AI works behind the scenes</p>
           </div>
         </div>
       </section>

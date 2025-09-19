@@ -134,9 +134,16 @@
 /* Curriculum Section */
 .curriculum-section {
   padding: 80px 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  background: rgba(29, 126, 153, 0.1);
   text-align: center;
+}
+
+.curriculum-section>h2,
+.curriculum-section>.curriculum-intro,
+.curriculum-section>.curriculum-grid {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .curriculum-section h2 {
@@ -188,61 +195,6 @@
 .curriculum-item p {
   color: var(--secondary-text-color);
   line-height: 1.6;
-}
-
-/* Audience Section */
-.audience-section {
-  padding: 80px 20px;
-  background: rgba(29, 126, 153, 0.1);
-  text-align: center;
-}
-
-.audience-section h2 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 48px;
-  color: var(--text-color);
-}
-
-.audience-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 32px;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.audience-item {
-  background: rgba(29, 126, 153, 0.05);
-  padding: 32px 24px;
-  border-radius: 12px;
-  border: 1px solid rgba(29, 126, 153, 0.2);
-  transition: all 0.3s ease;
-}
-
-.audience-item:hover {
-  transform: translateY(-4px);
-  border-color: var(--primary-color);
-  box-shadow: 0 8px 24px rgba(29, 126, 153, 0.3);
-}
-
-.audience-icon {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-  display: block;
-}
-
-.audience-item h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--text-color);
-}
-
-.audience-item p {
-  color: var(--secondary-text-color);
-  font-size: 0.95rem;
-  line-height: 1.5;
 }
 
 /* Format Section */
@@ -379,11 +331,6 @@
     padding: 24px 20px;
   }
 
-  .audience-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-
   .format-section {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -397,7 +344,6 @@
 
   .about-content h2,
   .curriculum-section h2,
-  .audience-section h2,
   .format-content h2,
   .cta-section h2 {
     font-size: 2rem;
@@ -416,7 +362,6 @@
   .hero-section,
   .about-section,
   .curriculum-section,
-  .audience-section,
   .format-section,
   .cta-section {
     padding: 60px 16px;
@@ -437,5 +382,105 @@
   .hero-image img {
     max-width: 100px;
     height: auto;
+  }
+}
+
+/* Merged Info Section - Super Compact */
+.merged-info-section {
+  padding: 30px 20px;
+  background: rgba(29, 126, 153, 0.1);
+}
+
+.merged-info-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.about-content-merged {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.about-content-merged h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: var(--text-color);
+}
+
+.about-content-merged p {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: var(--secondary-text-color);
+}
+
+.audience-content-merged h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.audience-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.audience-item-compact {
+  background: rgba(29, 126, 153, 0.05);
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(29, 126, 153, 0.2);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.audience-item-compact:hover {
+  transform: translateY(-2px);
+  background: rgba(29, 126, 153, 0.1);
+}
+
+.audience-item-compact .audience-icon {
+  font-size: 1.7rem;
+  margin-bottom: 4px;
+}
+
+.audience-item-compact h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1px;
+  color: var(--text-color);
+}
+
+.audience-item-compact p {
+  font-size: 0.9rem;
+  color: var(--secondary-text-color);
+  line-height: 1.2;
+  margin: 0;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .merged-info-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .audience-grid-compact {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .about-content-merged {
+    text-align: center;
   }
 }
