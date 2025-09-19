@@ -115,7 +115,8 @@ const PayPalCheckout = ({
                         enrollmentType: 'free_coupon',
                         enrollmentId: result.enrollmentId,
                         batchNumber: result.batchNumber,
-                        batchInfo: result.batchInfo
+                        batchInfo: result.batchInfo,
+                        enrollmentComplete: true // Flag to prevent duplicate processing
                     });
                 }
             } else {

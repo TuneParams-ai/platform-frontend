@@ -49,7 +49,23 @@ const CourseDetail = () => {
     // All useCallback hooks must be at the top level, before any conditional returns
     const handlePaymentSuccess = useCallback(async (paymentDetails) => {
         try {
-            // Process the enrollment using our payment service
+            // If enrollment is already complete (e.g., from 100% coupon), skip processing
+            if (paymentDetails.enrollmentComplete) {
+                // Just show the success modal with the existing data
+                setPaymentData(paymentDetails);
+                setEnrollmentResult({
+                    success: true,
+                    enrollmentId: paymentDetails.enrollmentId,
+                    batchNumber: paymentDetails.batchNumber,
+                    batchInfo: paymentDetails.batchInfo,
+                    emailSent: true // Assume email was sent during direct enrollment
+                });
+                setShowSuccessModal(true);
+                setShowPayPal(false);
+                return;
+            }
+
+            // Process the enrollment using our payment service for regular payments
             const result = await processEnrollment(paymentDetails);
 
             if (result.success) {
