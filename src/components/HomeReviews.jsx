@@ -48,7 +48,7 @@ const HomeReviews = () => {
                 const maxIndex = reviews.length - 3;
                 return prevIndex >= maxIndex ? 0 : prevIndex + 1;
             });
-        }, 4000); // Change every 4 seconds
+        }, 8000); // Change every 8 seconds
 
         return () => clearInterval(interval);
     }, [reviews]);
@@ -91,9 +91,10 @@ const HomeReviews = () => {
                                                     <span>{r.userName || 'User'}</span>
                                                     {r.verified && <span className="review-verified" title="Verified User">✓</span>}
                                                 </div>
-                                                <div className="review-date">
+                                                {/* TODO: Re-enable review dates later */}
+                                                {/* <div className="review-date">
                                                     {r.createdAt?.toDate ? r.createdAt.toDate().toLocaleDateString() : ''}
-                                                </div>
+                                                </div> */}
                                             </div>
                                         </div>
                                         <button

@@ -470,25 +470,31 @@
     box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.3);
 }
 
-.review-course-chip {
-    display: inline-block;
-    background: #eef2ff;
-    color: #3730a3;
-    padding: 2px 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    margin-bottom: 6px;
-}
+/* Removed duplicate course chip styling */
 
 .review-course-chip {
-    display: inline-block;
-    background: rgba(29, 126, 153, 0.2);
+    display: block;
+    background: rgba(29, 126, 153, 0.3);
     color: var(--text-color);
-    padding: 2px 8px;
-    border-radius: 9999px;
-    font-size: 12px;
-    margin-bottom: 6px;
-    border: 1px solid rgba(29, 126, 153, 0.3);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 8px auto 12px auto;
+    border: 1px solid rgba(29, 126, 153, 0.4);
+    text-align: center;
+    max-width: fit-content;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(29, 126, 153, 0.1);
+    transition: all 0.3s ease;
+}
+
+.review-course-chip:hover {
+    background: rgba(29, 126, 153, 0.4);
+    border-color: rgba(29, 126, 153, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(29, 126, 153, 0.2);
 }
 
 .review-comment {

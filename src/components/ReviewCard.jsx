@@ -16,8 +16,9 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin 
 
     if (!review) return null;
 
-    const { userName, userPhotoURL, rating, comment, verified, createdAt, courseTitle } = review;
-    const dateText = createdAt?.toDate ? createdAt.toDate().toLocaleDateString() : '';
+    const { userName, userPhotoURL, rating, comment, verified, /* createdAt, */ courseTitle } = review;
+    // TODO: Re-enable date formatting when dates are shown again
+    // const dateText = createdAt?.toDate ? createdAt.toDate().toLocaleDateString() : '';
 
     // Helper function to format user names properly
     const formatUserName = (name) => {
@@ -86,7 +87,8 @@ const ReviewCard = ({ review, showCourseTitle = false, isOwner = false, isAdmin 
                             <span>{displayName || 'User'}</span>
                             {verified && <span className="review-verified" title="Verified User">✓</span>}
                         </div>
-                        {dateText && <div className="review-date">{dateText}</div>}
+                        {/* TODO: Re-enable review dates later */}
+                        {/* {dateText && <div className="review-date">{dateText}</div>} */}
                     </div>
                 </div>
                 <Stars value={rating} />
