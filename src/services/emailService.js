@@ -229,7 +229,8 @@ This email was sent to ${userEmail} regarding your course enrollment.
 export const sendEnrollmentConfirmationEmail = async (enrollmentData) => {
     try {
         // Check if EmailJS is configured
-        if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {return {
+        if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+            return {
                 success: false,
                 error: 'Email service not configured',
                 skipped: true
@@ -510,10 +511,31 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
 
         const emailContent = generateCouponEmailContent(couponEmailData);
 
+        // Prepare template parameters for EmailJS (similar to enrollment email format)
+        const templateParams = {
+            to_email: emailContent.to_email,
+            to_name: emailContent.to_name,
+            from_name: emailContent.from_name,
+            subject: emailContent.subject,
+            html_content: emailContent.html_content,
+            text_content: emailContent.text_content,
+            coupon_code: emailContent.coupon_code,
+            coupon_name: emailContent.coupon_name,
+            discount_type: emailContent.discount_type,
+            discount_value: emailContent.discount_value,
+            website_url: WEBSITE_URL,
+            support_email: SUPPORT_EMAIL,
+            course_id: emailContent.course_id || '',
+            course_title: couponEmailData.courseTitle || '',
+            recipient_name: emailContent.to_name,
+            sender_name: couponEmailData.senderName || '',
+            admin_message: couponEmailData.adminMessage || ''
+        };
+
         const response = await emailjs.send(
             EMAILJS_SERVICE_ID,
             EMAILJS_TEMPLATE_ID, // You might want a separate template for coupons
-            emailContent
+            templateParams
         );
 
         // Record successful email sending
@@ -528,7 +550,7 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
                 courseTitle: couponEmailData.courseTitle || null,
                 emailServiceResponse: response,
                 success: true,
-                rawTextContent: generateCouponEmailText(couponEmailData),
+                rawTextContent: emailContent.text_content,
                 metadata: {
                     couponCode: couponEmailData.couponCode,
                     couponName: couponEmailData.couponName,
@@ -546,7 +568,9 @@ export const sendCouponEmail = async (couponEmailData, userId = null) => {
         return {
             success: true,
             response: response,
-            emailId: response.text
+            emailId: response.text,
+            emailContent: emailContent,
+            rawTextContent: emailContent.text_content
         };
 
     } catch (error) {
@@ -598,8 +622,7 @@ const generateCouponEmailContent = (couponData) => {
         courseId,
         validUntil,
         minOrderAmount,
-        adminMessage,
-        senderName
+        adminMessage
     } = couponData;
 
     // Format discount display
@@ -622,202 +645,149 @@ const generateCouponEmailContent = (couponData) => {
         : 'No minimum order requirement';
 
     // Course-specific message and links
-    let courseInfo = '';
-    let courseLinks = '';
     let enrollmentUrl = `${WEBSITE_URL}/courses`;
+    let courseSpecificMessage = '';
 
     if (courseTitle && courseId) {
-        courseInfo = `This coupon is specifically for: **${courseTitle}**`;
         enrollmentUrl = `${WEBSITE_URL}/courses/${courseId}`;
-        courseLinks = `
-📚 **Course Information**: ${WEBSITE_URL}/courses/${courseId}
-🎯 **Direct Enrollment**: ${enrollmentUrl}
+        courseSpecificMessage = `
+            <div style="background: rgba(29, 126, 153, 0.15); padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1D7E99;">
+                <h4 style="color: #1D7E99; margin: 0 0 8px 0; font-size: 16px;">Course Specific Coupon</h4>
+                <p style="color: #ffffff; margin: 0; font-size: 14px;">This coupon is exclusively for <strong>${courseTitle}</strong></p>
+            </div>
         `;
     } else {
-        courseInfo = 'This coupon can be used for any of our courses';
-        courseLinks = `
-📚 **Browse All Courses**: ${WEBSITE_URL}/courses
-🎯 **AI Foundations Course**: ${WEBSITE_URL}/courses/FAAI
-🤖 **Reinforcement Learning**: ${WEBSITE_URL}/courses/RLAI
+        courseSpecificMessage = `
+            <div style="background: rgba(29, 126, 153, 0.15); padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1D7E99;">
+                <h4 style="color: #1D7E99; margin: 0 0 8px 0; font-size: 16px;">General Coupon</h4>
+                <p style="color: #ffffff; margin: 0; font-size: 14px;">This coupon can be used for any of our AI & Machine Learning courses</p>
+            </div>
         `;
     }
 
-    // Step-by-step instructions
-    const detailedInstructions = courseTitle && courseId ?
-        `
-**How to Redeem Your Coupon:**
+    // Create beautiful HTML email content matching enrollment email style
+    const htmlContent = `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000000;">
+            <div style="background: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 28px;">Your Exclusive Coupon</h1>
+                <p style="color: #ffffff; margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Special discount for ${COMPANY_NAME} courses</p>
+            </div>
 
-1. 🌐 **Visit the course page**: ${enrollmentUrl}
-2. 📝 **Click "Enroll Now"** to start the enrollment process
-3. 💳 **At checkout**, look for "Have a coupon code?" section
-4. 🎫 **Enter your coupon code**: \`${couponCode}\`
-5. ✅ **Click "Apply"** to see your discount applied instantly
-6. 💰 **Complete payment** with your discounted price
-7. 🎉 **Start learning immediately** after enrollment
+            <div style="background: #000000; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(29, 126, 153, 0.2);">
+                <p style="font-size: 16px; color: #ffffff; margin-bottom: 20px;">Dear ${recipientName || 'Student'},</p>
 
-**Need Help?**
-- 📧 Email us at: ${SUPPORT_EMAIL}
-- 🌐 Visit our help center: ${WEBSITE_URL}/support
-- 💬 Live chat available on our website
-        ` :
-        `
-**How to Redeem Your Coupon:**
+                <p style="font-size: 16px; color: #ffffff; line-height: 1.6;">
+                    Here is your exclusive coupon code for ${COMPANY_NAME}! Get ready to advance your AI and machine learning skills at a special discounted price.
+                </p>
 
-1. 🌐 **Browse our courses**: ${WEBSITE_URL}/courses
-2. 📚 **Select any course** that interests you
-3. 📝 **Click "Enroll Now"** on your chosen course
-4. 💳 **At checkout**, look for "Have a coupon code?" section
-5. 🎫 **Enter your coupon code**: \`${couponCode}\`
-6. ✅ **Click "Apply"** to see your discount applied instantly
-7. 💰 **Complete payment** with your discounted price
-8. 🎉 **Start learning immediately** after enrollment
+                ${courseSpecificMessage}
 
-**Need Help?**
-- 📧 Email us at: ${SUPPORT_EMAIL}
-- 🌐 Visit our help center: ${WEBSITE_URL}/support
-- 💬 Live chat available on our website
-        `;
+                <div style="background: rgba(29, 126, 153, 0.1); padding: 25px; border-radius: 8px; margin: 25px 0; border: 1px solid rgba(29, 126, 153, 0.2); text-align: center;">
+                    <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 20px;">Your Coupon Details</h3>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 6px; margin: 15px 0; border: 2px dashed #1D7E99;">
+                        <div style="font-family: monospace; font-size: 24px; font-weight: bold; color: #1D7E99; letter-spacing: 2px; text-align: center;">
+                            ${couponCode}
+                        </div>
+                    </div>
+                    
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <tr>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold; text-align: left;">Coupon Name:</td>
+                            <td style="padding: 8px 0; color: #ffffff; text-align: right;">${couponName || 'Special Discount'}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold; text-align: left;">Discount:</td>
+                            <td style="padding: 8px 0; color: #00ff88; font-weight: bold; text-align: right; font-size: 18px;">${discountDisplay}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold; text-align: left;">Valid Until:</td>
+                            <td style="padding: 8px 0; color: #ffffff; text-align: right;">${expiryText}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px 0; color: #C3C7CA; font-weight: bold; text-align: left;">Minimum Order:</td>
+                            <td style="padding: 8px 0; color: #ffffff; text-align: right;">${minOrderText}</td>
+                        </tr>
+                    </table>
+                </div>
 
-    return {
-        to_email: recipientEmail,
-        to_name: recipientName || 'Student',
-        from_name: COMPANY_NAME,
-        reply_to: SUPPORT_EMAIL,
+                ${adminMessage ? `
+                <div style="background: rgba(255, 215, 0, 0.1); padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #FFD700;">
+                    <h4 style="color: #FFD700; margin: 0 0 10px 0; font-size: 16px;">Personal Message</h4>
+                    <p style="color: #ffffff; margin: 0; font-style: italic; line-height: 1.5;">"${adminMessage}"</p>
+                </div>
+                ` : ''}
 
-        subject: `🎫 Your Exclusive Coupon Code: ${couponCode}`,
+                <h3 style="color: #ffffff; margin-top: 30px;">How to Redeem Your Coupon:</h3>
+                <ol style="color: #ffffff; line-height: 1.8; padding-left: 20px;">
+                    <li>Visit ${courseTitle && courseId ? 'the course page' : 'our courses'}: <a href="${enrollmentUrl}" style="color: #1D7E99; text-decoration: none;">${enrollmentUrl}</a></li>
+                    <li>Click <strong>"Enroll Now"</strong> ${courseTitle && courseId ? '' : 'on your chosen course'}</li>
+                    <li>At checkout, look for <strong>"Have a coupon code?"</strong> section</li>
+                    <li>Enter your coupon code: <strong>${couponCode}</strong></li>
+                    <li>Click <strong>"Apply"</strong> to see your discount applied instantly</li>
+                    <li>Complete payment with your discounted price</li>
+                    <li>Start learning immediately after enrollment!</li>
+                </ol>
 
-        // Email content
-        message_title: `🎉 You've Received a Special Discount!`,
+                <h3 style="color: #ffffff; margin-top: 30px;">Why Choose TuneParams.ai?</h3>
+                <ul style="color: #ffffff; line-height: 1.8; padding-left: 20px;">
+                    <li><strong>Expert-led courses</strong> by industry professionals</li>
+                    <li><strong>Hands-on projects</strong> and real-world applications</li>
+                    <li><strong>Small batch sizes</strong> for personalized attention</li>
+                    <li><strong>Comprehensive curriculum</strong> from foundations to advanced topics</li>
+                    <li><strong>Career support</strong> and networking opportunities</li>
+                </ul>
 
-        greeting: `Dear ${recipientName || 'Student'},`,
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${enrollmentUrl}" style="display: inline-block; background: linear-gradient(135deg, #1D7E99 0%, #C3C7CA 100%); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                        ${courseTitle && courseId ? `Enroll in ${courseTitle} Now →` : 'Browse All Courses →'}
+                    </a>
+                </div>
 
-        main_content: `${senderName ? `${senderName} has sent you` : 'You have received'} an exclusive coupon code for ${COMPANY_NAME}! Get ready to advance your AI and machine learning skills at a discounted price.`,
+                <p style="color: #ffffff; line-height: 1.6; margin-top: 25px;">
+                    If you have any questions or need help redeeming your coupon, feel free to reach out to us at
+                    <a href="mailto:${SUPPORT_EMAIL}" style="color: #1D7E99; text-decoration: none;">${SUPPORT_EMAIL}</a>.
+                </p>
 
-        // Coupon details section
-        coupon_section: `
-🎫 **Your Coupon Code**: \`${couponCode}\`
-🎁 **Discount**: ${discountDisplay}
-📝 **Coupon Name**: ${couponName || 'Special Discount'}
-⏰ **Validity**: ${expiryText}
-💰 **${minOrderText}**
-        `,
+                <p style="color: #ffffff; line-height: 1.6; margin-top: 20px;">
+                    We're excited to have you join our community of AI learners!
+                </p>
 
-        course_info: courseInfo,
-        course_links: courseLinks,
+                <p style="color: #ffffff; margin-top: 30px;">
+                    Best regards,<br>
+                    <strong>The ${COMPANY_NAME} Team</strong>
+                </p>
+            </div>
 
-        // Detailed instructions
-        instructions: detailedInstructions,
+            <div style="text-align: center; padding: 20px; color: #C3C7CA; font-size: 14px; background-color: #000000;">
+                <p style="margin: 0 0 10px 0;">
+                    <strong>Important:</strong> This coupon code is unique to you - please don't share it
+                </p>
+                <p style="margin: 0 0 15px 0;">© 2025 ${COMPANY_NAME}. All rights reserved.</p>
+                <p style="margin: 0; font-size: 12px;">
+                    Follow us: 
+                    <a href="${WEBSITE_URL}" style="color: #1D7E99; text-decoration: none;">Website</a> | 
+                    <a href="https://linkedin.com/company/tuneparams-ai" style="color: #1D7E99; text-decoration: none;">LinkedIn</a> | 
+                    <a href="https://twitter.com/tuneparamsai" style="color: #1D7E99; text-decoration: none;">Twitter</a>
+                </p>
+            </div>
+        </div>
+    `;
 
-        // Personal message from admin if provided
-        admin_message: adminMessage ? `
-**Personal Message:**
-"${adminMessage}"
-        ` : '',
-
-        // Call to action
-        cta_section: `
-🚀 **Ready to Start Learning?**
-
-${courseTitle && courseId ?
-                `[**Enroll in ${courseTitle} Now →**](${enrollmentUrl})` :
-                `[**Browse All Courses →**](${WEBSITE_URL}/courses)`
-            }
-
-[**Visit TuneParams.ai →**](${WEBSITE_URL})
-        `,
-
-        // Social proof and trust signals
-        trust_section: `
-**Why Choose TuneParams.ai?**
-✅ Expert-led courses by industry professionals
-✅ Hands-on projects and real-world applications
-✅ Small batch sizes for personalized attention
-✅ Comprehensive curriculum from foundations to advanced topics
-✅ Career support and networking opportunities
-        `,
-
-        // Footer information
-        footer_info: `
-**Important Information:**
-• This coupon code is unique to you - please don't share it
-• Discount will be applied automatically at checkout
-• For technical issues, contact ${SUPPORT_EMAIL}
-• Terms and conditions apply
-
-Follow us for updates:
-📱 **Website**: ${WEBSITE_URL}
-💼 **LinkedIn**: [TuneParams AI](https://linkedin.com/company/tuneparams-ai)
-🐦 **Twitter**: [@TuneParamsAI](https://twitter.com/tuneparamsai)
-
-Thank you for choosing TuneParams.ai for your AI learning journey!
-
-Best regards,
-The ${COMPANY_NAME} Team
-        `,
-
-        support_email: SUPPORT_EMAIL,
-        website_url: WEBSITE_URL,
-        company_name: COMPANY_NAME,
-        enrollment_url: enrollmentUrl,
-
-        // Additional metadata for tracking
-        email_type: 'coupon_notification',
-        coupon_code: couponCode,
-        coupon_name: couponName,
-        discount_type: discountType,
-        discount_value: discountValue,
-        course_id: courseId,
-        timestamp: new Date().toISOString()
-    };
-};
-
-/**
- * Generate plain text version of coupon email for tracking
- * @param {Object} couponData - Coupon email details
- * @returns {string} Plain text email content
- */
-const generateCouponEmailText = (couponData) => {
-    const {
-        recipientName,
-        couponCode,
-        couponName,
-        discountType,
-        discountValue,
-        courseTitle,
-        courseId,
-        validUntil,
-        minOrderAmount,
-        adminMessage,
-        senderName
-    } = couponData;
-
-    const discountDisplay = discountType === 'percentage'
-        ? `${discountValue}% off`
-        : `$${discountValue} off`;
-
-    const expiryText = validUntil
-        ? `Valid until ${new Date(validUntil).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        })}`
-        : 'No expiry date';
-
-    const enrollmentUrl = courseId ? `${WEBSITE_URL}/courses/${courseId}` : `${WEBSITE_URL}/courses`;
-
-    return `
+    // Plain text version for email clients that don't support HTML
+    const textContent = `
 Your Exclusive Coupon Code: ${couponCode}
 
 Dear ${recipientName || 'Student'},
 
-${senderName ? `${senderName} has sent you` : 'You have received'} an exclusive coupon code for ${COMPANY_NAME}!
+Here is your exclusive coupon code for ${COMPANY_NAME}!
 
 COUPON DETAILS:
 - Code: ${couponCode}
 - Discount: ${discountDisplay}
 - Name: ${couponName || 'Special Discount'}
 - Validity: ${expiryText}
-- ${minOrderAmount ? `Minimum order: $${minOrderAmount}` : 'No minimum order requirement'}
+- ${minOrderText}
 
 ${courseTitle ? `This coupon is for: ${courseTitle}` : 'This coupon can be used for any course'}
 
@@ -836,4 +806,47 @@ Best regards,
 The ${COMPANY_NAME} Team
 ${WEBSITE_URL}
     `;
+
+    // Create dynamic subject line based on discount and course
+    let subjectLine;
+    if (courseTitle && courseId) {
+        // Course-specific coupon
+        if (discountType === 'percentage' && discountValue === 100) {
+            subjectLine = `Free Access: ${courseTitle} - Use Code ${couponCode}`;
+        } else if (discountType === 'percentage') {
+            subjectLine = `${discountValue}% Off ${courseTitle} - Code ${couponCode}`;
+        } else {
+            subjectLine = `$${discountValue} Off ${courseTitle} - Code ${couponCode}`;
+        }
+    } else {
+        // General coupon
+        if (discountType === 'percentage' && discountValue === 100) {
+            subjectLine = `Free Course Access - Your Code: ${couponCode}`;
+        } else if (discountType === 'percentage') {
+            subjectLine = `${discountValue}% Off TuneParams.ai Courses - Code ${couponCode}`;
+        } else {
+            subjectLine = `$${discountValue} Off AI Courses - Code ${couponCode}`;
+        }
+    }
+
+    return {
+        to_email: recipientEmail,
+        to_name: recipientName || 'Student',
+        from_name: COMPANY_NAME,
+        reply_to: SUPPORT_EMAIL,
+        subject: subjectLine,
+        html_content: htmlContent,
+        text_content: textContent,
+
+        // Additional metadata for tracking
+        email_type: 'coupon_notification',
+        coupon_code: couponCode,
+        coupon_name: couponName,
+        discount_type: discountType,
+        discount_value: discountValue,
+        course_id: courseId,
+        timestamp: new Date().toISOString()
+    };
 };
+
+
