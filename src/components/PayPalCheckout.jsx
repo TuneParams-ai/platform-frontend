@@ -33,29 +33,63 @@ const PayPalCheckout = ({
     useEffect(() => {
         // Only load PayPal SDK if Client ID is configured
         if (!PAYPAL_CLIENT_ID) {
+            console.warn('PayPal Client ID not configured');
             setIsLoading(false);
             return;
         }
 
+        console.log('Loading PayPal SDK with Client ID:', PAYPAL_CLIENT_ID ? PAYPAL_CLIENT_ID.substring(0, 10) + '...' : 'undefined');
+
         // Load PayPal SDK
         const loadPayPalScript = () => {
             if (window.paypal) {
+                console.log('PayPal SDK already loaded');
                 setPaypalLoaded(true);
                 setIsLoading(false);
                 return;
             }
 
             const script = document.createElement('script');
-            script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD`;
+            const environment = process.env.REACT_APP_PAYPAL_ENVIRONMENT || 'sandbox';
+
+            // Enable credit cards, disable venmo and paylater
+            script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=USD&enable-funding=card&disable-funding=venmo,paylater`;
             script.async = true;
+
+            console.log('Loading PayPal SDK:', environment, 'mode');
+
             script.onload = () => {
-                setPaypalLoaded(true);
+                console.log('✅ PayPal SDK loaded successfully');
+                if (window.paypal) {
+                    setPaypalLoaded(true);
+                } else {
+                    console.error('❌ PayPal SDK loaded but object not available');
+                }
                 setIsLoading(false);
-            };
-            script.onerror = () => {
+            }; script.onerror = (error) => {
+                console.error('❌ Failed to load PayPal SDK:', error);
+
+                // Test if the URL is accessible to provide specific error messages
+                fetch(script.src, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.status === 400) {
+                            console.error('❌ Invalid PayPal Client ID');
+                            alert('Invalid PayPal Client ID. Please contact support.');
+                        } else if (response.status === 404) {
+                            console.error('❌ PayPal SDK not found');
+                            alert('PayPal SDK not found. Please try refreshing the page.');
+                        } else if (response.ok) {
+                            alert('PayPal SDK failed to load. Please refresh the page and try again.');
+                        }
+                    })
+                    .catch(fetchError => {
+                        console.error('❌ Network error:', fetchError);
+                        alert('Network error loading PayPal. Please check your connection.');
+                    });
+
                 setIsLoading(false);
                 if (onError) {
-                    onError(new Error('PayPal SDK failed to load'));
+                    onError(new Error('PayPal SDK failed to load. Please refresh the page and try again.'));
                 }
             };
             document.body.appendChild(script);
@@ -138,7 +172,21 @@ const PayPalCheckout = ({
 
             window.paypal.Buttons({
                 createOrder: (data, actions) => {
-                    return actions.order.create({
+                    console.log('Creating PayPal order for:', courseTitle, '$' + finalPrice);
+
+                    if (!finalPrice || finalPrice <= 0) {
+                        console.error('❌ Invalid payment amount:', finalPrice);
+                        alert('Invalid payment amount. Please refresh and try again.');
+                        throw new Error('Invalid payment amount');
+                    }
+
+                    if (!user?.uid) {
+                        console.error('❌ User not authenticated');
+                        alert('Please log in to continue with payment.');
+                        throw new Error('User not authenticated');
+                    }
+
+                    const orderData = {
                         purchase_units: [{
                             amount: {
                                 value: finalPrice.toString(),
@@ -153,24 +201,64 @@ const PayPalCheckout = ({
                         application_context: {
                             brand_name: 'TuneParams.ai',
                             landing_page: 'BILLING',
-                            user_action: 'PAY_NOW'
+                            user_action: 'PAY_NOW',
+                            shipping_preference: 'NO_SHIPPING'
                         }
+                    };
+
+                    console.log('Order data being sent to PayPal:', orderData);
+
+                    return actions.order.create(orderData).then(orderId => {
+                        console.log('✅ PayPal order created:', orderId);
+                        return orderId;
+                    }).catch(error => {
+                        console.error('❌ Failed to create PayPal order:', error);
+
+                        let errorMessage = 'Failed to create payment order';
+
+                        // Handle specific PayPal error codes
+                        if (error.message && error.message.includes('422')) {
+                            errorMessage = 'PayPal Client ID invalid. Please contact support.';
+                        } else if (error.message && error.message.includes('401')) {
+                            errorMessage = 'PayPal authentication failed. Please contact support.';
+                        } else if (error.message && error.message.includes('403')) {
+                            errorMessage = 'PayPal access denied. Please contact support.';
+                        } else if (error.message) {
+                            errorMessage = `PayPal error: ${error.message}`;
+                        }
+
+                        alert(errorMessage);
+                        throw error;
                     });
                 },
                 onApprove: async (data, actions) => {
+                    console.log('Processing payment approval...');
+
                     try {
-                        const order = await actions.order.capture();// Call the success handler with payment details
+                        const order = await actions.order.capture();
+                        console.log('✅ Payment captured successfully');
+
+                        // Validate payment structure
+                        if (!order?.purchase_units?.[0]?.payments?.captures?.[0]) {
+                            console.error('❌ Invalid payment structure');
+                            throw new Error('Payment capture failed. Please contact support.');
+                        }
+
+                        const capture = order.purchase_units[0].payments.captures[0];
+                        if (capture.status !== 'COMPLETED') {
+                            console.error('❌ Payment not completed:', capture.status);
+                            throw new Error(`Payment ${capture.status.toLowerCase()}. Please try again.`);
+                        }
+
+                        console.log('✅ Payment completed successfully');
+
+                        // Call success handler with payment details
                         if (onSuccess) {
-                            // Format payer name properly (PayPal returns an object)
                             const payerName = order.payer.name
                                 ? `${order.payer.name.given_name || ''} ${order.payer.name.surname || ''}`.trim()
                                 : 'Student';
 
-                            // Extract payment source information
-                            const paymentSource = order.purchase_units[0].payments.captures[0].payment_source || {};
-                            const fundingSource = order.purchase_units[0].payments.captures[0].funding_source || null;
-
-                            onSuccess({
+                            const successData = {
                                 orderID: order.id,
                                 payerID: order.payer.payer_id,
                                 paymentID: order.purchase_units[0].payments.captures[0].id,
@@ -182,17 +270,26 @@ const PayPalCheckout = ({
                                 payerName: payerName,
                                 transactionStatus: order.status,
                                 timestamp: new Date().toISOString(),
-                                // Add payment method details
-                                paymentSource: paymentSource,
-                                fundingSource: fundingSource,
-                                // Add payer address if available
+                                paymentSource: order.purchase_units[0].payments.captures[0].payment_source || {},
+                                fundingSource: order.purchase_units[0].payments.captures[0].funding_source || null,
                                 payerAddress: order.payer.address || null,
                                 // Add terms acceptance data
                                 termsAccepted: termsAccepted,
                                 termsAcceptedAt: new Date().toISOString(),
                                 // Add coupon data if applied
                                 appliedCoupon: appliedCoupon
-                            });
+                            };
+
+                            console.log('Calling success handler with data:', successData);
+
+                            try {
+                                onSuccess(successData);
+                                console.log('✅ Success handler called successfully');
+                            } catch (successError) {
+                                console.error('❌ Error in success handler:', successError);
+                                alert(`Payment successful but enrollment failed: ${successError.message}. Please contact support with Order ID: ${order.id}`);
+                                return;
+                            }
 
                             // Record coupon usage if coupon was applied
                             if (appliedCoupon) {
@@ -215,16 +312,55 @@ const PayPalCheckout = ({
                                     // Don't fail the payment for coupon recording errors
                                 }
                             }
+                        } else {
+                            console.error('❌ No success handler provided');
+                            alert('Payment successful but no success handler. Please contact support.');
+                            return;
                         }
                     } catch (error) {
+                        console.error('Payment processing error:', error);
+
+                        let errorMessage = 'Payment processing failed. Please try again.';
+
+                        // Handle specific error types
+                        if (error.message && error.message.includes('capture')) {
+                            errorMessage = 'Payment capture failed. Your card may have been charged but enrollment was not completed. Please contact support.';
+                        } else if (error.message && error.message.includes('network')) {
+                            errorMessage = 'Network error during payment processing. Please check your connection and try again.';
+                        } else if (error.message) {
+                            errorMessage = error.message;
+                        }
+
+                        const enhancedError = new Error(errorMessage);
+                        enhancedError.originalError = error;
+
                         if (onError) {
-                            onError(error);
+                            onError(enhancedError);
                         }
                     }
                 },
                 onError: (err) => {
+                    console.error('PayPal payment error:', err);
+                    let errorMessage = 'Payment failed. Please try again.';
+
+                    // Provide more specific error messages based on error type
+                    if (err.name === 'VALIDATION_ERROR') {
+                        errorMessage = 'Payment validation failed. Please check your payment information and try again.';
+                    } else if (err.name === 'INSTRUMENT_DECLINED') {
+                        errorMessage = 'Your payment method was declined. Please try a different card or payment method.';
+                    } else if (err.name === 'PAYER_ACTION_REQUIRED') {
+                        errorMessage = 'Additional verification required. Please complete the payment process.';
+                    } else if (err.name === 'UNPROCESSABLE_ENTITY') {
+                        errorMessage = 'Payment could not be processed. Please verify your payment details.';
+                    } else if (err.message && err.message.includes('network')) {
+                        errorMessage = 'Network error. Please check your connection and try again.';
+                    }
+
+                    const enhancedError = new Error(errorMessage);
+                    enhancedError.originalError = err;
+
                     if (onError) {
-                        onError(err);
+                        onError(enhancedError);
                     }
                 },
                 onCancel: (data) => {
@@ -236,10 +372,19 @@ const PayPalCheckout = ({
                     layout: 'vertical',
                     color: 'blue',
                     shape: 'rect',
-                    label: 'paypal',
-                    height: 45
+                    label: 'pay',
+                    height: 45,
+                    tagline: false
                 }
-            }).render(paypalRef.current);
+                // Remove fundingSource restriction to allow all payment methods including credit cards
+            }).render(paypalRef.current).then(() => {
+                console.log('✅ PayPal Buttons rendered successfully');
+            }).catch((renderError) => {
+                console.error('❌ Failed to render PayPal Buttons:', renderError);
+                if (onError) {
+                    onError(new Error('Failed to load payment options. Please refresh the page and try again.'));
+                }
+            });
         }
     }, [finalPrice, courseTitle, courseId, onSuccess, onError, onCancel, appliedCoupon, originalPrice, termsAccepted, user]);
 
@@ -265,7 +410,10 @@ const PayPalCheckout = ({
             }}>
                 <p>⚠️ PayPal payment is not configured.</p>
                 <p style={{ fontSize: '14px', margin: '8px 0 0 0' }}>
-                    Please contact support to enable payments.
+                    Missing REACT_APP_PAYPAL_CLIENT_ID environment variable.
+                </p>
+                <p style={{ fontSize: '12px', margin: '8px 0 0 0', opacity: 0.8 }}>
+                    Please set up your PayPal Client ID to enable payments.
                 </p>
             </div>
         );

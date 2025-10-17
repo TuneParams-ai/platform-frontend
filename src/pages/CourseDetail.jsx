@@ -48,40 +48,48 @@ const CourseDetail = () => {
 
     // All useCallback hooks must be at the top level, before any conditional returns
     const handlePaymentSuccess = useCallback(async (paymentDetails) => {
+        console.log('Processing enrollment for:', paymentDetails.courseTitle);
+
         try {
-            // If enrollment is already complete (e.g., from 100% coupon), skip processing
+            // Handle direct enrollment (100% coupons)
             if (paymentDetails.enrollmentComplete) {
-                // Just show the success modal with the existing data
+                console.log('✅ Direct enrollment complete');
                 setPaymentData(paymentDetails);
                 setEnrollmentResult({
                     success: true,
                     enrollmentId: paymentDetails.enrollmentId,
                     batchNumber: paymentDetails.batchNumber,
                     batchInfo: paymentDetails.batchInfo,
-                    emailSent: true // Assume email was sent during direct enrollment
+                    emailSent: true
                 });
                 setShowSuccessModal(true);
                 setShowPayPal(false);
                 return;
-            }
-
-            // Process the enrollment using our payment service for regular payments
+            }            // Process paid enrollment
+            console.log('Processing paid enrollment...');
             const result = await processEnrollment(paymentDetails);
 
             if (result.success) {
+                console.log('✅ Enrollment successful');
                 setPaymentData(paymentDetails);
                 setEnrollmentResult(result);
                 setShowSuccessModal(true);
                 setShowPayPal(false);
+            } else {
+                console.error('❌ Enrollment failed:', result);
+                throw new Error(result.error || 'Enrollment processing failed');
             }
         } catch (error) {
+            console.error('❌ Enrollment error:', error);
             alert(`Enrollment failed: ${error.message}. Please contact support with your payment details.`);
             setShowPayPal(false);
         }
     }, [processEnrollment]);
 
     const handlePaymentError = useCallback((error) => {
-        alert('Payment failed. Please try again or contact support.');
+        console.error('Payment error:', error);
+        const errorMessage = error?.message || 'Payment failed. Please try again or contact support.';
+        alert(errorMessage);
         setShowPayPal(false);
     }, []);
 
