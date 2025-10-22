@@ -13,7 +13,7 @@ const ManualPaymentPanel = ({ courseId, courseTitle, coursePrice, user, onSucces
 
     // Use bundled Zelle QR image from src/data
     const zelleQrPath = zelleQr;
-    const zelleName = 'HA Tallent Tech';
+    const zelleName = 'HA Talent Tech';
     const zelleNotice = 'Scan the QR or send via Zelle to the payee above. After sending, enter the transaction ID below for verification.';
 
     const handleSubmit = async (e) => {
