@@ -51,6 +51,16 @@ const CourseDetail = () => {
         console.log('Processing enrollment for:', paymentDetails.courseTitle);
 
         try {
+            // If this is a manual payment submission, show pending message and return
+            if (paymentDetails.manualSubmission) {
+                console.log('Manual payment submitted; awaiting admin verification');
+                setPaymentData(paymentDetails);
+                setEnrollmentResult({ success: false, pendingManual: true });
+                setShowSuccessModal(true);
+                setShowPayPal(false);
+                return;
+            }
+
             // Handle direct enrollment (100% coupons)
             if (paymentDetails.enrollmentComplete) {
                 console.log('✅ Direct enrollment complete');

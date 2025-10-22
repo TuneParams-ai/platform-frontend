@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import CouponInput from './CouponInput';
 import { recordCouponUsage } from '../services/couponService';
 import { processDirectEnrollment } from '../services/paymentService';
+import ManualPaymentPanel from './ManualPaymentPanel';
 import '../styles/paypal-checkout.css';
 
 const PayPalCheckout = ({
@@ -29,9 +30,17 @@ const PayPalCheckout = ({
 
     // PayPal Client ID - Must be configured in environment variables
     const PAYPAL_CLIENT_ID = process.env.REACT_APP_PAYPAL_CLIENT_ID;
+    // Toggle to enable/disable PayPal at runtime
+    const ENABLE_PAYPAL = process.env.REACT_APP_ENABLE_PAYPAL === 'true';
 
     useEffect(() => {
-        // Only load PayPal SDK if Client ID is configured
+        // Only load PayPal SDK if Client ID is configured and PayPal enabled
+        if (!ENABLE_PAYPAL) {
+            console.log('PayPal is disabled via REACT_APP_ENABLE_PAYPAL');
+            setIsLoading(false);
+            return;
+        }
+
         if (!PAYPAL_CLIENT_ID) {
             console.warn('PayPal Client ID not configured');
             setIsLoading(false);
@@ -96,7 +105,7 @@ const PayPalCheckout = ({
         };
 
         loadPayPalScript();
-    }, [PAYPAL_CLIENT_ID, onError]);
+    }, [PAYPAL_CLIENT_ID, onError, ENABLE_PAYPAL]);
 
     // Coupon handlers
     const handleCouponApplied = (couponData) => {
@@ -398,6 +407,91 @@ const PayPalCheckout = ({
     }, [paypalLoaded, disabled, finalPrice, termsAccepted, renderPayPalButton]);
 
     // Validate PayPal Client ID is configured (after all hooks)
+    if (!ENABLE_PAYPAL) {
+        // Render manual payment flow (coupons + summary + manual panel)
+        return (
+            <div className="paypal-checkout-container">
+                {/* Coupon Input Section */}
+                {user && (
+                    <CouponInput
+                        userId={user.uid}
+                        courseId={courseId}
+                        originalAmount={originalPrice}
+                        onCouponApplied={handleCouponApplied}
+                        onCouponRemoved={handleCouponRemoved}
+                        disabled={disabled}
+                    />
+                )}
+
+                <div className="payment-summary">
+                    <h4>Payment Summary</h4>
+                    <div className="payment-details">
+                        <div className="payment-item">
+                            <span>Course:</span>
+                            <span>{courseTitle}</span>
+                        </div>
+                        {appliedCoupon && (
+                            <>
+                                <div className="payment-item">
+                                    <span>Original Price:</span>
+                                    <span>${originalPrice.toFixed(2)}</span>
+                                </div>
+                                <div className="payment-item discount-item">
+                                    <span>Discount ({appliedCoupon.couponCode}):</span>
+                                    <span>-${appliedCoupon.discountAmount.toFixed(2)}</span>
+                                </div>
+                            </>
+                        )}
+                        <div className="payment-item total">
+                            <span>Total:</span>
+                            <span>${finalPrice.toFixed(2)}</span>
+                        </div>
+                        {appliedCoupon && appliedCoupon.savings > 0 && (
+                            <div className="savings-info">
+                                You save ${appliedCoupon.savings.toFixed(2)}!
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Terms and Conditions Section */}
+                <div className="terms-conditions-section">
+                    <div className="terms-checkbox-container">
+                        <label className="terms-checkbox-label">
+                            <input
+                                type="checkbox"
+                                checked={termsAccepted}
+                                onChange={(e) => setTermsAccepted(e.target.checked)}
+                                className="terms-checkbox"
+                            />
+                            <span className="checkmark"></span>
+                            <span className="terms-text">
+                                I agree to the <button type="button" className="terms-link" onClick={() => setShowTermsModal(true)}>Terms and Conditions</button> and <button type="button" className="terms-link" onClick={() => setShowPrivacyModal(true)}>Privacy Policy</button>
+                            </span>
+                        </label>
+                    </div>
+                    {!termsAccepted && (
+                        <p className="terms-requirement">
+                            Please accept the Terms and Conditions to proceed with payment.
+                        </p>
+                    )}
+                </div>
+
+                <div style={{ marginTop: 12 }}>
+                    <ManualPaymentPanel
+                        courseId={courseId}
+                        courseTitle={courseTitle}
+                        coursePrice={finalPrice}
+                        user={user}
+                        onSuccess={onSuccess}
+                        onError={onError}
+                        disabled={!termsAccepted}
+                    />
+                </div>
+            </div>
+        );
+    }
+
     if (!PAYPAL_CLIENT_ID) {
         return (
             <div style={{

@@ -1,0 +1,137 @@
+.manual-payment-panel {
+    background: linear-gradient(180deg, #071024 0%, #0b1220 100%);
+    color: #fff;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 6px 20px rgba(2, 6, 23, 0.6);
+}
+
+.manual-payment-panel h4 {
+    margin-top: 0;
+    color: #7ee7c7;
+    font-size: 18px;
+}
+
+.zelle-info {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.zelle-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.zelle-qr img {
+    width: 340px;
+    height: 340px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: #fff;
+    padding: 10px;
+}
+
+.zelle-payee {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #efe;
+    text-align: center;
+    font-size: 16px;
+}
+
+.zelle-details {
+    flex: 1;
+}
+
+.zelle-instruction {
+    margin: 0 0 8px 0;
+    color: #cfe;
+}
+
+.manual-payment-form {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.manual-payment-form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.manual-payment-form input,
+.manual-payment-form textarea {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: #071022;
+    color: #fff;
+}
+
+.manual-payment-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+@media (max-width: 900px) {
+    .zelle-info {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .zelle-qr img {
+        width: 260px;
+        height: 260px;
+    }
+
+    .manual-submit-row {
+        justify-content: center;
+    }
+}
+
+.manual-submit-row {
+    margin-top: 8px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.manual-message {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.manual-message.success {
+    background: rgba(29, 215, 135, 0.06);
+    color: #9ef0bf;
+    border: 1px solid rgba(29, 215, 135, 0.12);
+}
+
+.manual-message.error {
+    background: rgba(255, 83, 83, 0.06);
+    color: #ffb3b3;
+    border: 1px solid rgba(255, 83, 83, 0.08);
+}
+
+@media (max-width: 640px) {
+    .zelle-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .zelle-qr img {
+        width: 180px;
+        height: 180px;
+    }
+
+    .manual-submit-row {
+        justify-content: center;
+    }
+}
