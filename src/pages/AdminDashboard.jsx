@@ -6,6 +6,7 @@ import { isUserAdmin } from '../services/roleService';
 import AdminRoleManager from '../components/AdminRoleManager';
 import AdminOverview from '../components/AdminOverview';
 import AdminPayments from '../components/AdminPayments';
+import AdminManualPayments from '../components/AdminManualPayments';
 import AdminEnrollments from '../components/AdminEnrollments';
 import AdminEmailTracking from '../components/AdminEmailTracking';
 import AdminCouponManager from '../components/AdminCouponManager';
@@ -101,6 +102,12 @@ const AdminDashboard = () => {
                     💳 Payments
                 </button>
                 <button
+                    onClick={() => setActiveTab('manualPayments')}
+                    className={`admin-tab-button ${activeTab === 'manualPayments' ? 'active' : ''}`}
+                >
+                    🧾 Manual Payments
+                </button>
+                <button
                     onClick={() => setActiveTab('enrollments')}
                     className={`admin-tab-button ${activeTab === 'enrollments' ? 'active' : ''}`}
                 >
@@ -147,6 +154,7 @@ const AdminDashboard = () => {
             <div className="admin-content">
                 {activeTab === 'overview' && <AdminOverview />}
                 {activeTab === 'payments' && <AdminPayments />}
+                {activeTab === 'manualPayments' && <AdminManualPayments />}
                 {activeTab === 'enrollments' && <AdminEnrollments />}
                 {activeTab === 'emails' && <AdminEmailTracking />}
                 {activeTab === 'coupons' && <AdminCouponManager />}

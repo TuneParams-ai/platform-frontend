@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useUserRole } from '../hooks/useUserRole';
+import { useAuth } from '../hooks/useAuth';
 import { manualEnrollUser } from '../services/paymentService';
 import { sendEnrollmentConfirmationEmail } from '../services/emailService';
 
@@ -25,6 +26,8 @@ const AdminManualPayments = () => {
         loadPending();
     }, [isAdminUser]);
 
+    const { user } = useAuth();
+
     const verifyAndEnroll = async (payment) => {
         try {
             // Expect payment.userId or try to find by payerEmail (not implemented here)
@@ -34,7 +37,7 @@ const AdminManualPayments = () => {
             }
 
             // Enroll user using existing admin function
-            const adminUserId = 'admin';
+            const adminUserId = user?.uid || 'admin';
             const enrollRes = await manualEnrollUser(payment.userId, payment.courseId, adminUserId, null, `Verified manual payment ${payment.transactionId || ''}`);
 
             if (!enrollRes.success) {
