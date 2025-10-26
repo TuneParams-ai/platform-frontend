@@ -53,29 +53,41 @@ const CourseDetail = () => {
     // Load next batch
     useEffect(() => {
         const loadNextBatch = async () => {
-            if (courseId && !hasAccess) {
-                const batch = await getNextAvailableBatch(courseId);
-                setNextBatch(batch);
+            if (courseId && courseData && !coursesLoading) {
+                try {
+                    const batch = await getNextAvailableBatch(courseId);
+                    setNextBatch(batch);
+                } catch (error) {
+                    console.error('Error loading next batch:', error);
+                    // Fallback to course batches if available
+                    if (courseData.batches && courseData.batches.length > 0) {
+                        const availableBatch = courseData.batches.find(
+                            batch => batch.status === 'active' || batch.status === 'upcoming'
+                        );
+                        setNextBatch(availableBatch || courseData.batches[courseData.batches.length - 1]);
+                    }
+                }
             }
         };
         loadNextBatch();
-    }, [courseId, hasAccess]);
+    }, [courseId, courseData, coursesLoading]);
 
     // Load curriculum
     useEffect(() => {
         const loadCurriculum = async () => {
-            if (courseId) {
+            if (courseId && courseData && !coursesLoading) {
                 try {
                     const curriculumData = await getCourseCurriculum(courseId);
                     setCurriculum(curriculumData || []);
                 } catch (error) {
                     console.error('Error loading curriculum:', error);
-                    setCurriculum([]);
+                    // Fallback to curriculum in course data
+                    setCurriculum(courseData.curriculum || []);
                 }
             }
         };
         loadCurriculum();
-    }, [courseId]);
+    }, [courseId, courseData, coursesLoading]);
 
     // Reviews
     // Note: Reviews handling moved to ReviewsSection component
@@ -211,12 +223,33 @@ const CourseDetail = () => {
         if (isComingSoon(courseData) && (value === "TBD" || value === "N/A" || value === null || value === 0)) {
             return "Coming Soon";
         }
-        return value ? value : defaultValue;
+        return value || defaultValue;
     };
 
     // Get current enrollment count from dynamic stats
     // const currentEnrollments = statsLoading ? (courseData.students || 0) : stats.enrollmentCount;
     const comingSoon = isComingSoon(courseData);
+
+    // Show loading state while courses are being fetched
+    if (coursesLoading) {
+        return (
+            <div className="course-detail-container">
+                <div className="course-detail-header">
+                    <div className="course-hero">
+                        <div className="course-hero-content">
+                            <div className="course-icon-large">⏳</div>
+                            <div className="course-info">
+                                <h1 className="course-detail-title">Loading Course...</h1>
+                                <p className="course-detail-description">
+                                    Please wait while we fetch the course information.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     // If course not found, show course not found message
     if (!courseData) {
@@ -472,16 +505,21 @@ const CourseDetail = () => {
                                     })()
                                 )} */}
                                 {/* Only show next batch info for non-enrolled users */}
-                                {!hasAccess && !accessLoading && nextBatch && !comingSoon && (
+                                {!hasAccess && !accessLoading && nextBatch && nextBatch.startDate && !comingSoon && (
                                     <div className="next-batch-info">
                                         <span className="next-batch-label">Next Batch Starts:</span>
                                         <span className="next-batch-date">
                                             {(() => {
-                                                const [year, month, day] = nextBatch.startDate.split('-');
-                                                const date = new Date(year, month - 1, day);
-                                                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                                                    'July', 'August', 'September', 'October', 'November', 'December'];
-                                                return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+                                                try {
+                                                    const [year, month, day] = nextBatch.startDate.split('-');
+                                                    const date = new Date(year, month - 1, day);
+                                                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                                                        'July', 'August', 'September', 'October', 'November', 'December'];
+                                                    return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+                                                } catch (error) {
+                                                    console.error('Error formatting batch date:', error);
+                                                    return nextBatch.startDate;
+                                                }
                                             })()}
                                         </span>
                                     </div>
@@ -543,10 +581,12 @@ const CourseDetail = () => {
                             <h2>Course Content</h2>
                             {curriculum && curriculum.length > 0 ? (
                                 <CurriculumSection curriculum={curriculum} />
+                            ) : courseData && courseData.curriculum && courseData.curriculum.length > 0 ? (
+                                <CurriculumSection curriculum={courseData.curriculum} />
                             ) : (
                                 <div className="na-message">
                                     <p>Detailed curriculum information is not available at this time.</p>
-                                    <p>Course details coming soon</p>
+                                    <p>Course details coming soon!</p>
                                 </div>
                             )}
                         </section>
@@ -596,12 +636,17 @@ const CourseDetail = () => {
                                     <strong>Available Seats:</strong> {comingSoon ? "Coming Soon" : `${currentEnrollments}/${displayValue(courseData.maxCapacity)}`}
                                 </div> */}
                                 <div className="info-item">
-                                    <strong>Next Batch:</strong> {nextBatch ? (() => {
-                                        const [year, month, day] = nextBatch.startDate.split('-');
-                                        const date = new Date(year, month - 1, day);
-                                        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                                        return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+                                    <strong>Next Batch:</strong> {nextBatch && nextBatch.startDate ? (() => {
+                                        try {
+                                            const [year, month, day] = nextBatch.startDate.split('-');
+                                            const date = new Date(year, month - 1, day);
+                                            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                                            return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+                                        } catch (error) {
+                                            console.error('Error formatting batch date:', error);
+                                            return nextBatch.startDate;
+                                        }
                                     })() : "N/A"}
                                 </div>
                             </div>
