@@ -15,6 +15,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { useCourseAccess } from '../hooks/useCourseAccess';
 import { useUserRole } from '../hooks/useUserRole';
+import VideoLibrary from '../components/VideoLibrary';
 import '../styles/course-dashboard.css';
 
 const CourseDashboard = () => {
@@ -450,6 +451,12 @@ const CourseDashboard = () => {
                                 </div>
                             )}
                         </div>
+
+                        {/* Video Library Section */}
+                        <VideoLibrary
+                            videos={selectedBatch.videos || []}
+                            batchNumber={selectedBatch.batchNumber}
+                        />
 
                         {/* Batch Information - Admin Only */}
                         {isAdminUser && (

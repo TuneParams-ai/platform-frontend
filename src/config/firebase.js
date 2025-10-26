@@ -4,6 +4,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 // Your Firebase configuration - using only environment variables
 const firebaseConfig = {
@@ -24,12 +25,13 @@ const requiredEnvVars = [
 ];
 
 const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-if (missingVars.length > 0) {}
+if (missingVars.length > 0) { }
 
 // Initialize Firebase
 let app;
 let auth;
 let db;
+let storage;
 let googleProvider;
 let isFirebaseConfigured = false;
 
@@ -46,6 +48,7 @@ try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
+    storage = getStorage(app);
     googleProvider = new GoogleAuthProvider();
 
     // Configure Google provider
@@ -53,12 +56,14 @@ try {
         prompt: 'select_account'
     });
 
-    isFirebaseConfigured = true;} catch (error) {// Create mock objects to prevent app crashes
+    isFirebaseConfigured = true;
+} catch (error) {// Create mock objects to prevent app crashes
     auth = null;
     db = null;
+    storage = null;
     googleProvider = null;
     isFirebaseConfigured = false;
 }
 
-export { auth, db, googleProvider, isFirebaseConfigured };
+export { auth, db, storage, googleProvider, isFirebaseConfigured };
 export default app;

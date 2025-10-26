@@ -54,12 +54,20 @@ export const coursesData = [
                     zoom: "https://zoom.us/j/batch1-faai",
                     discord: "https://discord.gg/batch1-faai"
                 },
-                schedule: []
+                schedule: [],
+                videos: [
+                    // Simple YouTube Video Example
+                    // {
+                    //     title: "Week 1 - Introduction to Machine Learning",
+                    //     youtubeUrl: "https://www.youtube.com/watch?v=YOUR_VIDEO_ID",
+                    //     thumbnail: null // Auto-fetched from YouTube
+                    // }
+                ]
             },
             {
                 batchNumber: 2,
                 batchName: "Beta",
-                startDate: "2025-10-18",
+                startDate: "2025-10-25",
                 endDate: "2026-01-15",
                 status: "active",
                 maxCapacity: 30,
@@ -68,7 +76,14 @@ export const coursesData = [
                     zoom: "https://zoom.us/j/batch2-faai",
                     discord: "https://discord.gg/batch2-faai"
                 },
-                schedule: []
+                schedule: [],
+                videos: [
+                    {
+                        title: "Week 1 - Introduction to AI & ML Foundations",
+                        youtubeUrl: "https://www.youtube.com/watch?v=qYNweeDHiyU&t=71s",
+                        thumbnail: null
+                    }
+                ]
             }
         ],
         curriculum: [
@@ -326,7 +341,8 @@ export const coursesData = [
                     zoom: "TBD",
                     discord: "TBD"
                 },
-                schedule: [] // Empty schedule for courses not yet scheduled
+                schedule: [], // Empty schedule for courses not yet scheduled
+                videos: []
             }
         ],
         curriculum: [
