@@ -9,7 +9,8 @@ import { deleteReviewByIdAsAdmin } from '../services/reviewService';
 const ReviewsSection = ({ courseId, courseTitle }) => {
     const { user, loading: authLoading } = useAuth();
     const { isAdminUser } = useUserRole();
-    const { reviews, loading: reviewsLoading, error: reviewsError } = useReviews(courseId, { limit: 20 });
+    const [reviewLimit, setReviewLimit] = React.useState(10);
+    const { reviews, loading: reviewsLoading, error: reviewsError } = useReviews(courseId, { limit: reviewLimit });
 
     const avgRating = React.useMemo(() => {
         if (!reviews?.length) return null;
@@ -38,6 +39,10 @@ const ReviewsSection = ({ courseId, courseTitle }) => {
             alert('Failed to delete review. Please try again.');
         }
     }, [isAdminUser]);
+
+    const handleLoadMore = () => {
+        setReviewLimit(prev => prev + 10);
+    };
 
     return (
         <section className="course-section" id="reviews-section">
@@ -80,6 +85,17 @@ const ReviewsSection = ({ courseId, courseTitle }) => {
                     isCurrentUserAdmin={isAdminUser}
                     onAdminDelete={handleAdminDeleteReview}
                 />
+                {!reviewsLoading && !reviewsError && reviews.length > 0 && reviews.length % 10 === 0 && (
+                    <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                        <button
+                            onClick={handleLoadMore}
+                            className="btn btn-secondary"
+                            style={{ padding: '0.75rem 1.5rem' }}
+                        >
+                            Load More Reviews
+                        </button>
+                    </div>
+                )}
             </div>
         </section>
     );

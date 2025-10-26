@@ -43,26 +43,25 @@ const CourseManagement = () => {
 
             <div className="course-management-content">
                 {/* Sidebar - Course List */}
-                <div className="course-sidebar">
+                <div className="course-management-sidebar">
                     <div className="sidebar-header">
                         <h3>Courses ({courses.length})</h3>
                         <button className="btn-primary">+ New Course</button>
                     </div>
 
-                    <div className="course-list">
-                        {courses.map(course => (
-                            <div
-                                key={course.id}
-                                className={`course-item ${selectedCourse?.id === course.id ? 'active' : ''}`}
-                                onClick={() => setSelectedCourse(course)}
-                            >
-                                <div className="course-icon">{course.icon}</div>
-                                <div className="course-info">
-                                    <h4>{course.title}</h4>
-                                    <span className="course-id">{course.id}</span>
-                                </div>
+                    <div className="course-list">{courses.map(course => (
+                        <div
+                            key={course.id}
+                            className={`course-item ${selectedCourse?.id === course.id ? 'active' : ''}`}
+                            onClick={() => setSelectedCourse(course)}
+                        >
+                            <div className="course-icon">{course.icon}</div>
+                            <div className="course-info">
+                                <h4>{course.title}</h4>
+                                <span className="course-id">{course.id}</span>
                             </div>
-                        ))}
+                        </div>
+                    ))}
                     </div>
                 </div>
 

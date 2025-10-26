@@ -263,8 +263,6 @@
     gap: 25px;
     min-width: 0;
     /* Ensure sidebar can shrink */
-    overflow: hidden;
-    /* Prevent sidebar content from overflowing */
     max-width: 100%;
     /* Ensure sidebar doesn't exceed container */
 }
@@ -284,11 +282,11 @@
 }
 
 .course-sidebar .review-comment:not(.expanded) {
-    max-height: 120px;
+    max-height: 180px;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
+    -webkit-line-clamp: 7;
+    line-clamp: 7;
     -webkit-box-orient: vertical;
 }
 
@@ -302,7 +300,13 @@
 
 .course-reviews-list {
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
+}
+
+/* Load more reviews button in sidebar */
+.course-sidebar .btn-secondary {
+    width: 100%;
+    max-width: 100%;
 }
 
 /* Course detail review expand button */
@@ -1051,9 +1055,9 @@
     }
 
     .course-sidebar .review-comment:not(.expanded) {
-        max-height: 100px;
-        -webkit-line-clamp: 4;
-        line-clamp: 4;
+        max-height: 150px;
+        -webkit-line-clamp: 6;
+        line-clamp: 6;
     }
 
     .course-sidebar .review-expand-btn {
