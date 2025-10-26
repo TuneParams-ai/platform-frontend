@@ -14,6 +14,7 @@ import AdminCouponManager from '../components/AdminCouponManager';
 import AdminProgressManager from '../components/AdminProgressManager';
 import AdminSearch from '../components/AdminSearch';
 import AdminAuditLogs from '../components/AdminAuditLogs';
+import AdminBatchMigration from '../components/AdminBatchMigration';
 import '../styles/admin-dashboard.css';
 
 const AdminDashboard = () => {
@@ -161,6 +162,12 @@ const AdminDashboard = () => {
                 >
                     📋 Audit Logs
                 </button>
+                <button
+                    onClick={() => setActiveTab('migration')}
+                    className={`admin-tab-button ${activeTab === 'migration' ? 'active' : ''}`}
+                >
+                    🔧 Batch Migration
+                </button>
             </div>
 
             <div className="admin-content">
@@ -174,6 +181,7 @@ const AdminDashboard = () => {
                 {activeTab === 'search' && <AdminSearch />}
                 {activeTab === 'roles' && <AdminRoleManager />}
                 {activeTab === 'audit' && <AdminAuditLogs />}
+                {activeTab === 'migration' && <AdminBatchMigration />}
             </div>
         </div>
     );

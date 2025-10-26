@@ -4,6 +4,7 @@ import '../styles/batch-manager.css';
 
 const BatchManager = ({ course, batch, onClose, onSave }) => {
     const isEditMode = !!batch;
+    const [batchId, setBatchId] = useState(null); // Store the Firestore document ID
     const [formData, setFormData] = useState({
         batchNumber: 1,
         batchName: '',
@@ -22,6 +23,7 @@ const BatchManager = ({ course, batch, onClose, onSave }) => {
 
     useEffect(() => {
         if (batch) {
+            setBatchId(batch.id); // Store the Firestore document ID
             setFormData({
                 batchNumber: batch.batchNumber || 1,
                 batchName: batch.batchName || '',
@@ -36,6 +38,7 @@ const BatchManager = ({ course, batch, onClose, onSave }) => {
                 }
             });
         } else {
+            setBatchId(null);
             // Auto-generate batch number for new batch
             const nextBatchNumber = (course.batches?.length || 0) + 1;
             setFormData(prev => ({ ...prev, batchNumber: nextBatchNumber }));
@@ -68,7 +71,8 @@ const BatchManager = ({ course, batch, onClose, onSave }) => {
 
         try {
             if (isEditMode) {
-                await updateBatch(course.id, formData.batchNumber, formData);
+                // Use the stored batchId (Firestore document ID) for updates
+                await updateBatch(course.id, batchId, formData);
             } else {
                 await createBatch(course.id, {
                     ...formData,
@@ -94,7 +98,8 @@ const BatchManager = ({ course, batch, onClose, onSave }) => {
         setError(null);
 
         try {
-            await deleteBatch(course.id, formData.batchNumber);
+            // Use the stored batchId (Firestore document ID) for deletion
+            await deleteBatch(course.id, batchId);
             onSave();
             onClose();
         } catch (err) {

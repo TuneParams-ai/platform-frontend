@@ -6,8 +6,6 @@ import {
     addDoc,
     updateDoc,
     deleteDoc,
-    query,
-    orderBy,
     serverTimestamp,
     writeBatch
 } from 'firebase/firestore';
@@ -354,16 +352,24 @@ export const deleteBatch = async (courseId, batchId) => {
 export const getBatchVideos = async (courseId, batchId) => {
     try {
         const videosRef = collection(db, 'courses', courseId, 'batches', batchId, 'videos');
-        const q = query(videosRef, orderBy('order', 'asc'));
-        const snapshot = await getDocs(q);
 
-        return snapshot.docs.map(doc => ({
+        // Fetch without ordering to avoid index requirements
+        const snapshot = await getDocs(videosRef);
+
+        const videos = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
+
+        // Sort in memory by order field
+        videos.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        return videos;
     } catch (error) {
         console.error('Error getting videos:', error);
-        throw error;
+        // Return empty array instead of throwing to prevent breaking the parent function
+        console.warn('Returning empty videos array for batch:', batchId);
+        return [];
     }
 };
 
@@ -441,16 +447,28 @@ export const deleteBatchVideo = async (courseId, batchId, videoId) => {
 export const getBatchSchedule = async (courseId, batchId) => {
     try {
         const scheduleRef = collection(db, 'courses', courseId, 'batches', batchId, 'schedule');
-        const q = query(scheduleRef, orderBy('date', 'asc'), orderBy('time', 'asc'));
-        const snapshot = await getDocs(q);
 
-        return snapshot.docs.map(doc => ({
+        // Fetch without ordering to avoid index requirements
+        const snapshot = await getDocs(scheduleRef);
+
+        const schedule = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
+
+        // Sort in memory by date and time
+        schedule.sort((a, b) => {
+            const dateCompare = (a.date || '').localeCompare(b.date || '');
+            if (dateCompare !== 0) return dateCompare;
+            return (a.time || '').localeCompare(b.time || '');
+        });
+
+        return schedule;
     } catch (error) {
         console.error('Error getting schedule:', error);
-        throw error;
+        // Return empty array instead of throwing to prevent breaking the parent function
+        console.warn('Returning empty schedule array for batch:', batchId);
+        return [];
     }
 };
 
@@ -527,15 +545,15 @@ export const deleteBatchSchedule = async (courseId, batchId, scheduleId) => {
 export const getCompleteCourse = async (courseId) => {
     try {
         console.log('🔍 getCompleteCourse called for:', courseId);
-        
+
         console.log('📚 Fetching base course data...');
         const course = await getCourse(courseId);
         console.log('✅ Base course:', course);
-        
+
         console.log('📦 Fetching batches...');
         const batches = await getCourseBatches(courseId);
         console.log('✅ Batches fetched:', batches);
-        
+
         console.log('📖 Fetching curriculum...');
         const curriculum = await getCourseCurriculum(courseId);
         console.log('✅ Curriculum fetched:', curriculum);
@@ -544,23 +562,33 @@ export const getCompleteCourse = async (courseId) => {
         console.log('🎥 Fetching videos and schedules for each batch...');
         const batchesWithDetails = await Promise.all(
             batches.map(async (batch) => {
-                console.log('Processing batch:', batch.id);
-                const videos = await getBatchVideos(courseId, batch.id);
-                const schedule = await getBatchSchedule(courseId, batch.id);
-                return {
-                    ...batch,
-                    videos,
-                    schedule
-                };
+                try {
+                    console.log('Processing batch:', batch.id);
+                    const videos = await getBatchVideos(courseId, batch.id);
+                    const schedule = await getBatchSchedule(courseId, batch.id);
+                    return {
+                        ...batch,
+                        videos,
+                        schedule
+                    };
+                } catch (batchError) {
+                    console.error(`Error processing batch ${batch.id}:`, batchError);
+                    // Return batch without videos/schedule if there's an error
+                    return {
+                        ...batch,
+                        videos: [],
+                        schedule: []
+                    };
+                }
             })
         );
-        
+
         const completeCourse = {
             ...course,
             batches: batchesWithDetails,
             curriculum
         };
-        
+
         console.log('✅ Complete course data:', completeCourse);
         return completeCourse;
     } catch (error) {

@@ -60,16 +60,27 @@ const CourseManagement = () => {
     const loadCourseDetails = async (courseId) => {
         try {
             setLoadingCourse(true);
-            console.log('Loading complete course data for:', courseId);
+            console.log('🔄 Loading complete course data for:', courseId);
             const completeCourse = await getCompleteCourse(courseId);
-            console.log('Complete course loaded:', completeCourse);
-            console.log('Batches:', completeCourse?.batches);
-            console.log('Curriculum:', completeCourse?.curriculum);
+            console.log('✅ Complete course loaded:', completeCourse);
+            console.log('📦 Batches:', completeCourse?.batches);
+            console.log('📖 Curriculum:', completeCourse?.curriculum);
+
+            if (!completeCourse.batches || completeCourse.batches.length === 0) {
+                console.warn('⚠️ No batches found in course data!');
+            }
+
             setSelectedCourse(completeCourse);
         } catch (err) {
-            console.error('Error loading course details:', err);
+            console.error('❌ Error loading course details:', err);
+            console.error('Error details:', {
+                message: err.message,
+                code: err.code,
+                stack: err.stack
+            });
             // Fallback to the basic course data from the list
             const basicCourse = courses.find(c => c.id === courseId);
+            console.warn('⚠️ Using fallback basic course data:', basicCourse);
             setSelectedCourse(basicCourse);
         } finally {
             setLoadingCourse(false);
@@ -246,7 +257,7 @@ const CourseManagement = () => {
                                         </div>
 
                                         <div className="batches-list">{selectedCourse.batches?.map(batch => (
-                                            <div key={batch.batchNumber} className="batch-card">
+                                            <div key={batch.id || batch.batchNumber} className="batch-card">
                                                 <div className="batch-header">
                                                     <h4>Batch {batch.batchNumber}: {batch.batchName}</h4>
                                                     <span className={`status-badge status-${batch.status}`}>
