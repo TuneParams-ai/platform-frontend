@@ -1,51 +1,74 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useUserRole } from '../hooks/useUserRole';
 import { useAuth } from '../hooks/useAuth';
 import { manualEnrollUser } from '../services/paymentService';
 import { sendEnrollmentConfirmationEmail } from '../services/emailService';
+import '../styles/admin-manual-payments.css';
+
+const STATUS_TABS = {
+    PENDING: 'pending_manual_verification',
+    VERIFIED: 'verified_and_enrolled',
+    ARCHIVED: 'archived',
+    REJECTED: 'rejected'
+};
 
 const AdminManualPayments = () => {
     const { isAdminUser } = useUserRole();
+    const { user } = useAuth();
+    const [activeTab, setActiveTab] = useState(STATUS_TABS.PENDING);
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!isAdminUser) return;
+        loadPayments(activeTab);
+    }, [isAdminUser, activeTab]);
 
-        const loadPending = async () => {
-            setLoading(true);
-            const q = query(collection(db, 'manual_payments'), where('status', '==', 'pending_manual_verification'));
+    const loadPayments = async (status) => {
+        setLoading(true);
+        try {
+            const q = query(
+                collection(db, 'manual_payments'),
+                where('status', '==', status),
+                orderBy('createdAt', 'desc')
+            );
             const snap = await getDocs(q);
             const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             setPayments(rows);
-            setLoading(false);
-        };
-
-        loadPending();
-    }, [isAdminUser]);
-
-    const { user } = useAuth();
+        } catch (error) {
+            console.error('Error loading payments:', error);
+            // If orderBy fails (missing index), try without ordering
+            const q = query(collection(db, 'manual_payments'), where('status', '==', status));
+            const snap = await getDocs(q);
+            const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            setPayments(rows);
+        }
+        setLoading(false);
+    };
 
     const verifyAndEnroll = async (payment) => {
         try {
-            // Expect payment.userId or try to find by payerEmail (not implemented here)
             if (!payment.userId) {
                 alert('No userId present on payment; please ensure the payer has an account before verifying.');
                 return;
             }
 
-            // Enroll user using existing admin function
             const adminUserId = user?.uid || 'admin';
-            const enrollRes = await manualEnrollUser(payment.userId, payment.courseId, adminUserId, null, `Verified manual payment ${payment.transactionId || ''}`);
+            const enrollRes = await manualEnrollUser(
+                payment.userId,
+                payment.courseId,
+                adminUserId,
+                null,
+                `Verified manual payment ${payment.transactionId || ''}`
+            );
 
             if (!enrollRes.success) {
                 alert(`Enrollment failed: ${enrollRes.error}`);
                 return;
             }
 
-            // Send confirmation email
             const emailData = {
                 userName: payment.payerName || payment.payerEmail?.split('@')[0] || 'Student',
                 userEmail: payment.payerEmail,
@@ -65,10 +88,9 @@ const AdminManualPayments = () => {
 
             const emailRes = await sendEnrollmentConfirmationEmail(emailData);
 
-            // Update payment doc
             const mpRef = doc(db, 'manual_payments', payment.id);
             await updateDoc(mpRef, {
-                status: 'verified_and_enrolled',
+                status: STATUS_TABS.VERIFIED,
                 enrollmentId: enrollRes.enrollmentId,
                 enrollmentBatch: enrollRes.batchNumber,
                 emailSent: emailRes.success || false,
@@ -77,12 +99,68 @@ const AdminManualPayments = () => {
             });
 
             alert('Enrollment completed and email sent.');
-            // Refresh list
-            setPayments(prev => prev.filter(p => p.id !== payment.id));
-
+            loadPayments(activeTab);
         } catch (error) {
             console.error('Verify error', error);
             alert('Verification failed: ' + (error.message || error));
+        }
+    };
+
+    const updatePaymentStatus = async (payment, newStatus, notes = '') => {
+        try {
+            const mpRef = doc(db, 'manual_payments', payment.id);
+            const adminUserId = user?.uid || 'admin';
+
+            const updateData = {
+                status: newStatus,
+                lastModifiedBy: adminUserId,
+                lastModifiedAt: new Date()
+            };
+
+            if (notes) {
+                updateData.adminNotes = notes;
+            }
+
+            await updateDoc(mpRef, updateData);
+            alert('Payment status updated.');
+            loadPayments(activeTab);
+        } catch (error) {
+            console.error('Update error', error);
+            alert('Update failed: ' + (error.message || error));
+        }
+    };
+
+    const handleArchive = (payment) => {
+        const notes = prompt('Archive notes (optional):');
+        if (notes !== null) { // null means cancelled
+            updatePaymentStatus(payment, STATUS_TABS.ARCHIVED, notes);
+        }
+    };
+
+    const handleReject = (payment) => {
+        const reason = prompt('Rejection reason (required):');
+        if (reason && reason.trim()) {
+            updatePaymentStatus(payment, STATUS_TABS.REJECTED, reason);
+        } else if (reason !== null) {
+            alert('Please provide a rejection reason.');
+        }
+    };
+
+    const handleUnarchive = (payment) => {
+        updatePaymentStatus(payment, STATUS_TABS.PENDING, 'Unarchived');
+    };
+
+    const handleUnreject = (payment) => {
+        updatePaymentStatus(payment, STATUS_TABS.PENDING, 'Unreject - moved back to pending');
+    };
+
+    const formatDate = (timestamp) => {
+        if (!timestamp) return 'N/A';
+        try {
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleString();
+        } catch {
+            return 'Invalid date';
         }
     };
 
@@ -90,24 +168,153 @@ const AdminManualPayments = () => {
         return <div>You do not have permission to view this page.</div>;
     }
 
-    if (loading) return <div>Loading pending manual payments...</div>;
-
     return (
-        <div>
-            <h3>Pending Manual Payments</h3>
-            {payments.length === 0 && <p>No pending manual payments.</p>}
-            <ul>
-                {payments.map(p => (
-                    <li key={p.id} style={{ marginBottom: 12, padding: 8, border: '1px solid rgba(255,255,255,0.04)' }}>
-                        <div><strong>{p.courseTitle}</strong> — {p.amount ? `$${p.amount}` : 'N/A'}</div>
-                        <div>Transaction: {p.transactionId}</div>
-                        <div>Payer: {p.payerName} ({p.payerEmail})</div>
-                        <div style={{ marginTop: 8 }}>
-                            <button className="btn btn-primary" onClick={() => verifyAndEnroll(p)}>Verify & Enroll</button>
+        <div className="admin-manual-payments">
+            <h3>Manual Payments Management</h3>
+
+            <div className="payment-status-tabs">
+                <button
+                    className={`status-tab ${activeTab === STATUS_TABS.PENDING ? 'active' : ''}`}
+                    onClick={() => setActiveTab(STATUS_TABS.PENDING)}
+                >
+                    ⏳ Pending ({payments.filter(p => p.status === STATUS_TABS.PENDING).length})
+                </button>
+                <button
+                    className={`status-tab ${activeTab === STATUS_TABS.VERIFIED ? 'active' : ''}`}
+                    onClick={() => setActiveTab(STATUS_TABS.VERIFIED)}
+                >
+                    ✅ Verified & Enrolled
+                </button>
+                <button
+                    className={`status-tab ${activeTab === STATUS_TABS.ARCHIVED ? 'active' : ''}`}
+                    onClick={() => setActiveTab(STATUS_TABS.ARCHIVED)}
+                >
+                    📦 Archived
+                </button>
+                <button
+                    className={`status-tab ${activeTab === STATUS_TABS.REJECTED ? 'active' : ''}`}
+                    onClick={() => setActiveTab(STATUS_TABS.REJECTED)}
+                >
+                    ❌ Rejected
+                </button>
+            </div>
+
+            {loading ? (
+                <div className="loading-state">Loading payments...</div>
+            ) : (
+                <div className="payments-list">
+                    {payments.length === 0 ? (
+                        <p className="no-payments">No {activeTab.replace('_', ' ')} payments.</p>
+                    ) : (
+                        <div className="payment-cards">
+                            {payments.map(p => (
+                                <div key={p.id} className="payment-card">
+                                    <div className="payment-header">
+                                        <strong>{p.courseTitle}</strong>
+                                        <span className="payment-amount">
+                                            {p.amount ? `$${p.amount}` : 'N/A'}
+                                        </span>
+                                    </div>
+
+                                    <div className="payment-details">
+                                        <div className="detail-row">
+                                            <span className="label">Transaction ID:</span>
+                                            <span className="value">{p.transactionId || 'N/A'}</span>
+                                        </div>
+                                        <div className="detail-row">
+                                            <span className="label">Payer:</span>
+                                            <span className="value">{p.payerName}</span>
+                                        </div>
+                                        <div className="detail-row">
+                                            <span className="label">Email:</span>
+                                            <span className="value">{p.payerEmail}</span>
+                                        </div>
+                                        <div className="detail-row">
+                                            <span className="label">Submitted:</span>
+                                            <span className="value">{formatDate(p.createdAt)}</span>
+                                        </div>
+                                        {p.notes && (
+                                            <div className="detail-row">
+                                                <span className="label">User Notes:</span>
+                                                <span className="value">{p.notes}</span>
+                                            </div>
+                                        )}
+                                        {p.adminNotes && (
+                                            <div className="detail-row admin-notes">
+                                                <span className="label">Admin Notes:</span>
+                                                <span className="value">{p.adminNotes}</span>
+                                            </div>
+                                        )}
+                                        {p.enrollmentId && (
+                                            <div className="detail-row">
+                                                <span className="label">Enrollment ID:</span>
+                                                <span className="value">{p.enrollmentId}</span>
+                                            </div>
+                                        )}
+                                        {p.verifiedAt && (
+                                            <div className="detail-row">
+                                                <span className="label">Verified:</span>
+                                                <span className="value">{formatDate(p.verifiedAt)}</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="payment-actions">
+                                        {activeTab === STATUS_TABS.PENDING && (
+                                            <>
+                                                <button
+                                                    className="btn btn-primary"
+                                                    onClick={() => verifyAndEnroll(p)}
+                                                    disabled={!p.userId}
+                                                    title={!p.userId ? 'No user ID - cannot auto-enroll' : ''}
+                                                >
+                                                    ✓ Verify & Enroll
+                                                </button>
+                                                <button
+                                                    className="btn btn-secondary"
+                                                    onClick={() => handleArchive(p)}
+                                                >
+                                                    📦 Archive
+                                                </button>
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={() => handleReject(p)}
+                                                >
+                                                    ✗ Reject
+                                                </button>
+                                            </>
+                                        )}
+                                        {activeTab === STATUS_TABS.VERIFIED && (
+                                            <button
+                                                className="btn btn-secondary"
+                                                onClick={() => handleArchive(p)}
+                                            >
+                                                📦 Archive
+                                            </button>
+                                        )}
+                                        {activeTab === STATUS_TABS.ARCHIVED && (
+                                            <button
+                                                className="btn btn-secondary"
+                                                onClick={() => handleUnarchive(p)}
+                                            >
+                                                ↩️ Restore to Pending
+                                            </button>
+                                        )}
+                                        {activeTab === STATUS_TABS.REJECTED && (
+                                            <button
+                                                className="btn btn-secondary"
+                                                onClick={() => handleUnreject(p)}
+                                            >
+                                                ↩️ Move to Pending
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    </li>
-                ))}
-            </ul>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
