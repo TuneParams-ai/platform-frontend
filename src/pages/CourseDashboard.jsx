@@ -12,6 +12,7 @@ import {
     hasAccessLinks,
     getAvailableAccessLinks
 } from '../data/coursesData';
+import { getCourseBatches } from '../services/courseManagementService';
 import { useAuth } from '../hooks/useAuth';
 import { useCourseAccess } from '../hooks/useCourseAccess';
 import { useUserRole } from '../hooks/useUserRole';
@@ -24,42 +25,56 @@ const CourseDashboard = () => {
     const { hasAccess, enrollment, loading: accessLoading } = useCourseAccess(courseId);
     const { isAdminUser, loading: roleLoading } = useUserRole();
     const [course, setCourse] = useState(null);
+    const [batches, setBatches] = useState([]);
     const [selectedBatch, setSelectedBatch] = useState(null);
     const [loading, setLoading] = useState(true);
     const [batchEnrollmentCounts, setBatchEnrollmentCounts] = useState({});
 
     useEffect(() => {
-        const foundCourse = findCourseById(courseId);
-        if (foundCourse) {
-            setCourse(foundCourse);
+        const loadCourseData = async () => {
+            try {
+                setLoading(true);
+                const foundCourse = await findCourseById(courseId);
+                if (foundCourse) {
+                    setCourse(foundCourse);
 
-            // For regular users: use their enrolled batch or default to first available
-            // For admins: show current active batch or first batch
-            if (!roleLoading && !accessLoading && !authLoading) {
-                if (isAdminUser) {
-                    // Admin can see all batches - set default to current batch
-                    const currentBatch = getCurrentBatch(foundCourse);
-                    const activeBatches = getActiveBatches(foundCourse);
-                    setSelectedBatch(currentBatch || (activeBatches.length > 0 ? activeBatches[0] : foundCourse.batches?.[0]));
-                } else if (enrollment) {
-                    // Regular user: find their enrolled batch
-                    const userBatch = foundCourse.batches?.find(batch => batch.batchNumber === enrollment.batchNumber);
-                    setSelectedBatch(userBatch);
-                } else {
-                    // For development: if no enrollment found, default to current active batch
-                    const currentBatch = getCurrentBatch(foundCourse);
-                    const activeBatches = getActiveBatches(foundCourse);
-                    setSelectedBatch(currentBatch || (activeBatches.length > 0 ? activeBatches[0] : foundCourse.batches?.[0]));
+                    // Load batches separately
+                    const courseBatches = await getCourseBatches(courseId);
+                    setBatches(courseBatches);
+
+                    // Set selected batch after batches are loaded
+                    if (!roleLoading && !accessLoading && !authLoading && courseBatches.length > 0) {
+                        if (isAdminUser) {
+                            // Admin can see all batches - set default to current batch
+                            const currentBatch = await getCurrentBatch(courseId);
+                            const activeBatches = await getActiveBatches(courseId);
+                            setSelectedBatch(currentBatch || activeBatches[0] || courseBatches[0]);
+                        } else if (enrollment) {
+                            // Regular user: find their enrolled batch
+                            const userBatch = courseBatches.find(batch => batch.batchNumber === enrollment.batchNumber);
+                            setSelectedBatch(userBatch || courseBatches[0]);
+                        } else {
+                            // For development: if no enrollment found, default to current active batch
+                            const currentBatch = await getCurrentBatch(courseId);
+                            const activeBatches = await getActiveBatches(courseId);
+                            setSelectedBatch(currentBatch || activeBatches[0] || courseBatches[0]);
+                        }
+                    }
                 }
+            } catch (error) {
+                console.error('Error loading course data:', error);
+            } finally {
+                setLoading(false);
             }
-        }
-        setLoading(false);
+        };
+
+        loadCourseData();
     }, [courseId, enrollment, isAdminUser, roleLoading, accessLoading, authLoading]);
 
     // Load enrollment counts for all batches
     useEffect(() => {
         const loadEnrollmentCounts = async () => {
-            if (!course) return;
+            if (!course || batches.length === 0) return;
 
             try {
                 // Get all enrollments for this course
@@ -72,7 +87,7 @@ const CourseDashboard = () => {
 
                 // Count enrollments by batch
                 const counts = {};
-                course.batches?.forEach(batch => {
+                batches.forEach(batch => {
                     // Handle different ways batch numbers might be stored
                     const batchEnrollments = enrollments.filter(e => {
                         return e.batchNumber === batch.batchNumber ||
@@ -95,7 +110,7 @@ const CourseDashboard = () => {
         };
 
         loadEnrollmentCounts();
-    }, [course, courseId]);
+    }, [course, batches, courseId]);
 
     // Show loading while checking authentication, access, and role
     if (loading || accessLoading || roleLoading || authLoading) {
@@ -293,7 +308,7 @@ const CourseDashboard = () => {
         );
     }
 
-    if (!course.batches || course.batches.length === 0) {
+    if (!batches || batches.length === 0) {
         return (
             <div className="course-dashboard">
                 <div className="dashboard-container">
@@ -327,7 +342,7 @@ const CourseDashboard = () => {
                     <div className="batch-selector">
                         <h2>Select Batch</h2>
                         <div className="batch-tabs">
-                            {course.batches.map((batch) => (
+                            {batches.map((batch) => (
                                 <button
                                     key={batch.batchNumber}
                                     className={`batch-tab ${selectedBatch?.batchNumber === batch.batchNumber ? 'active' : ''}`}
@@ -361,9 +376,9 @@ const CourseDashboard = () => {
                                 <div className="access-card zoom-card">
                                     <div className="card-icon">📹</div>
                                     <h3>Zoom Classroom</h3>
-                                    {getAvailableAccessLinks(selectedBatch).zoom ? (
+                                    {selectedBatch.classLinks?.zoom ? (
                                         <a
-                                            href={getAvailableAccessLinks(selectedBatch).zoom}
+                                            href={selectedBatch.classLinks.zoom}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="access-link"
@@ -378,9 +393,9 @@ const CourseDashboard = () => {
                                 <div className="access-card discord-card">
                                     <div className="card-icon">💬</div>
                                     <h3>Discord Community</h3>
-                                    {getAvailableAccessLinks(selectedBatch).discord ? (
+                                    {selectedBatch.classLinks?.discord ? (
                                         <a
-                                            href={getAvailableAccessLinks(selectedBatch).discord}
+                                            href={selectedBatch.classLinks.discord}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="access-link"

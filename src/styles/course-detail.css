@@ -1,4 +1,4 @@
-/* Course Detail Page Styles */
+﻿/* Course Detail Page Styles */
 
 .course-detail-container {
     min-height: calc(100vh - 80px);
@@ -263,6 +263,8 @@
     gap: 25px;
     min-width: 0;
     /* Ensure sidebar can shrink */
+    overflow: hidden;
+    /* Prevent sidebar content from overflowing */
     max-width: 100%;
     /* Ensure sidebar doesn't exceed container */
 }
@@ -282,11 +284,11 @@
 }
 
 .course-sidebar .review-comment:not(.expanded) {
-    max-height: 180px;
+    max-height: 120px;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 7;
-    line-clamp: 7;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
     -webkit-box-orient: vertical;
 }
 
@@ -300,13 +302,7 @@
 
 .course-reviews-list {
     max-width: 100%;
-    overflow: visible;
-}
-
-/* Load more reviews button in sidebar */
-.course-sidebar .btn-secondary {
-    width: 100%;
-    max-width: 100%;
+    overflow: hidden;
 }
 
 /* Course detail review expand button */
@@ -414,7 +410,7 @@
 }
 
 .outcomes-list li:before {
-    content: "✓";
+    content: "Γ£ô";
     color: var(--primary-color);
     font-weight: bold;
     position: absolute;
@@ -452,7 +448,7 @@
 }
 
 .section-header {
-    padding: 6px 10px;
+    padding: 12px 16px;
     cursor: pointer;
     user-select: none;
     transition: background-color 0.2s ease;
@@ -472,20 +468,20 @@
 .section-title-with-count {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     flex: 1;
 }
 
 .section-header h3 {
     color: var(--text-color);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin: 0;
     font-weight: 600;
 }
 
 .expand-icon {
     color: var(--primary-color);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     transition: transform 0.3s ease;
     font-weight: bold;
 }
@@ -496,18 +492,18 @@
 
 .section-description {
     color: var(--secondary-text-color);
-    font-size: 0.85rem;
-    margin: 2px 0 0 0;
-    line-height: 1.2;
+    font-size: 0.875rem;
+    margin: 6px 0 0 0;
+    line-height: 1.4;
 }
 
 .topic-count {
     background: rgba(29, 126, 153, 0.2);
     color: var(--primary-color);
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
     white-space: nowrap;
 }
 
@@ -773,7 +769,7 @@
 }
 
 .prerequisites-list li:before {
-    content: "•";
+    content: "ΓÇó";
     color: var(--primary-color);
     position: absolute;
     left: 0;
@@ -1055,9 +1051,9 @@
     }
 
     .course-sidebar .review-comment:not(.expanded) {
-        max-height: 150px;
-        -webkit-line-clamp: 6;
-        line-clamp: 6;
+        max-height: 100px;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
     }
 
     .course-sidebar .review-expand-btn {

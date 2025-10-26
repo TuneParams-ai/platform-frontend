@@ -1,12 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCourseAccess } from '../hooks/useCourseAccess';
-import { findCourseById } from '../data/coursesData';
+import { useCourses } from '../hooks/useCourses';
 import { isProgressTrackingEnabled } from '../utils/configUtils';
 import '../styles/dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  // Get courses data
+  const { courses } = useCourses();
 
   // Use the course access hook to get real enrollment data
   const {
@@ -22,7 +25,7 @@ const Dashboard = () => {
 
   // Convert enrollments to the format expected by the UI
   const enrolledCourses = allEnrollments.map(enrollment => {
-    const courseData = findCourseById(enrollment.courseId);
+    const courseData = courses.find(c => c.id === enrollment.courseId);
     return {
       id: enrollment.courseId,
       title: enrollment.courseTitle || courseData?.title || 'Unknown Course',

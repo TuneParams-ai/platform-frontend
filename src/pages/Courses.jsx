@@ -1,23 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import CourseCard from "../components/CourseCard";
-import { coursesData, getCategories } from "../data/coursesData";
+import { useCourses } from "../hooks/useCourses";
 import { useCourseAccess } from "../hooks/useCourseAccess";
 import "../styles/courses.css";
 
 const Courses = () => {
   const { user } = useAuth();
   const [activeFilter, setActiveFilter] = useState("All");
+  const [filterCategories, setFilterCategories] = useState(["All"]);
+
+  // Get courses from Firestore
+  const { courses, loading, error } = useCourses();
 
   // Get enrollment data to show enrollment status (only if user is logged in)
   const { allEnrollments } = useCourseAccess();
 
-  // Get filter categories dynamically
-  const filterCategories = getCategories();
+  // Extract categories from courses
+  useEffect(() => {
+    if (courses && courses.length > 0) {
+      const categories = ["All", ...new Set(courses.map(course => course.category).filter(Boolean))];
+      setFilterCategories(categories);
+    }
+  }, [courses]);
 
   const filteredCourses = activeFilter === "All"
-    ? coursesData
-    : coursesData.filter(course => course.category === activeFilter);
+    ? courses
+    : courses.filter(course => course.category === activeFilter);
 
   // Helper function to check if user is enrolled in a course
   const isEnrolled = (courseId) => {
@@ -25,6 +34,28 @@ const Courses = () => {
     if (!user || !allEnrollments) return false;
     return allEnrollments.some(enrollment => enrollment.courseId === courseId);
   };
+
+  if (loading) {
+    return (
+      <div className="courses-page-container">
+        <div className="courses-loading">
+          <div className="spinner"></div>
+          <p>Loading courses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="courses-page-container">
+        <div className="courses-error">
+          <h2>Error Loading Courses</h2>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="courses-page-container">
