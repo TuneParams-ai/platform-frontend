@@ -131,14 +131,27 @@ export const deleteCourse = async (courseId) => {
  */
 export const getCourseCurriculum = async (courseId) => {
     try {
+        console.log('Fetching curriculum for course:', courseId);
         const curriculumRef = collection(db, 'courses', courseId, 'curriculum');
-        const q = query(curriculumRef, orderBy('order', 'asc'));
-        const snapshot = await getDocs(q);
 
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        // Fetch without ordering to avoid index requirements
+        const snapshot = await getDocs(curriculumRef);
+
+        console.log('Curriculum snapshot size:', snapshot.size);
+        const curriculum = snapshot.docs.map(doc => {
+            const data = doc.data();
+            console.log('Curriculum doc:', doc.id, data);
+            return {
+                id: doc.id,
+                ...data
+            };
+        });
+
+        // Sort in memory by order field
+        curriculum.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        console.log('Processed curriculum:', curriculum);
+        return curriculum;
     } catch (error) {
         console.error('Error getting curriculum:', error);
         throw error;
@@ -214,14 +227,27 @@ export const deleteCurriculumSection = async (courseId, sectionId) => {
  */
 export const getCourseBatches = async (courseId) => {
     try {
+        console.log('Fetching batches for course:', courseId);
         const batchesRef = collection(db, 'courses', courseId, 'batches');
-        const q = query(batchesRef, orderBy('batchNumber', 'asc'));
-        const snapshot = await getDocs(q);
 
-        return snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        // Fetch without ordering to avoid index requirements
+        const snapshot = await getDocs(batchesRef);
+
+        console.log('Batches snapshot size:', snapshot.size);
+        const batches = snapshot.docs.map(doc => {
+            const data = doc.data();
+            console.log('Batch doc:', doc.id, data);
+            return {
+                id: doc.id,
+                ...data
+            };
+        });
+
+        // Sort in memory by batchNumber
+        batches.sort((a, b) => (a.batchNumber || 0) - (b.batchNumber || 0));
+
+        console.log('Processed batches:', batches);
+        return batches;
     } catch (error) {
         console.error('Error getting batches:', error);
         throw error;
@@ -500,13 +526,25 @@ export const deleteBatchSchedule = async (courseId, batchId, scheduleId) => {
  */
 export const getCompleteCourse = async (courseId) => {
     try {
+        console.log('🔍 getCompleteCourse called for:', courseId);
+        
+        console.log('📚 Fetching base course data...');
         const course = await getCourse(courseId);
+        console.log('✅ Base course:', course);
+        
+        console.log('📦 Fetching batches...');
         const batches = await getCourseBatches(courseId);
+        console.log('✅ Batches fetched:', batches);
+        
+        console.log('📖 Fetching curriculum...');
         const curriculum = await getCourseCurriculum(courseId);
+        console.log('✅ Curriculum fetched:', curriculum);
 
         // Get videos and schedules for each batch
+        console.log('🎥 Fetching videos and schedules for each batch...');
         const batchesWithDetails = await Promise.all(
             batches.map(async (batch) => {
+                console.log('Processing batch:', batch.id);
                 const videos = await getBatchVideos(courseId, batch.id);
                 const schedule = await getBatchSchedule(courseId, batch.id);
                 return {
@@ -516,14 +554,17 @@ export const getCompleteCourse = async (courseId) => {
                 };
             })
         );
-
-        return {
+        
+        const completeCourse = {
             ...course,
             batches: batchesWithDetails,
             curriculum
         };
+        
+        console.log('✅ Complete course data:', completeCourse);
+        return completeCourse;
     } catch (error) {
-        console.error('Error getting complete course:', error);
+        console.error('❌ Error getting complete course:', error);
         throw error;
     }
 };

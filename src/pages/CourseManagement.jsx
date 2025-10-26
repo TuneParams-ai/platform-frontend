@@ -2,13 +2,28 @@ import React, { useState } from 'react';
 import { useCourses } from '../hooks/useCourses';
 import { useUserRole } from '../hooks/useUserRole';
 import { Navigate } from 'react-router-dom';
+import { getCompleteCourse } from '../services/courseManagementService';
+import CourseEditor from '../components/CourseEditor';
+import BatchManager from '../components/BatchManager';
+import CurriculumManager from '../components/CurriculumManager';
+import VideoManager from '../components/VideoManager';
+import ScheduleManager from '../components/ScheduleManager';
 import '../styles/course-management.css';
 
 const CourseManagement = () => {
     const { isAdmin, loading: roleLoading } = useUserRole();
     const { courses, loading: coursesLoading, error, refetch } = useCourses();
-    const [activeTab, setActiveTab] = useState('courses');
+    const [activeTab, setActiveTab] = useState('overview');
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [loadingCourse, setLoadingCourse] = useState(false);
+    const [showCourseEditor, setShowCourseEditor] = useState(false);
+    const [showBatchManager, setShowBatchManager] = useState(false);
+    const [showCurriculumManager, setShowCurriculumManager] = useState(false);
+    const [showVideoManager, setShowVideoManager] = useState(false);
+    const [showScheduleManager, setShowScheduleManager] = useState(false);
+    const [editingBatch, setEditingBatch] = useState(null);
+    const [editingSection, setEditingSection] = useState({ section: null, index: null });
+
 
     // Redirect if not admin
     if (!roleLoading && !isAdmin) {
@@ -34,6 +49,58 @@ const CourseManagement = () => {
         );
     }
 
+    const handleSave = async () => {
+        refetch();
+        // Reload the selected course with fresh data including batches and curriculum
+        if (selectedCourse) {
+            await loadCourseDetails(selectedCourse.id);
+        }
+    };
+
+    const loadCourseDetails = async (courseId) => {
+        try {
+            setLoadingCourse(true);
+            console.log('Loading complete course data for:', courseId);
+            const completeCourse = await getCompleteCourse(courseId);
+            console.log('Complete course loaded:', completeCourse);
+            console.log('Batches:', completeCourse?.batches);
+            console.log('Curriculum:', completeCourse?.curriculum);
+            setSelectedCourse(completeCourse);
+        } catch (err) {
+            console.error('Error loading course details:', err);
+            // Fallback to the basic course data from the list
+            const basicCourse = courses.find(c => c.id === courseId);
+            setSelectedCourse(basicCourse);
+        } finally {
+            setLoadingCourse(false);
+        }
+    };
+
+    const handleCourseSelect = async (course) => {
+        // Load complete course data with batches and curriculum
+        await loadCourseDetails(course.id);
+    };
+
+    const handleEditBatch = (batch) => {
+        setEditingBatch(batch);
+        setShowBatchManager(true);
+    };
+
+    const handleEditSection = (section, index) => {
+        setEditingSection({ section, index });
+        setShowCurriculumManager(true);
+    };
+
+    const handleManageVideos = (batch) => {
+        setEditingBatch(batch);
+        setShowVideoManager(true);
+    };
+
+    const handleManageSchedule = (batch) => {
+        setEditingBatch(batch);
+        setShowScheduleManager(true);
+    };
+
     return (
         <div className="course-management">
             <div className="course-management-header">
@@ -53,7 +120,7 @@ const CourseManagement = () => {
                         <div
                             key={course.id}
                             className={`course-item ${selectedCourse?.id === course.id ? 'active' : ''}`}
-                            onClick={() => setSelectedCourse(course)}
+                            onClick={() => handleCourseSelect(course)}
                         >
                             <div className="course-icon">{course.icon}</div>
                             <div className="course-info">
@@ -74,6 +141,11 @@ const CourseManagement = () => {
                                 <p>Select a course from the sidebar to manage its content</p>
                             </div>
                         </div>
+                    ) : loadingCourse ? (
+                        <div className="course-loading">
+                            <div className="spinner"></div>
+                            <p>Loading course details...</p>
+                        </div>
                     ) : (
                         <>
                             {/* Course Header */}
@@ -85,7 +157,9 @@ const CourseManagement = () => {
                                     </span>
                                 </div>
                                 <div className="course-actions">
-                                    <button className="btn-secondary">Edit Course Info</button>
+                                    <button className="btn-secondary" onClick={() => setShowCourseEditor(true)}>
+                                        Edit Course Info
+                                    </button>
                                     <button className="btn-danger">Delete Course</button>
                                 </div>
                             </div>
@@ -160,32 +234,54 @@ const CourseManagement = () => {
                                     <div className="batches-tab">
                                         <div className="tab-header">
                                             <h3>Manage Batches</h3>
-                                            <button className="btn-primary">+ Add Batch</button>
+                                            <button
+                                                className="btn-primary"
+                                                onClick={() => {
+                                                    setEditingBatch(null);
+                                                    setShowBatchManager(true);
+                                                }}
+                                            >
+                                                + Add Batch
+                                            </button>
                                         </div>
 
-                                        <div className="batches-list">
-                                            {selectedCourse.batches?.map(batch => (
-                                                <div key={batch.batchNumber} className="batch-card">
-                                                    <div className="batch-header">
-                                                        <h4>Batch {batch.batchNumber}: {batch.batchName}</h4>
-                                                        <span className={`status-badge status-${batch.status}`}>
-                                                            {batch.status}
-                                                        </span>
-                                                    </div>
-                                                    <div className="batch-details">
-                                                        <p><strong>Dates:</strong> {batch.startDate} to {batch.endDate}</p>
-                                                        <p><strong>Capacity:</strong> {batch.enrollmentCount}/{batch.maxCapacity}</p>
-                                                        <p><strong>Videos:</strong> {batch.videos?.length || 0} uploaded</p>
-                                                        <p><strong>Schedule:</strong> {batch.schedule?.length || 0} sessions</p>
-                                                    </div>
-                                                    <div className="batch-actions">
-                                                        <button className="btn-sm btn-secondary">✏️ Edit</button>
-                                                        <button className="btn-sm btn-info">🎥 Manage Videos</button>
-                                                        <button className="btn-sm btn-info">📅 Manage Schedule</button>
-                                                        <button className="btn-sm btn-danger">🗑️ Delete</button>
-                                                    </div>
+                                        <div className="batches-list">{selectedCourse.batches?.map(batch => (
+                                            <div key={batch.batchNumber} className="batch-card">
+                                                <div className="batch-header">
+                                                    <h4>Batch {batch.batchNumber}: {batch.batchName}</h4>
+                                                    <span className={`status-badge status-${batch.status}`}>
+                                                        {batch.status}
+                                                    </span>
                                                 </div>
-                                            ))}
+                                                <div className="batch-details">
+                                                    <p><strong>Dates:</strong> {batch.startDate} to {batch.endDate}</p>
+                                                    <p><strong>Capacity:</strong> {batch.enrollmentCount}/{batch.maxCapacity}</p>
+                                                    <p><strong>Videos:</strong> {batch.videos?.length || 0} uploaded</p>
+                                                    <p><strong>Schedule:</strong> {batch.schedule?.length || 0} sessions</p>
+                                                </div>
+                                                <div className="batch-actions">
+                                                    <button
+                                                        className="btn-sm btn-secondary"
+                                                        onClick={() => handleEditBatch(batch)}
+                                                    >
+                                                        ✏️ Edit
+                                                    </button>
+                                                    <button
+                                                        className="btn-sm btn-info"
+                                                        onClick={() => handleManageVideos(batch)}
+                                                    >
+                                                        🎥 Manage Videos
+                                                    </button>
+                                                    <button
+                                                        className="btn-sm btn-info"
+                                                        onClick={() => handleManageSchedule(batch)}
+                                                    >
+                                                        📅 Manage Schedule
+                                                    </button>
+                                                    <button className="btn-sm btn-danger">🗑️ Delete</button>
+                                                </div>
+                                            </div>
+                                        ))}
 
                                             {(!selectedCourse.batches || selectedCourse.batches.length === 0) && (
                                                 <div className="empty-state">
@@ -200,7 +296,15 @@ const CourseManagement = () => {
                                     <div className="curriculum-tab">
                                         <div className="tab-header">
                                             <h3>Course Curriculum</h3>
-                                            <button className="btn-primary">+ Add Section</button>
+                                            <button
+                                                className="btn-primary"
+                                                onClick={() => {
+                                                    setEditingSection({ section: null, index: null });
+                                                    setShowCurriculumManager(true);
+                                                }}
+                                            >
+                                                + Add Section
+                                            </button>
                                         </div>
 
                                         <div className="curriculum-sections">
@@ -208,7 +312,12 @@ const CourseManagement = () => {
                                                 <div key={index} className="curriculum-section">
                                                     <div className="section-header">
                                                         <h4>{section.section}</h4>
-                                                        <button className="btn-sm btn-secondary">✏️ Edit</button>
+                                                        <button
+                                                            className="btn-sm btn-secondary"
+                                                            onClick={() => handleEditSection(section, index)}
+                                                        >
+                                                            ✏️ Edit
+                                                        </button>
                                                     </div>
                                                     {section.description && (
                                                         <p className="section-description">{section.description}</p>
@@ -227,6 +336,12 @@ const CourseManagement = () => {
                                                     </div>
                                                 </div>
                                             ))}
+
+                                            {(!selectedCourse.curriculum || selectedCourse.curriculum.length === 0) && (
+                                                <div className="empty-state">
+                                                    <p>No curriculum sections yet. Click "+ Add Section" to create one.</p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 )}
@@ -259,6 +374,64 @@ const CourseManagement = () => {
                     )}
                 </div>
             </div>
+
+            {/* Modals */}
+            {showCourseEditor && selectedCourse && (
+                <CourseEditor
+                    course={selectedCourse}
+                    onClose={() => setShowCourseEditor(false)}
+                    onSave={handleSave}
+                />
+            )}
+
+            {showBatchManager && selectedCourse && (
+                <BatchManager
+                    course={selectedCourse}
+                    batch={editingBatch}
+                    onClose={() => {
+                        setShowBatchManager(false);
+                        setEditingBatch(null);
+                    }}
+                    onSave={handleSave}
+                />
+            )}
+
+            {showCurriculumManager && selectedCourse && (
+                <CurriculumManager
+                    course={selectedCourse}
+                    section={editingSection.section}
+                    sectionIndex={editingSection.index}
+                    onClose={() => {
+                        setShowCurriculumManager(false);
+                        setEditingSection({ section: null, index: null });
+                    }}
+                    onSave={handleSave}
+                />
+            )}
+
+            {showVideoManager && selectedCourse && editingBatch && (
+                <VideoManager
+                    course={selectedCourse}
+                    batch={editingBatch}
+                    onClose={() => {
+                        setShowVideoManager(false);
+                        setEditingBatch(null);
+                    }}
+                    onSave={handleSave}
+                />
+            )}
+
+            {showScheduleManager && selectedCourse && editingBatch && (
+                <ScheduleManager
+                    course={selectedCourse}
+                    batch={editingBatch}
+                    onClose={() => {
+                        setShowScheduleManager(false);
+                        setEditingBatch(null);
+                    }}
+                    onSave={handleSave}
+                />
+            )}
         </div>
     );
 };

@@ -121,9 +121,11 @@ const Dashboard = () => {
           <h2>Quick Actions</h2>
           <div className="actions-grid">
             <div className="action-card">
-              <div className="action-icon">📖</div>
-              <h4>Browse Courses</h4>
-              <p>Discover new courses to expand your skills</p>
+              <div className="action-content">
+                <div className="action-icon">📖</div>
+                <h4>Browse Courses</h4>
+                <p>Discover new courses to expand your skills</p>
+              </div>
               <button
                 className="btn btn-secondary"
                 onClick={() => navigate('/courses')}
@@ -132,9 +134,11 @@ const Dashboard = () => {
               </button>
             </div>
             <div className="action-card">
-              <div className="action-icon">💬</div>
-              <h4>Get Support</h4>
-              <p>Need help? Contact our support team</p>
+              <div className="action-content">
+                <div className="action-icon">💬</div>
+                <h4>Get Support</h4>
+                <p>Need help? Contact our support team</p>
+              </div>
               <button
                 className="btn btn-secondary"
                 onClick={() => navigate('/contact')}
@@ -142,14 +146,6 @@ const Dashboard = () => {
                 Contact Support
               </button>
             </div>
-            {/* <div className="action-card">
-              <div className="action-icon">📄</div>
-              <h4>Certificates</h4>
-              <p>View and download your course certificates</p>
-              <button className="btn btn-secondary" disabled>
-                Coming Soon
-              </button>
-            </div> */}
           </div>
         </section>
       </div>

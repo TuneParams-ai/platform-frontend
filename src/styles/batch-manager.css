@@ -1,0 +1,10 @@
+/* Batch Manager Modal Styles */
+.batch-manager-modal {
+    max-width: 700px;
+}
+
+.batch-manager-form {
+    padding: 24px;
+}
+
+/* Reuse form styles from course-editor but keep specific overrides here */
