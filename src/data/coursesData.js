@@ -645,3 +645,8 @@ export const getAvailableAccessLinks = (batch) => {
 
     return links;
 };
+
+// CommonJS export for Node.js scripts (migration)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { coursesData };
+}

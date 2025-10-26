@@ -22,6 +22,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import Forums from "./pages/Forums";
 import ThreadDetail from "./pages/ThreadDetail";
+import CourseManagement from "./pages/CourseManagement";
 
 import "./styles/root.css"; // global styles
 import "./styles/components.css"; // unified component styles
@@ -60,6 +61,11 @@ function App() {
               <Route path="/admin/dashboard" element={
                 <ProtectedRoute>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/courses" element={
+                <ProtectedRoute>
+                  <CourseManagement />
                 </ProtectedRoute>
               } />
               {/* Catch-all route for unmatched paths */}

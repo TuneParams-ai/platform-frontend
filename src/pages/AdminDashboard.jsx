@@ -2,6 +2,7 @@
 // Admin dashboard with optimized lazy loading
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { isUserAdmin } from '../services/roleService';
 import AdminRoleManager from '../components/AdminRoleManager';
 import AdminOverview from '../components/AdminOverview';
@@ -17,6 +18,7 @@ import '../styles/admin-dashboard.css';
 
 const AdminDashboard = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('overview');
     const [isAdmin, setIsAdmin] = useState(false);
     const [adminLoading, setAdminLoading] = useState(true);
@@ -86,7 +88,17 @@ const AdminDashboard = () => {
 
     return (
         <div className="admin-container">
-            <h1>Admin Dashboard</h1>
+            <div className="admin-header-section">
+                <h1>Admin Dashboard</h1>
+                <div className="quick-actions">
+                    <button
+                        onClick={() => navigate('/admin/courses')}
+                        className="quick-action-btn course-management-btn"
+                    >
+                        📚 Course Management
+                    </button>
+                </div>
+            </div>
 
             <div className="admin-tabs">
                 <button

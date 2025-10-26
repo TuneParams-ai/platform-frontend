@@ -95,6 +95,54 @@ service cloud.firestore {
       );
     }
     
+    // Courses collection - public read, admin-only write
+    match /courses/{courseId} {
+      // Anyone can read courses
+      allow read: if true;
+      
+      // Only admins can create, update, delete courses
+      allow create, update, delete: if request.auth != null && (
+        request.auth.token.admin == true || 
+        isAdminViaRoles(request.auth.uid)
+      );
+      
+      // Curriculum subcollection
+      match /curriculum/{sectionId} {
+        allow read: if true;
+        allow create, update, delete: if request.auth != null && (
+          request.auth.token.admin == true || 
+          isAdminViaRoles(request.auth.uid)
+        );
+      }
+      
+      // Batches subcollection
+      match /batches/{batchId} {
+        allow read: if true;
+        allow create, update, delete: if request.auth != null && (
+          request.auth.token.admin == true || 
+          isAdminViaRoles(request.auth.uid)
+        );
+        
+        // Videos subcollection
+        match /videos/{videoId} {
+          allow read: if true;
+          allow create, update, delete: if request.auth != null && (
+            request.auth.token.admin == true || 
+            isAdminViaRoles(request.auth.uid)
+          );
+        }
+        
+        // Schedule subcollection
+        match /schedule/{scheduleId} {
+          allow read: if true;
+          allow create, update, delete: if request.auth != null && (
+            request.auth.token.admin == true || 
+            isAdminViaRoles(request.auth.uid)
+          );
+        }
+      }
+    }
+    
     // All other collections require authentication
     match /{document=**} {
       allow read, write: if request.auth != null;
