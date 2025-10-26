@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { collection, query, where, getDocs, doc, updateDoc, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useUserRole } from '../hooks/useUserRole';
 import { useAuth } from '../hooks/useAuth';
 import { manualEnrollUser } from '../services/paymentService';
 import { sendEnrollmentConfirmationEmail } from '../services/emailService';
+import { getUserProfile } from '../services/userService';
 import '../styles/admin-manual-payments.css';
 
 const STATUS_TABS = {
@@ -20,10 +21,17 @@ const AdminManualPayments = () => {
     const [activeTab, setActiveTab] = useState(STATUS_TABS.PENDING);
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [confirmModal, setConfirmModal] = useState(null);
+    const [statistics, setStatistics] = useState({
+        totalVerified: 0,
+        totalAmount: 0,
+        count: 0
+    });
 
     useEffect(() => {
         if (!isAdminUser) return;
         loadPayments(activeTab);
+        loadStatistics();
     }, [isAdminUser, activeTab]);
 
     const loadPayments = async (status) => {
@@ -48,6 +56,95 @@ const AdminManualPayments = () => {
         setLoading(false);
     };
 
+    const loadStatistics = async () => {
+        try {
+            const q = query(collection(db, 'manual_payments'), where('status', '==', STATUS_TABS.VERIFIED));
+            const snap = await getDocs(q);
+            const verified = snap.docs.map(d => d.data());
+
+            const totalAmount = verified.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+            setStatistics({
+                totalVerified: verified.length,
+                totalAmount: totalAmount,
+                count: verified.length
+            });
+        } catch (error) {
+            console.error('Error loading statistics:', error);
+        }
+    };
+
+    const showConfirmation = (payment) => {
+        setConfirmModal(payment);
+    };
+
+    const cancelConfirmation = () => {
+        setConfirmModal(null);
+    };
+
+    const recordManualPaymentInPaymentsCollection = async (payment, enrollmentId, batchNumber) => {
+        try {
+            const userProfile = await getUserProfile(payment.userId);
+            const userData = userProfile.success ? userProfile.userData : null;
+
+            const paymentRecord = {
+                // Payment details
+                paymentId: payment.transactionId || `manual_${Date.now()}`,
+                orderId: enrollmentId,
+                payerId: payment.userId,
+
+                // Course details
+                courseId: payment.courseId,
+                courseTitle: payment.courseTitle,
+                amount: parseFloat(payment.amount) || 0,
+                originalAmount: parseFloat(payment.amount) || 0,
+
+                // Coupon details (manual payments typically don't have coupons, but keep structure)
+                appliedCoupon: null,
+                discountAmount: 0,
+                couponCode: null,
+
+                // User details
+                userId: payment.userId,
+                userEmail: userData?.email || payment.payerEmail,
+                userName: userData?.displayName || payment.payerName,
+
+                // Keep payer data for reconciliation
+                payerEmail: payment.payerEmail,
+                payerName: payment.payerName,
+
+                // Status and metadata
+                status: 'completed',
+                transactionStatus: 'Completed',
+                paymentMethod: 'manual',
+
+                // Manual payment specific fields
+                manualPaymentId: payment.id,
+                manualTransactionId: payment.transactionId,
+                verifiedBy: user?.uid || 'admin',
+
+                // Terms acceptance tracking
+                termsAccepted: payment.termsAccepted || false,
+                termsAcceptedAt: payment.termsAcceptedAt || null,
+
+                // Enrollment reference
+                enrollmentId: enrollmentId,
+                batchNumber: batchNumber,
+
+                // Timestamps
+                paymentDate: payment.createdAt?.toDate ? payment.createdAt.toDate() : new Date(),
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            };
+
+            const paymentRef = await addDoc(collection(db, 'payments'), paymentRecord);
+            return { success: true, paymentRecordId: paymentRef.id };
+        } catch (error) {
+            console.error('Error recording payment:', error);
+            return { success: false, error: error.message };
+        }
+    };
+
     const verifyAndEnroll = async (payment) => {
         try {
             if (!payment.userId) {
@@ -56,6 +153,8 @@ const AdminManualPayments = () => {
             }
 
             const adminUserId = user?.uid || 'admin';
+
+            // Enroll user using existing admin function
             const enrollRes = await manualEnrollUser(
                 payment.userId,
                 payment.courseId,
@@ -69,6 +168,19 @@ const AdminManualPayments = () => {
                 return;
             }
 
+            // Record payment in payments collection
+            const paymentRecordRes = await recordManualPaymentInPaymentsCollection(
+                payment,
+                enrollRes.enrollmentId,
+                enrollRes.batchNumber
+            );
+
+            if (!paymentRecordRes.success) {
+                console.error('Failed to record payment in payments collection:', paymentRecordRes.error);
+                // Continue anyway since enrollment succeeded
+            }
+
+            // Send confirmation email
             const emailData = {
                 userName: payment.payerName || payment.payerEmail?.split('@')[0] || 'Student',
                 userEmail: payment.payerEmail,
@@ -88,18 +200,22 @@ const AdminManualPayments = () => {
 
             const emailRes = await sendEnrollmentConfirmationEmail(emailData);
 
+            // Update manual payment doc
             const mpRef = doc(db, 'manual_payments', payment.id);
             await updateDoc(mpRef, {
                 status: STATUS_TABS.VERIFIED,
                 enrollmentId: enrollRes.enrollmentId,
                 enrollmentBatch: enrollRes.batchNumber,
+                paymentRecordId: paymentRecordRes.success ? paymentRecordRes.paymentRecordId : null,
                 emailSent: emailRes.success || false,
                 verifiedBy: adminUserId,
                 verifiedAt: new Date()
             });
 
-            alert('Enrollment completed and email sent.');
+            alert('✅ Enrollment completed, payment recorded, and email sent successfully!');
+            setConfirmModal(null);
             loadPayments(activeTab);
+            loadStatistics(); // Refresh statistics
         } catch (error) {
             console.error('Verify error', error);
             alert('Verification failed: ' + (error.message || error));
@@ -172,12 +288,24 @@ const AdminManualPayments = () => {
         <div className="admin-manual-payments">
             <h3>Manual Payments Management</h3>
 
+            {/* Statistics Summary */}
+            <div className="payment-statistics">
+                <div className="stat-card">
+                    <div className="stat-label">Total Verified Payments</div>
+                    <div className="stat-value">{statistics.count}</div>
+                </div>
+                <div className="stat-card">
+                    <div className="stat-label">Total Amount Received</div>
+                    <div className="stat-value">${statistics.totalAmount.toFixed(2)}</div>
+                </div>
+            </div>
+
             <div className="payment-status-tabs">
                 <button
                     className={`status-tab ${activeTab === STATUS_TABS.PENDING ? 'active' : ''}`}
                     onClick={() => setActiveTab(STATUS_TABS.PENDING)}
                 >
-                    ⏳ Pending ({payments.filter(p => p.status === STATUS_TABS.PENDING).length})
+                    ⏳ Pending
                 </button>
                 <button
                     className={`status-tab ${activeTab === STATUS_TABS.VERIFIED ? 'active' : ''}`}
@@ -264,7 +392,7 @@ const AdminManualPayments = () => {
                                             <>
                                                 <button
                                                     className="btn btn-primary"
-                                                    onClick={() => verifyAndEnroll(p)}
+                                                    onClick={() => showConfirmation(p)}
                                                     disabled={!p.userId}
                                                     title={!p.userId ? 'No user ID - cannot auto-enroll' : ''}
                                                 >
@@ -313,6 +441,71 @@ const AdminManualPayments = () => {
                             ))}
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Confirmation Modal */}
+            {confirmModal && (
+                <div className="confirmation-modal-overlay" onClick={cancelConfirmation}>
+                    <div className="confirmation-modal" onClick={(e) => e.stopPropagation()}>
+                        <h4>⚠️ Confirm Payment Verification</h4>
+                        <p>Please review the payment details carefully before approving:</p>
+
+                        <div className="confirmation-details">
+                            <div className="confirm-row">
+                                <strong>Course:</strong>
+                                <span>{confirmModal.courseTitle}</span>
+                            </div>
+                            <div className="confirm-row">
+                                <strong>Amount:</strong>
+                                <span className="amount-highlight">${confirmModal.amount || 0}</span>
+                            </div>
+                            <div className="confirm-row">
+                                <strong>Transaction ID:</strong>
+                                <span>{confirmModal.transactionId || 'N/A'}</span>
+                            </div>
+                            <div className="confirm-row">
+                                <strong>Payer:</strong>
+                                <span>{confirmModal.payerName}</span>
+                            </div>
+                            <div className="confirm-row">
+                                <strong>Email:</strong>
+                                <span>{confirmModal.payerEmail}</span>
+                            </div>
+                            <div className="confirm-row">
+                                <strong>Submitted:</strong>
+                                <span>{formatDate(confirmModal.createdAt)}</span>
+                            </div>
+                            {confirmModal.notes && (
+                                <div className="confirm-row notes-row">
+                                    <strong>User Notes:</strong>
+                                    <span>{confirmModal.notes}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="confirmation-checklist">
+                            <h5>✅ Pre-approval Checklist:</h5>
+                            <ul>
+                                <li>✓ Transaction ID matches bank/Zelle records</li>
+                                <li>✓ Amount received matches the listed amount</li>
+                                <li>✓ Payer information is correct</li>
+                                <li>✓ No duplicate payment for same course/user</li>
+                            </ul>
+                        </div>
+
+                        <div className="modal-actions">
+                            <button className="btn btn-cancel" onClick={cancelConfirmation}>
+                                Cancel
+                            </button>
+                            <button
+                                className="btn btn-confirm"
+                                onClick={() => verifyAndEnroll(confirmModal)}
+                            >
+                                ✓ Confirm & Process
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
