@@ -836,7 +836,7 @@
 }
 
 .prerequisites-list li:before {
-    content: "ΓÇó";
+    content: "•";
     color: var(--primary-color);
     position: absolute;
     left: 0;
