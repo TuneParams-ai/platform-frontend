@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.bc47a8f2.css",
-    "main.js": "/static/js/main.a943443b.js",
+    "main.css": "/static/css/main.cd0d1bdf.css",
+    "main.js": "/static/js/main.e1a74f44.js",
     "static/media/zelle-qr.jpg": "/static/media/zelle-qr.14d3f3593f241d7497a9.jpg",
     "index.html": "/index.html",
-    "main.bc47a8f2.css.map": "/static/css/main.bc47a8f2.css.map",
-    "main.a943443b.js.map": "/static/js/main.a943443b.js.map"
+    "main.cd0d1bdf.css.map": "/static/css/main.cd0d1bdf.css.map",
+    "main.e1a74f44.js.map": "/static/js/main.e1a74f44.js.map"
   },
   "entrypoints": [
-    "static/css/main.bc47a8f2.css",
-    "static/js/main.a943443b.js"
+    "static/css/main.cd0d1bdf.css",
+    "static/js/main.e1a74f44.js"
   ]
 }
