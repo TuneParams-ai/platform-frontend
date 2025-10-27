@@ -103,13 +103,13 @@ export const enrollUserInCourse = async (userId, courseId, paymentData, userEmai
         }
 
         // Get course data to determine next available batch
-        const course = findCourseById(courseId);
+        const course = await findCourseById(courseId);
         if (!course) {
             throw new Error(`Course not found: ${courseId}`);
         }
 
         // Automatically determine the next available batch
-        const nextBatch = getNextAvailableBatch(course);
+        const nextBatch = await getNextAvailableBatch(courseId);
         if (!nextBatch) {
             throw new Error('No available batches for enrollment');
         }
@@ -668,7 +668,7 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
         }
 
         // Get course data to determine batch
-        const course = findCourseById(courseId);
+        const course = await findCourseById(courseId);
         if (!course) {
             throw new Error(`Course not found: ${courseId}`);
         }
@@ -681,7 +681,7 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
                 throw new Error(`Batch ${batchNumber} not found for course ${courseId}`);
             }
         } else {
-            targetBatch = getNextAvailableBatch(course);
+            targetBatch = await getNextAvailableBatch(courseId);
             if (!targetBatch) {
                 throw new Error('No available batches for enrollment');
             }

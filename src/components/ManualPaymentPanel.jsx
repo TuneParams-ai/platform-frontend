@@ -14,7 +14,7 @@ const ManualPaymentPanel = ({ courseId, courseTitle, coursePrice, user, onSucces
     // Use bundled Zelle QR image from src/data
     const zelleQrPath = zelleQr;
     const zelleName = 'HA Talent Tech';
-    const zelleNotice = 'Scan the QR or send via Zelle to the payee above. After sending, enter the transaction ID below for verification.';
+    const zelleEmail = 'contact@tuneparams.com';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -70,41 +70,100 @@ const ManualPaymentPanel = ({ courseId, courseTitle, coursePrice, user, onSucces
 
     return (
         <div className="manual-payment-panel">
-            <h4>Manual Payment (Zelle)</h4>
+            <h4>💳 Secure Payment via Zelle</h4>
             <div className="zelle-info">
                 <div className="zelle-qr">
-                    <img src={zelleQrPath} alt="Zelle QR" />
+                    <img src={zelleQrPath} alt="Zelle QR Code for HA Talent Tech" />
                     <div className="zelle-payee">{zelleName}</div>
+                    <div className="zelle-email">{zelleEmail}</div>
                 </div>
                 <div className="zelle-details">
-                    <p className="zelle-instruction">{zelleNotice}</p>
+                    <div className="payment-instructions">
+                        <h5>📋 Payment Instructions</h5>
+                        <div className="instruction-steps">
+                            <div className="step">
+                                <span className="step-number">1</span>
+                                <span className="step-text">Open your <strong>bank's mobile app</strong> (do not use your phone's camera directly)</span>
+                            </div>
+                            <div className="step">
+                                <span className="step-number">2</span>
+                                <span className="step-text">Navigate to the <strong>Zelle section</strong> within your banking app</span>
+                            </div>
+                            <div className="step">
+                                <span className="step-number">3</span>
+                                <span className="step-text">Either <strong>scan the QR code</strong> above or send to: <strong>{zelleEmail}</strong></span>
+                            </div>
+                            <div className="step">
+                                <span className="step-number">4</span>
+                                <span className="step-text">Enter the exact amount: <strong>${Number(coursePrice).toFixed(2)}</strong></span>
+                            </div>
+                            <div className="step">
+                                <span className="step-number">5</span>
+                                <span className="step-text">Complete the payment and note your <strong>transaction ID</strong></span>
+                            </div>
+                        </div>
+                        <div className="important-note">
+                            <strong>📌 Important:</strong> Your transaction ID will appear in your bank app's payment history immediately after sending. Please enter it below to verify your payment.
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <form className="manual-payment-form" onSubmit={handleSubmit}>
-                <label>
-                    Your Name (optional)
-                    <input type="text" value={payerName} onChange={(e) => setPayerName(e.target.value)} />
-                </label>
+                <div className="form-section">
+                    <h5>📝 Payment Verification Details</h5>
 
-                <label>
-                    Your Email (required)
-                    <input type="email" value={payerEmail} onChange={(e) => setPayerEmail(e.target.value)} required />
-                </label>
+                    <label>
+                        Your Name (optional)
+                        <input
+                            type="text"
+                            value={payerName}
+                            onChange={(e) => setPayerName(e.target.value)}
+                            placeholder="Enter your full name"
+                        />
+                    </label>
 
-                <label>
-                    Transaction ID (required)
-                    <input type="text" value={transactionId} onChange={(e) => setTransactionId(e.target.value)} required />
-                </label>
+                    <label>
+                        Your Email (required) <span className="required">*</span>
+                        <input
+                            type="email"
+                            value={payerEmail}
+                            onChange={(e) => setPayerEmail(e.target.value)}
+                            required
+                            placeholder="Enter your email address"
+                        />
+                    </label>
 
-                <label>
-                    Notes (optional)
-                    <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
-                </label>
+                    <label>
+                        Transaction ID (required) <span className="required">*</span>
+                        <input
+                            type="text"
+                            value={transactionId}
+                            onChange={(e) => setTransactionId(e.target.value)}
+                            required
+                            placeholder="Enter Zelle transaction ID"
+                        />
+                        <small className="field-help">Find this in your bank app's payment history after sending</small>
+                    </label>
+
+                    <label>
+                        Notes (optional)
+                        <textarea
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            placeholder="Any additional notes or comments"
+                            rows="3"
+                        />
+                    </label>
+                </div>
 
                 <div className="manual-submit-row">
-                    <button type="submit" className="btn btn-primary" disabled={submitting || disabled}>
-                        {submitting ? 'Submitting...' : `Submit Zelle Payment — $${Number(coursePrice).toFixed(2)}`}
+                    <div className="payment-summary">
+                        <span className="amount-label">Total Amount:</span>
+                        <span className="amount-value">${Number(coursePrice).toFixed(2)}</span>
+                    </div>
+                    <button type="submit" className="btn btn-primary payment-submit-btn" disabled={submitting || disabled}>
+                        {submitting ? '⏳ Verifying Payment...' : '✅ Verify Zelle Payment'}
                     </button>
                 </div>
 
