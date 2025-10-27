@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // import { addBatchSchedule, updateBatchSchedule, deleteBatchSchedule } from '../services/courseManagementService';
 import '../styles/schedule-manager.css';
 
-const ScheduleManager = ({ course, batch, onClose, onSave }) => {
+const ScheduleManager = ({ course, batch, onClose, onSave, showNotification }) => {
     const [schedule, setSchedule] = useState([]);
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingIndex, setEditingIndex] = useState(null);
@@ -48,16 +48,26 @@ const ScheduleManager = ({ course, batch, onClose, onSave }) => {
                 setSchedule(updatedSchedule);
                 // In a real app, you'd call a service to update the batch
                 // await updateBatchSchedule(course.id, batch.id, editingIndex, sessionData);
+                if (showNotification) {
+                    showNotification('Session updated successfully', 'success');
+                }
             } else {
                 // Add new session
                 setSchedule([...schedule, sessionData]);
                 // await addBatchSchedule(course.id, batch.id, sessionData);
+                if (showNotification) {
+                    showNotification('Session added successfully', 'success');
+                }
             }
 
             onSave();
             resetForm();
         } catch (err) {
-            setError(err.message || `Failed to ${editingIndex !== null ? 'update' : 'add'} session`);
+            const errorMsg = err.message || `Failed to ${editingIndex !== null ? 'update' : 'add'} session`;
+            setError(errorMsg);
+            if (showNotification) {
+                showNotification(errorMsg, 'error');
+            }
         } finally {
             setSaving(false);
         }
@@ -86,9 +96,16 @@ const ScheduleManager = ({ course, batch, onClose, onSave }) => {
             const updatedSchedule = schedule.filter((_, i) => i !== index);
             setSchedule(updatedSchedule);
             // await deleteBatchSchedule(course.id, batch.id, index);
+            if (showNotification) {
+                showNotification('Session deleted successfully', 'success');
+            }
             onSave();
         } catch (err) {
-            setError(err.message || 'Failed to delete session');
+            const errorMsg = err.message || 'Failed to delete session';
+            setError(errorMsg);
+            if (showNotification) {
+                showNotification(errorMsg, 'error');
+            }
         } finally {
             setSaving(false);
         }

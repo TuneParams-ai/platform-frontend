@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // import { addBatchVideo, updateBatchVideo, deleteBatchVideo } from '../services/courseManagementService';
 import '../styles/video-manager.css';
 
-const VideoManager = ({ course, batchNumber, onClose, onSave }) => {
+const VideoManager = ({ course, batchNumber, onClose, onSave, showNotification }) => {
     const batch = course.batches?.find(b => b.batchNumber === batchNumber);
     const [videos, setVideos] = useState(batch?.videos || []);
     const [editingIndex, setEditingIndex] = useState(null);
@@ -31,12 +31,18 @@ const VideoManager = ({ course, batchNumber, onClose, onSave }) => {
     const handleAddVideo = () => {
         if (!formData.title.trim() || !formData.youtubeUrl.trim()) {
             setError('Please provide both title and YouTube URL');
+            if (showNotification) {
+                showNotification('Please provide both title and YouTube URL', 'error');
+            }
             return;
         }
 
         const videoId = extractVideoId(formData.youtubeUrl);
         if (!videoId) {
             setError('Invalid YouTube URL');
+            if (showNotification) {
+                showNotification('Invalid YouTube URL format', 'error');
+            }
             return;
         }
 
@@ -51,8 +57,14 @@ const VideoManager = ({ course, batchNumber, onClose, onSave }) => {
             updatedVideos[editingIndex] = newVideo;
             setVideos(updatedVideos);
             setEditingIndex(null);
+            if (showNotification) {
+                showNotification('Video updated successfully', 'success');
+            }
         } else {
             setVideos([...videos, newVideo]);
+            if (showNotification) {
+                showNotification('Video added successfully', 'success');
+            }
         }
 
         setFormData({ title: '', youtubeUrl: '', thumbnail: null });
@@ -72,6 +84,9 @@ const VideoManager = ({ course, batchNumber, onClose, onSave }) => {
     const handleDeleteVideo = (index) => {
         if (window.confirm('Are you sure you want to delete this video?')) {
             setVideos(videos.filter((_, i) => i !== index));
+            if (showNotification) {
+                showNotification('Video deleted successfully', 'success');
+            }
         }
     };
 
@@ -99,10 +114,17 @@ const VideoManager = ({ course, batchNumber, onClose, onSave }) => {
             // Update the batch with new videos array
             // TODO: Implement batch update with videos array
             // await updateBatchVideo(course.id, batchNumber, videos);
+            if (showNotification) {
+                showNotification('Videos saved successfully', 'success');
+            }
             onSave();
             onClose();
         } catch (err) {
-            setError(err.message || 'Failed to save videos');
+            const errorMsg = err.message || 'Failed to save videos';
+            setError(errorMsg);
+            if (showNotification) {
+                showNotification(errorMsg, 'error');
+            }
         } finally {
             setSaving(false);
         }

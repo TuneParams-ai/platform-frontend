@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createBatch, updateBatch, deleteBatch } from '../services/courseManagementService';
 import '../styles/batch-manager.css';
 
-const BatchManager = ({ course, batch, onClose, onSave }) => {
+const BatchManager = ({ course, batch, onClose, onSave, showNotification }) => {
     const isEditMode = !!batch;
     const [batchId, setBatchId] = useState(null); // Store the Firestore document ID
     const [formData, setFormData] = useState({
@@ -73,17 +73,21 @@ const BatchManager = ({ course, batch, onClose, onSave }) => {
             if (isEditMode) {
                 // Use the stored batchId (Firestore document ID) for updates
                 await updateBatch(course.id, batchId, formData);
+                if (showNotification) showNotification('Batch updated successfully!', 'success');
             } else {
                 await createBatch(course.id, {
                     ...formData,
                     schedule: [],
                     videos: []
                 });
+                if (showNotification) showNotification('Batch created successfully!', 'success');
             }
             onSave();
             onClose();
         } catch (err) {
-            setError(err.message || `Failed to ${isEditMode ? 'update' : 'create'} batch`);
+            const errorMessage = err.message || `Failed to ${isEditMode ? 'update' : 'create'} batch`;
+            setError(errorMessage);
+            if (showNotification) showNotification(errorMessage, 'error');
         } finally {
             setSaving(false);
         }
@@ -100,10 +104,13 @@ const BatchManager = ({ course, batch, onClose, onSave }) => {
         try {
             // Use the stored batchId (Firestore document ID) for deletion
             await deleteBatch(course.id, batchId);
+            if (showNotification) showNotification('Batch deleted successfully!', 'success');
             onSave();
             onClose();
         } catch (err) {
-            setError(err.message || 'Failed to delete batch');
+            const errorMessage = err.message || 'Failed to delete batch';
+            setError(errorMessage);
+            if (showNotification) showNotification(errorMessage, 'error');
             setSaving(false);
         }
     };

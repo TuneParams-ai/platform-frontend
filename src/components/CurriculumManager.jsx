@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { addCurriculumSection, updateCurriculumSection, deleteCurriculumSection } from '../services/courseManagementService';
 import '../styles/curriculum-manager.css';
 
-const CurriculumManager = ({ course, section, sectionIndex, onClose, onSave }) => {
+const CurriculumManager = ({ course, section, sectionIndex, onClose, onSave, showNotification }) => {
     const isEditMode = section !== null && section !== undefined;
     const [formData, setFormData] = useState({
         section: '',
@@ -48,7 +48,11 @@ const CurriculumManager = ({ course, section, sectionIndex, onClose, onSave }) =
 
     const removeTopic = (index) => {
         if (formData.topics.length === 1) {
-            alert('A section must have at least one topic');
+            const msg = 'A section must have at least one topic';
+            alert(msg);
+            if (showNotification) {
+                showNotification(msg, 'error');
+            }
             return;
         }
         setFormData(prev => ({
@@ -65,7 +69,11 @@ const CurriculumManager = ({ course, section, sectionIndex, onClose, onSave }) =
         // Filter out empty topics
         const cleanedTopics = formData.topics.filter(topic => topic.trim() !== '');
         if (cleanedTopics.length === 0) {
-            setError('Please add at least one topic');
+            const errorMsg = 'Please add at least one topic';
+            setError(errorMsg);
+            if (showNotification) {
+                showNotification(errorMsg, 'error');
+            }
             setSaving(false);
             return;
         }
@@ -78,13 +86,23 @@ const CurriculumManager = ({ course, section, sectionIndex, onClose, onSave }) =
 
             if (isEditMode) {
                 await updateCurriculumSection(course.id, sectionIndex, sectionData);
+                if (showNotification) {
+                    showNotification('Section updated successfully', 'success');
+                }
             } else {
                 await addCurriculumSection(course.id, sectionData);
+                if (showNotification) {
+                    showNotification('Section created successfully', 'success');
+                }
             }
             onSave();
             onClose();
         } catch (err) {
-            setError(err.message || `Failed to ${isEditMode ? 'update' : 'create'} section`);
+            const errorMsg = err.message || `Failed to ${isEditMode ? 'update' : 'create'} section`;
+            setError(errorMsg);
+            if (showNotification) {
+                showNotification(errorMsg, 'error');
+            }
         } finally {
             setSaving(false);
         }
@@ -100,10 +118,17 @@ const CurriculumManager = ({ course, section, sectionIndex, onClose, onSave }) =
 
         try {
             await deleteCurriculumSection(course.id, sectionIndex);
+            if (showNotification) {
+                showNotification('Section deleted successfully', 'success');
+            }
             onSave();
             onClose();
         } catch (err) {
-            setError(err.message || 'Failed to delete section');
+            const errorMsg = err.message || 'Failed to delete section';
+            setError(errorMsg);
+            if (showNotification) {
+                showNotification(errorMsg, 'error');
+            }
             setSaving(false);
         }
     };

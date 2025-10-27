@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCourses } from '../hooks/useCourses';
 import { useUserRole } from '../hooks/useUserRole';
 import { Navigate } from 'react-router-dom';
-import { getCompleteCourse } from '../services/courseManagementService';
+import { getCompleteCourse, updateCourse } from '../services/courseManagementService';
 import CourseEditor from '../components/CourseEditor';
 import BatchManager from '../components/BatchManager';
 import CurriculumManager from '../components/CurriculumManager';
@@ -23,6 +23,9 @@ const CourseManagement = () => {
     const [showScheduleManager, setShowScheduleManager] = useState(false);
     const [editingBatch, setEditingBatch] = useState(null);
     const [editingSection, setEditingSection] = useState({ section: null, index: null });
+    const [settingsForm, setSettingsForm] = useState({});
+    const [savingSettings, setSavingSettings] = useState(false);
+    const [notification, setNotification] = useState({ message: '', type: '', show: false });
 
 
     // Redirect if not admin
@@ -55,6 +58,17 @@ const CourseManagement = () => {
         if (selectedCourse) {
             await loadCourseDetails(selectedCourse.id);
         }
+    };
+
+    const showNotification = (message, type = 'info') => {
+        setNotification({ message, type, show: true });
+        setTimeout(() => {
+            setNotification(prev => ({ ...prev, show: false }));
+        }, 4000);
+    };
+
+    const hideNotification = () => {
+        setNotification(prev => ({ ...prev, show: false }));
     };
 
     const loadCourseDetails = async (courseId) => {
@@ -90,6 +104,12 @@ const CourseManagement = () => {
     const handleCourseSelect = async (course) => {
         // Load complete course data with batches and curriculum
         await loadCourseDetails(course.id);
+        // Initialize settings form when course is selected
+        setSettingsForm({
+            comingSoon: course.comingSoon || false,
+            nextBatchDate: course.nextBatchDate || '',
+            category: course.category || ''
+        });
     };
 
     const handleEditBatch = (batch) => {
@@ -112,8 +132,65 @@ const CourseManagement = () => {
         setShowScheduleManager(true);
     };
 
+    const handleSettingsChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setSettingsForm(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleSaveSettings = async () => {
+        if (!selectedCourse) return;
+
+        setSavingSettings(true);
+        try {
+            await updateCourse(selectedCourse.id, settingsForm);
+
+            // Update local selected course data
+            setSelectedCourse(prev => ({
+                ...prev,
+                ...settingsForm
+            }));
+
+            // Refresh the courses list
+            await refetch();
+
+            showNotification('Settings saved successfully!', 'success');
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            showNotification('Failed to save settings. Please try again.', 'error');
+        } finally {
+            setSavingSettings(false);
+        }
+    };
+
+    const handleDeleteBatch = async (batch) => {
+        if (!window.confirm(`Are you sure you want to delete ${batch.batchName}? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const { deleteBatch } = await import('../services/courseManagementService');
+            await deleteBatch(selectedCourse.id, batch.id);
+            await handleSave();
+            showNotification('Batch deleted successfully!', 'success');
+        } catch (error) {
+            console.error('Error deleting batch:', error);
+            showNotification('Failed to delete batch. Please try again.', 'error');
+        }
+    };
+
     return (
         <div className="course-management">
+            {/* Notification */}
+            {notification.show && (
+                <div className={`notification notification-${notification.type}`}>
+                    <span>{notification.message}</span>
+                    <button className="notification-close" onClick={hideNotification}>×</button>
+                </div>
+            )}
+
             <div className="course-management-header">
                 <h1>📚 Course Management</h1>
                 <p>Manage all course content, batches, videos, and schedules</p>
@@ -289,7 +366,12 @@ const CourseManagement = () => {
                                                     >
                                                         📅 Manage Schedule
                                                     </button>
-                                                    <button className="btn-sm btn-danger">🗑️ Delete</button>
+                                                    <button
+                                                        className="btn-sm btn-danger"
+                                                        onClick={() => handleDeleteBatch(batch)}
+                                                    >
+                                                        🗑️ Delete
+                                                    </button>
                                                 </div>
                                             </div>
                                         ))}
@@ -363,20 +445,48 @@ const CourseManagement = () => {
                                         <div className="settings-form">
                                             <div className="form-group">
                                                 <label>Coming Soon Status</label>
-                                                <select value={selectedCourse.comingSoon ? 'true' : 'false'}>
+                                                <select
+                                                    name="comingSoon"
+                                                    value={settingsForm.comingSoon ? 'true' : 'false'}
+                                                    onChange={(e) => handleSettingsChange({
+                                                        target: {
+                                                            name: 'comingSoon',
+                                                            value: e.target.value === 'true',
+                                                            type: 'checkbox',
+                                                            checked: e.target.value === 'true'
+                                                        }
+                                                    })}
+                                                >
                                                     <option value="false">Active (Available for enrollment)</option>
                                                     <option value="true">Coming Soon</option>
                                                 </select>
                                             </div>
                                             <div className="form-group">
                                                 <label>Next Batch Date</label>
-                                                <input type="date" defaultValue={selectedCourse.nextBatchDate} />
+                                                <input
+                                                    type="date"
+                                                    name="nextBatchDate"
+                                                    value={settingsForm.nextBatchDate || ''}
+                                                    onChange={handleSettingsChange}
+                                                />
                                             </div>
                                             <div className="form-group">
                                                 <label>Category</label>
-                                                <input type="text" defaultValue={selectedCourse.category} />
+                                                <input
+                                                    type="text"
+                                                    name="category"
+                                                    value={settingsForm.category || ''}
+                                                    onChange={handleSettingsChange}
+                                                    placeholder="e.g., AI, Machine Learning, Web Development"
+                                                />
                                             </div>
-                                            <button className="btn-primary">Save Settings</button>
+                                            <button
+                                                className="btn-primary"
+                                                onClick={handleSaveSettings}
+                                                disabled={savingSettings}
+                                            >
+                                                {savingSettings ? 'Saving...' : 'Save Settings'}
+                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -404,6 +514,7 @@ const CourseManagement = () => {
                         setEditingBatch(null);
                     }}
                     onSave={handleSave}
+                    showNotification={showNotification}
                 />
             )}
 
@@ -417,18 +528,20 @@ const CourseManagement = () => {
                         setEditingSection({ section: null, index: null });
                     }}
                     onSave={handleSave}
+                    showNotification={showNotification}
                 />
             )}
 
             {showVideoManager && selectedCourse && editingBatch && (
                 <VideoManager
                     course={selectedCourse}
-                    batch={editingBatch}
+                    batchNumber={editingBatch.batchNumber}
                     onClose={() => {
                         setShowVideoManager(false);
                         setEditingBatch(null);
                     }}
                     onSave={handleSave}
+                    showNotification={showNotification}
                 />
             )}
 
@@ -441,6 +554,7 @@ const CourseManagement = () => {
                         setEditingBatch(null);
                     }}
                     onSave={handleSave}
+                    showNotification={showNotification}
                 />
             )}
         </div>
