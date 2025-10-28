@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { coursesData, getNextAvailableBatch, getBatchDisplayName, findCourseById } from '../data/coursesData';
+import { findCourseById, getNextAvailableBatch, getCachedCourses, getBatchDisplayName } from '../data/coursesData';
+import { getCourseBatches } from '../services/courseManagementService';
 import { manualEnrollUser } from '../services/paymentService';
 import { useAuth } from '../hooks/useAuth';
 import '../styles/manual-enrollment-modal.css';
@@ -24,13 +25,27 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
     const [userEnrollments, setUserEnrollments] = useState([]);
     const [loadingEnrollments, setLoadingEnrollments] = useState(false);
     const [showUserDropdown, setShowUserDropdown] = useState(false);
+    const [nextAvailableBatch, setNextAvailableBatch] = useState(null);
+    const [availableBatches, setAvailableBatches] = useState([]);
+    const [courses, setCourses] = useState([]);
 
-    // Load users on component mount
+    // Load users and courses on component mount
     useEffect(() => {
         if (isOpen) {
             loadUsers();
+            loadCourses();
         }
     }, [isOpen]);
+
+    const loadCourses = async () => {
+        try {
+            const coursesData = await getCachedCourses();
+            setCourses(coursesData);
+        } catch (error) {
+            console.error('Error loading courses:', error);
+            setCourses([]);
+        }
+    };
 
     const loadUsers = async () => {
         setLoadingUsers(true);
@@ -71,6 +86,53 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
 
         setFilteredUsers(filtered);
     }, [searchTerm, users]);
+
+    // Load batch information when course selection changes
+    useEffect(() => {
+        const loadBatchInfo = async () => {
+            if (!selectedCourseId) {
+                setAvailableBatches([]);
+                setNextAvailableBatch(null);
+                setSelectedBatchNumber('');
+                return;
+            }
+
+            try {
+                console.log('Loading batch info for course:', selectedCourseId);
+                const course = await findCourseById(selectedCourseId);
+                console.log('Found course:', course);
+
+                if (course) {
+                    // Load batches from Firestore subcollection
+                    const batches = await getCourseBatches(selectedCourseId);
+                    console.log('Course batches from Firestore:', batches);
+                    setAvailableBatches(batches);
+
+                    const nextBatch = await getNextAvailableBatch(selectedCourseId);
+                    console.log('Next available batch:', nextBatch);
+                    setNextAvailableBatch(nextBatch);
+
+                    // Auto-select the next available batch as default
+                    if (nextBatch) {
+                        setSelectedBatchNumber(nextBatch.batchNumber.toString());
+                    } else if (batches.length > 0) {
+                        // If no "next" batch, select the latest batch
+                        const latestBatch = batches[batches.length - 1];
+                        setSelectedBatchNumber(latestBatch.batchNumber.toString());
+                    } else {
+                        setSelectedBatchNumber('');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading batch info:', error);
+                setAvailableBatches([]);
+                setNextAvailableBatch(null);
+                setSelectedBatchNumber('');
+            }
+        };
+
+        loadBatchInfo();
+    }, [selectedCourseId]);
 
     // Load user enrollments when a user is selected
     const loadUserEnrollments = async (userId) => {
@@ -131,11 +193,14 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
         setError(null);
 
         try {
+            // Use the selected batch number
+            const batchNumberToUse = selectedBatchNumber ? parseInt(selectedBatchNumber) : null;
+
             const result = await manualEnrollUser(
                 selectedUserId,
                 selectedCourseId,
                 user.uid,
-                selectedBatchNumber ? parseInt(selectedBatchNumber) : null,
+                batchNumberToUse,
                 notes
             );
 
@@ -170,9 +235,7 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
         onClose();
     };
 
-    const selectedCourse = coursesData.find(course => course.id === selectedCourseId);
-    const availableBatches = selectedCourse?.batches || [];
-    const nextAvailableBatch = selectedCourse ? getNextAvailableBatch(selectedCourse) : null;
+    const selectedCourse = courses.find(course => course.id === selectedCourseId);
 
     if (!isOpen) return null;
 
@@ -253,7 +316,7 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
                                 required
                             >
                                 <option value="">-- Select Course --</option>
-                                {coursesData.map(course => (
+                                {courses.map(course => (
                                     <option key={course.id} value={course.id}>
                                         {course.title}
                                     </option>
@@ -265,21 +328,32 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
                         {selectedCourse && (
                             <div className="form-group">
                                 <label htmlFor="batch-select">Select Batch</label>
-                                <select
-                                    id="batch-select"
-                                    value={selectedBatchNumber}
-                                    onChange={(e) => setSelectedBatchNumber(e.target.value)}
-                                >
-                                    <option value="">
-                                        Auto-assign to next available batch
-                                        {nextAvailableBatch && ` (${getBatchDisplayName(nextAvailableBatch)})`}
-                                    </option>
-                                    {availableBatches.map(batch => (
-                                        <option key={batch.batchNumber} value={batch.batchNumber}>
-                                            {getBatchDisplayName(batch)} - {batch.status}
-                                        </option>
-                                    ))}
-                                </select>
+                                {availableBatches.length > 0 ? (
+                                    <>
+                                        <select
+                                            id="batch-select"
+                                            value={selectedBatchNumber}
+                                            onChange={(e) => setSelectedBatchNumber(e.target.value)}
+                                        >
+                                            {availableBatches.map(batch => (
+                                                <option key={batch.batchNumber} value={batch.batchNumber}>
+                                                    {getBatchDisplayName(batch)} - {batch.status}
+                                                    {nextAvailableBatch && batch.batchNumber === nextAvailableBatch.batchNumber && ' (Current)'}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <small className="field-help">
+                                            {nextAvailableBatch && selectedBatchNumber === nextAvailableBatch.batchNumber.toString()
+                                                ? 'This is the current active/upcoming batch'
+                                                : 'Select which batch to enroll the user in'}
+                                        </small>
+                                    </>
+                                ) : (
+                                    <div className="loading-message">
+                                        <p>Loading batches for {selectedCourse.title}...</p>
+                                        <small>If this persists, the course might not have any batches configured.</small>
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -292,7 +366,7 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
                                 ) : userEnrollments.length > 0 ? (
                                     <div className="user-enrollments">
                                         {userEnrollments.map(enrollment => {
-                                            const course = findCourseById(enrollment.courseId);
+                                            const course = courses.find(c => c.id === enrollment.courseId);
                                             return (
                                                 <div key={enrollment.id} className="enrollment-item">
                                                     <div className="enrollment-course">
@@ -338,9 +412,15 @@ const ManualEnrollmentModal = ({ isOpen, onClose, onSuccess }) => {
                                 <p><strong>Title:</strong> {selectedCourse.title}</p>
                                 <p><strong>Duration:</strong> {selectedCourse.duration}</p>
                                 <p><strong>Level:</strong> {selectedCourse.level}</p>
-                                {nextAvailableBatch && (
-                                    <p><strong>Next Available Batch:</strong> {getBatchDisplayName(nextAvailableBatch)}</p>
-                                )}
+
+                                {/* Batch Selection Summary */}
+                                <div className="batch-selection-summary">
+                                    {selectedBatchNumber ? (
+                                        <p><strong>Selected Batch:</strong> {getBatchDisplayName(availableBatches.find(b => b.batchNumber.toString() === selectedBatchNumber))}</p>
+                                    ) : (
+                                        <p><strong>Batch:</strong> <em>No batch selected</em></p>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>

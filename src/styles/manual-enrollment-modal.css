@@ -334,3 +334,30 @@
     font-style: italic;
     margin: 8px 0;
 }
+
+/* Batch Selection Summary */
+.batch-selection-summary {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(29, 126, 153, 0.1);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.batch-selection-summary p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.batch-selection-summary em {
+    color: var(--secondary-text-color);
+}
+
+/* Field help text */
+.field-help {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--secondary-text-color);
+    font-style: italic;
+}
