@@ -160,7 +160,8 @@ const AdminManualPayments = () => {
                 payment.courseId,
                 adminUserId,
                 null,
-                `Verified manual payment ${payment.transactionId || ''}`
+                `Verified manual payment ${payment.transactionId || ''}`,
+                payment.amount // Pass the payment amount
             );
 
             if (!enrollRes.success) {

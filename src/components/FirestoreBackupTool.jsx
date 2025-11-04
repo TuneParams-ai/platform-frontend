@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {
     collection,
-    getDocs
+    getDocs,
+    doc
 } from 'firebase/firestore';
 import { db } from '../config/firebase'; const FirestoreBackupTool = () => {
     const [logs, setLogs] = useState([]);
@@ -40,6 +41,51 @@ import { db } from '../config/firebase'; const FirestoreBackupTool = () => {
             addLog(`❌ Error backing up ${collectionName}: ${error.message}`, 'error');
             return [];
         }
+    };
+
+    const backupSubcollection = async (parentPath, subcollectionName) => {
+        const fullPath = `${parentPath}/${subcollectionName}`;
+        addLog(`📦 Backing up subcollection: ${fullPath}`, 'info');
+
+        try {
+            const [parentCollection, parentDocId] = parentPath.split('/');
+            const parentDocRef = doc(db, parentCollection, parentDocId);
+            const subcollectionSnapshot = await getDocs(collection(parentDocRef, subcollectionName));
+            const data = [];
+
+            subcollectionSnapshot.docs.forEach(doc => {
+                data.push({
+                    id: doc.id,
+                    data: doc.data()
+                });
+            });
+
+            addLog(`✅ ${fullPath}: ${data.length} documents backed up`, 'success');
+            return data;
+
+        } catch (error) {
+            addLog(`❌ Error backing up ${fullPath}: ${error.message}`, 'error');
+            return [];
+        }
+    };
+
+    const backupCourseSpecificBatches = async () => {
+        addLog('🗂️ Backing up course-specific batch subcollections...', 'info');
+        const courseSpecificBatches = {};
+
+        const courses = ['FAAI', 'RLAI'];
+        for (const courseId of courses) {
+            try {
+                const courseBatches = await backupSubcollection(`courses/${courseId}`, 'batches');
+                if (courseBatches.length > 0) {
+                    courseSpecificBatches[`courses/${courseId}/batches`] = courseBatches;
+                }
+            } catch (error) {
+                addLog(`⚠️ Could not backup batches for course ${courseId}: ${error.message}`, 'warning');
+            }
+        }
+
+        return courseSpecificBatches;
     };
 
     const discoverCollections = async () => {
@@ -102,12 +148,18 @@ import { db } from '../config/firebase'; const FirestoreBackupTool = () => {
 
         try {
             // Discover all collections dynamically
-            const collections = await discoverCollections(); const backup = {
+            const collections = await discoverCollections();
+
+            // Backup course-specific subcollections
+            const courseSpecificBatches = await backupCourseSpecificBatches();
+
+            const backup = {
                 timestamp: new Date().toISOString(),
-                version: '2.0', // Updated version for comprehensive backup
-                description: 'Comprehensive backup of all discovered collections',
-                totalCollections: collections.length,
-                collections: {}
+                version: '3.0', // Updated version for comprehensive backup with subcollections
+                description: 'Comprehensive backup including all collections and course-specific subcollections',
+                totalCollections: collections.length + Object.keys(courseSpecificBatches).length,
+                collections: {},
+                subcollections: courseSpecificBatches
             };
 
             let totalDocuments = 0;
@@ -119,6 +171,11 @@ import { db } from '../config/firebase'; const FirestoreBackupTool = () => {
                 totalDocuments += collectionData.length;
             }
 
+            // Count subcollection documents
+            for (const [, data] of Object.entries(courseSpecificBatches)) {
+                totalDocuments += data.length;
+            }
+
             setBackupData(backup);
 
             addLog(`🎉 Backup completed successfully!`, 'success');
@@ -127,6 +184,11 @@ import { db } from '../config/firebase'; const FirestoreBackupTool = () => {
             // Log collection summary
             for (const [name, data] of Object.entries(backup.collections)) {
                 addLog(`  - ${name}: ${data.length} documents`, 'info');
+            }
+
+            // Log subcollection summary
+            for (const [path, data] of Object.entries(courseSpecificBatches)) {
+                addLog(`  - ${path}: ${data.length} documents`, 'info');
             }
 
         } catch (error) {

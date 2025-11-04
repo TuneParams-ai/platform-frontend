@@ -36,10 +36,20 @@ const FirestoreRestoreTool = () => {
                 setBackupData(data);
                 addLog(`✅ Backup file loaded successfully`, 'success');
                 addLog(`📊 Backup created: ${new Date(data.timestamp).toLocaleString()}`, 'info');
+                addLog(`📋 Version: ${data.version || '1.0'}`, 'info');
                 addLog(`📋 Collections available: ${Object.keys(data.collections).join(', ')}`, 'info');
 
+                // Check for subcollections (version 3.0+)
+                if (data.subcollections && Object.keys(data.subcollections).length > 0) {
+                    addLog(`🗂️ Subcollections found: ${Object.keys(data.subcollections).join(', ')}`, 'info');
+                }
+
                 // Auto-select all collections by default
-                setSelectedCollections(Object.keys(data.collections));
+                const allAvailableCollections = Object.keys(data.collections);
+                if (data.subcollections) {
+                    allAvailableCollections.push(...Object.keys(data.subcollections));
+                }
+                setSelectedCollections(allAvailableCollections);
 
             } catch (error) {
                 addLog(`❌ Error parsing backup file: ${error.message}`, 'error');
@@ -133,6 +143,69 @@ const FirestoreRestoreTool = () => {
         }
     };
 
+    const restoreSubcollection = async (subcollectionPath, documents, mode = 'replace') => {
+        addLog(`🔄 Restoring subcollection: ${subcollectionPath}`, 'info');
+
+        try {
+            // Parse the subcollection path (e.g., "courses/FAAI/batches")
+            const pathParts = subcollectionPath.split('/');
+            if (pathParts.length !== 3) {
+                throw new Error(`Invalid subcollection path: ${subcollectionPath}`);
+            }
+
+            const [parentCollection, parentDocId, subcollectionName] = pathParts;
+            const parentDocRef = doc(db, parentCollection, parentDocId);
+            const subcollectionRef = collection(parentDocRef, subcollectionName);
+
+            // Clear existing documents if in replace mode
+            if (mode === 'replace') {
+                addLog(`  🗑️ Clearing existing documents in ${subcollectionPath}...`, 'info');
+                const existingSnapshot = await getDocs(subcollectionRef);
+                const existingDocs = existingSnapshot.docs;
+
+                if (existingDocs.length > 0) {
+                    const batchSize = 400;
+                    for (let i = 0; i < existingDocs.length; i += batchSize) {
+                        const batchDocs = existingDocs.slice(i, i + batchSize);
+                        const deleteBatch = writeBatch(db);
+
+                        batchDocs.forEach(docSnap => {
+                            deleteBatch.delete(docSnap.ref);
+                        });
+
+                        await deleteBatch.commit();
+                        addLog(`  🗑️ Deleted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(existingDocs.length / batchSize)}`, 'info');
+                    }
+
+                    addLog(`✅ Cleared ${existingDocs.length} existing documents`, 'success');
+                }
+            }
+
+            // Restore documents in batches
+            const batchSize = 400;
+
+            for (let i = 0; i < documents.length; i += batchSize) {
+                const batchDocs = documents.slice(i, i + batchSize);
+                const restoreBatch = writeBatch(db);
+
+                batchDocs.forEach(docData => {
+                    const docRef = doc(parentDocRef, subcollectionName, docData.id);
+                    const processedData = processDocumentData(docData.data);
+                    restoreBatch.set(docRef, processedData);
+                });
+
+                await restoreBatch.commit();
+                addLog(`  ✅ Restored batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(documents.length / batchSize)}`, 'success');
+            }
+
+            addLog(`🎉 Successfully restored ${documents.length} documents to ${subcollectionPath}`, 'success');
+
+        } catch (error) {
+            addLog(`❌ Error restoring ${subcollectionPath}: ${error.message}`, 'error');
+            throw error;
+        }
+    };
+
     const performRestore = async (mode = 'replace') => {
         if (!backupData) {
             addLog('❌ No backup data loaded', 'error');
@@ -164,12 +237,27 @@ const FirestoreRestoreTool = () => {
             let totalRestored = 0;
 
             for (const collectionName of selectedCollections) {
-                const documents = backupData.collections[collectionName];
-                if (documents && documents.length > 0) {
-                    await restoreCollection(collectionName, documents, mode);
-                    totalRestored += documents.length;
+                // Check if this is a regular collection
+                if (backupData.collections && backupData.collections[collectionName]) {
+                    const documents = backupData.collections[collectionName];
+                    if (documents && documents.length > 0) {
+                        await restoreCollection(collectionName, documents, mode);
+                        totalRestored += documents.length;
+                    } else {
+                        addLog(`⚠️ No documents found for collection: ${collectionName}`, 'warning');
+                    }
+                }
+                // Check if this is a subcollection
+                else if (backupData.subcollections && backupData.subcollections[collectionName]) {
+                    const documents = backupData.subcollections[collectionName];
+                    if (documents && documents.length > 0) {
+                        await restoreSubcollection(collectionName, documents, mode);
+                        totalRestored += documents.length;
+                    } else {
+                        addLog(`⚠️ No documents found for subcollection: ${collectionName}`, 'warning');
+                    }
                 } else {
-                    addLog(`⚠️ No documents found for ${collectionName}`, 'warning');
+                    addLog(`⚠️ Collection/subcollection not found in backup: ${collectionName}`, 'warning');
                 }
             }
 
@@ -221,17 +309,39 @@ const FirestoreRestoreTool = () => {
                     <div style={{ marginTop: '15px' }}>
                         <strong>📁 Select Collections to Restore:</strong>
                         <div style={{ marginTop: '10px' }}>
-                            {Object.entries(backupData.collections).map(([name, docs]) => (
-                                <label key={name} style={{ display: 'block', margin: '5px 0' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedCollections.includes(name)}
-                                        onChange={() => handleCollectionToggle(name)}
-                                        style={{ marginRight: '10px' }}
-                                    />
-                                    <strong>{name}</strong> ({docs.length} documents)
-                                </label>
-                            ))}
+                            {/* Regular Collections */}
+                            <div style={{ marginBottom: '15px' }}>
+                                <h5 style={{ margin: '10px 0 5px 0', color: '#495057' }}>📦 Top-level Collections:</h5>
+                                {Object.entries(backupData.collections).map(([name, docs]) => (
+                                    <label key={name} style={{ display: 'block', margin: '5px 0' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedCollections.includes(name)}
+                                            onChange={() => handleCollectionToggle(name)}
+                                            style={{ marginRight: '10px' }}
+                                        />
+                                        <strong>{name}</strong> ({docs.length} documents)
+                                    </label>
+                                ))}
+                            </div>
+
+                            {/* Subcollections */}
+                            {backupData.subcollections && Object.keys(backupData.subcollections).length > 0 && (
+                                <div>
+                                    <h5 style={{ margin: '10px 0 5px 0', color: '#495057' }}>🗂️ Course-specific Subcollections:</h5>
+                                    {Object.entries(backupData.subcollections).map(([path, docs]) => (
+                                        <label key={path} style={{ display: 'block', margin: '5px 0' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedCollections.includes(path)}
+                                                onChange={() => handleCollectionToggle(path)}
+                                                style={{ marginRight: '10px' }}
+                                            />
+                                            <strong>{path}</strong> ({docs.length} documents)
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

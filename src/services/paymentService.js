@@ -653,15 +653,16 @@ export const updateCourseProgress = async (userId, courseId, progress, batchNumb
 };
 
 /**
- * Manually enroll a user in a course (admin function)
+ * Manually enrolls a user in a course (for admin use)
  * @param {string} userId - Firebase user ID
  * @param {string} courseId - Course identifier
  * @param {string} adminUserId - Admin user ID performing the enrollment
  * @param {number} batchNumber - Optional specific batch number (defaults to next available)
  * @param {string} notes - Optional notes about the manual enrollment
+ * @param {number} paymentAmount - Optional payment amount for verified manual payments
  * @returns {Promise<Object>} Success/error response
  */
-export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumber = null, notes = '') => {
+export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumber = null, notes = '', paymentAmount = 0) => {
     try {
         if (!db) {
             throw new Error('Firestore not initialized');
@@ -721,7 +722,7 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
             enrollmentType: 'manual',
             manualEnrollmentBy: adminUserId,
             manualEnrollmentNotes: notes,
-            amountPaid: 0, // No payment for manual enrollment
+            amountPaid: parseFloat(paymentAmount) || 0, // Use provided payment amount or 0 for free manual enrollment
 
             // Terms acceptance tracking (N/A for manual enrollment)
             termsAccepted: null, // Not applicable for manual enrollment

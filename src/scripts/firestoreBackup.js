@@ -7,7 +7,9 @@ const { initializeApp } = require('firebase/app');
 const {
     getFirestore,
     collection,
-    getDocs
+    getDocs,
+    doc,
+    getDoc
 } = require('firebase/firestore');
 const fs = require('fs');
 const path = require('path');
@@ -55,6 +57,51 @@ async function backupCollection(collectionName) {
         console.error(`❌ Error backing up ${collectionName}:`, error.message);
         return [];
     }
+}
+
+async function backupSubcollection(parentPath, subcollectionName) {
+    const fullPath = `${parentPath}/${subcollectionName}`;
+    console.log(`📦 Backing up subcollection: ${fullPath}`);
+
+    try {
+        const [parentCollection, parentDocId] = parentPath.split('/');
+        const parentDocRef = doc(db, parentCollection, parentDocId);
+        const subcollectionSnapshot = await getDocs(collection(parentDocRef, subcollectionName));
+        const data = [];
+
+        subcollectionSnapshot.docs.forEach(doc => {
+            data.push({
+                id: doc.id,
+                data: doc.data()
+            });
+        });
+
+        console.log(`✅ ${fullPath}: ${data.length} documents backed up`);
+        return data;
+
+    } catch (error) {
+        console.error(`❌ Error backing up ${fullPath}:`, error.message);
+        return [];
+    }
+}
+
+async function backupCourseSpecificBatches() {
+    console.log('🗂️ Backing up course-specific batch subcollections...');
+    const courseSpecificBatches = {};
+
+    const courses = ['FAAI', 'RLAI'];
+    for (const courseId of courses) {
+        try {
+            const courseBatches = await backupSubcollection(`courses/${courseId}`, 'batches');
+            if (courseBatches.length > 0) {
+                courseSpecificBatches[`courses/${courseId}/batches`] = courseBatches;
+            }
+        } catch (error) {
+            console.log(`⚠️ Could not backup batches for course ${courseId}:`, error.message);
+        }
+    }
+
+    return courseSpecificBatches;
 }
 
 async function discoverCollections() {
@@ -123,13 +170,19 @@ async function createBackup() {
     // Discover all collections dynamically
     const collections = await discoverCollections();
 
+    // Backup course-specific subcollections
+    const courseSpecificBatches = await backupCourseSpecificBatches();
+
     const backup = {
         timestamp: new Date().toISOString(),
-        version: '2.0',
-        description: 'Comprehensive backup of all discovered collections',
-        totalCollections: collections.length,
-        collections: {}
-    };    // Backup each collection
+        version: '3.0', // Updated version for subcollections
+        description: 'Comprehensive backup including all collections and course-specific subcollections',
+        totalCollections: collections.length + Object.keys(courseSpecificBatches).length,
+        collections: {},
+        subcollections: courseSpecificBatches
+    };
+
+    // Backup each collection
     for (const collectionName of collections) {
         const collectionData = await backupCollection(collectionName);
         backup.collections[collectionName] = collectionData;
@@ -139,6 +192,13 @@ async function createBackup() {
         fs.writeFileSync(collectionFile, JSON.stringify(collectionData, null, 2));
     }
 
+    // Save individual subcollection files
+    for (const [path, data] of Object.entries(courseSpecificBatches)) {
+        const sanitizedPath = path.replace(/\//g, '_');
+        const subcollectionFile = path.join(backupDir, `${sanitizedPath}.json`);
+        fs.writeFileSync(subcollectionFile, JSON.stringify(data, null, 2));
+    }
+
     // Save complete backup file
     const backupFile = path.join(backupDir, 'complete-backup.json');
     fs.writeFileSync(backupFile, JSON.stringify(backup, null, 2));
@@ -146,8 +206,9 @@ async function createBackup() {
     // Create backup summary
     const summary = {
         timestamp: backup.timestamp,
-        totalCollections: collections.length,
-        collections: {}
+        totalCollections: collections.length + Object.keys(courseSpecificBatches).length,
+        collections: {},
+        subcollections: {}
     };
 
     let totalDocuments = 0;
@@ -155,6 +216,12 @@ async function createBackup() {
         summary.collections[name] = data.length;
         totalDocuments += data.length;
     }
+
+    for (const [path, data] of Object.entries(courseSpecificBatches)) {
+        summary.subcollections[path] = data.length;
+        totalDocuments += data.length;
+    }
+
     summary.totalDocuments = totalDocuments;
 
     const summaryFile = path.join(backupDir, 'backup-summary.json');
@@ -169,11 +236,19 @@ async function createBackup() {
         console.log(`  - ${name}: ${count} documents`);
     }
 
+    for (const [path, count] of Object.entries(summary.subcollections)) {
+        console.log(`  - ${path}: ${count} documents`);
+    }
+
     console.log('\n📄 Files created:');
     console.log(`  - complete-backup.json (full backup)`);
     console.log(`  - backup-summary.json (summary)`);
     collections.forEach(name => {
         console.log(`  - ${name}.json (individual collection)`);
+    });
+    Object.keys(courseSpecificBatches).forEach(path => {
+        const sanitizedPath = path.replace(/\//g, '_');
+        console.log(`  - ${sanitizedPath}.json (individual subcollection)`);
     });
 
     return backupDir;
