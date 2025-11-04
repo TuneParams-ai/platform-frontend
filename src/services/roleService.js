@@ -4,6 +4,7 @@ import {
     doc,
     setDoc,
     getDoc,
+    getDocs,
     collection,
     addDoc,
     serverTimestamp
@@ -47,9 +48,10 @@ export const ROLE_PERMISSIONS = {
  * @param {string} userId - Firebase user ID
  * @param {string} role - User role (admin, instructor, student)
  * @param {string} assignedBy - ID of user who assigned the role
+ * @param {string} userEmail - Email of the user being assigned the role
  * @returns {Promise<Object>} Success/error response
  */
-export const assignUserRole = async (userId, role, assignedBy) => {
+export const assignUserRole = async (userId, role, assignedBy, userEmail = null) => {
     try {
         if (!db) {
             throw new Error('Firestore not initialized');
@@ -61,6 +63,7 @@ export const assignUserRole = async (userId, role, assignedBy) => {
 
         const userRoleData = {
             userId: userId,
+            userEmail: userEmail, // Store the email
             role: role,
             permissions: ROLE_PERMISSIONS[role] || [],
             assignedBy: assignedBy,
@@ -77,6 +80,7 @@ export const assignUserRole = async (userId, role, assignedBy) => {
         const userRef = doc(db, 'users', userId);
         await setDoc(userRef, {
             role: role,
+            email: userEmail, // Also store email in users collection
             updatedAt: serverTimestamp()
         }, { merge: true });
 
@@ -96,7 +100,11 @@ export const assignUserRole = async (userId, role, assignedBy) => {
 export const getUserRole = async (userId) => {
     try {
         if (!db) {
-            return { role: USER_ROLES.STUDENT, permissions: [] };
+            return {
+                role: USER_ROLES.STUDENT,
+                permissions: [],
+                userEmail: null
+            };
         }
 
         const roleRef = doc(db, 'user_roles', userId);
@@ -110,13 +118,18 @@ export const getUserRole = async (userId) => {
             return {
                 role: USER_ROLES.STUDENT,
                 permissions: ROLE_PERMISSIONS[USER_ROLES.STUDENT],
-                isActive: true
+                isActive: true,
+                userEmail: null
             };
         }
 
     } catch (error) {
 
-        return { role: USER_ROLES.STUDENT, permissions: [] };
+        return {
+            role: USER_ROLES.STUDENT,
+            permissions: [],
+            userEmail: null
+        };
     }
 };/**
  * Checks if a user has a specific permission
@@ -131,6 +144,35 @@ export const userHasPermission = async (userId, permission) => {
     } catch (error) {
 
         return false;
+    }
+};
+
+/**
+ * Gets all user roles with email information
+ * @returns {Promise<Array>} Array of user role data with emails
+ */
+export const getAllUserRoles = async () => {
+    try {
+        if (!db) {
+            return [];
+        }
+
+        const userRolesSnapshot = await getDocs(collection(db, 'user_roles'));
+        const userRoles = [];
+
+        userRolesSnapshot.docs.forEach(doc => {
+            const roleData = doc.data();
+            userRoles.push({
+                userId: doc.id,
+                ...roleData
+            });
+        });
+
+        return userRoles;
+
+    } catch (error) {
+        console.error('Error getting all user roles:', error);
+        return [];
     }
 };
 

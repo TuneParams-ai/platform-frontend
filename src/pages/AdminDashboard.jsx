@@ -14,6 +14,7 @@ import AdminCouponManager from '../components/AdminCouponManager';
 import AdminProgressManager from '../components/AdminProgressManager';
 import AdminSearch from '../components/AdminSearch';
 import AdminAuditLogs from '../components/AdminAuditLogs';
+import AdminCourseAccess from '../components/AdminCourseAccess';
 import FirestoreBackupTool from '../components/FirestoreBackupTool';
 import FirestoreRestoreTool from '../components/FirestoreRestoreTool';
 import '../styles/admin-dashboard.css';
@@ -99,6 +100,13 @@ const AdminDashboard = () => {
                     >
                         📚 Course Management
                     </button>
+                    <button
+                        onClick={() => setActiveTab('courseAccess')}
+                        className="quick-action-btn course-access-btn"
+                        title="Access any course dashboard as admin"
+                    >
+                        🎓 Course Access
+                    </button>
                 </div>
             </div>
 
@@ -126,6 +134,12 @@ const AdminDashboard = () => {
                     className={`admin-tab-button ${activeTab === 'enrollments' ? 'active' : ''}`}
                 >
                     📚 Enrollments
+                </button>
+                <button
+                    onClick={() => setActiveTab('courseAccess')}
+                    className={`admin-tab-button ${activeTab === 'courseAccess' ? 'active' : ''}`}
+                >
+                    🎓 Course Access
                 </button>
                 <button
                     onClick={() => setActiveTab('emails')}
@@ -186,6 +200,7 @@ const AdminDashboard = () => {
                 {activeTab === 'payments' && <AdminPayments />}
                 {activeTab === 'manualPayments' && <AdminManualPayments />}
                 {activeTab === 'enrollments' && <AdminEnrollments />}
+                {activeTab === 'courseAccess' && <AdminCourseAccess />}
                 {activeTab === 'emails' && <AdminEmailTracking />}
                 {activeTab === 'coupons' && <AdminCouponManager />}
                 {activeTab === 'progress' && <AdminProgressManager />}

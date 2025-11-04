@@ -147,26 +147,37 @@ const AdminRoleManager = () => {
             return;
         }
 
+        if (!selectedUserData) {
+            setError('Please select a valid user from the dropdown');
+            return;
+        }
+
         setLoading(true);
         setError(null);
         setMessage(null);
 
         try {
-            const result = await assignUserRole(selectedUser, selectedRole, user.uid);
+            // Get the user's email from selectedUserData
+            const userEmail = selectedUserData.email || selectedUserData.displayName || 'No email available';
+
+            const result = await assignUserRole(selectedUser, selectedRole, user.uid, userEmail);
 
             if (result.success) {
                 // Update local state with new role
                 const newRoleData = await getUserRole(selectedUser);
                 setUserRoles(prev => new Map(prev).set(selectedUser, newRoleData.role)); // Extract just the role string
 
-                // Log the action
+                // Log the action with email information
                 await logRoleAction('assign_role', selectedUser, user.uid, {
                     newRole: selectedRole,
+                    userEmail: userEmail,
                     timestamp: new Date().toISOString()
                 });
 
-                setMessage(`Successfully assigned ${selectedRole} role to user`);
+                setMessage(`Successfully assigned ${selectedRole} role to ${userEmail}`);
                 setSelectedUser('');
+                setSelectedUserData(null);
+                setUserSearchTerm('');
                 setSelectedRole(USER_ROLES.STUDENT);
             } else {
                 setError(`Error: ${result.error}`);
@@ -192,20 +203,35 @@ const AdminRoleManager = () => {
                 const roleData = roleDoc.data();
                 const userId = roleDoc.id;
 
+                // Find the user's email from our users list
+                const userInfo = users.find(u => (u.id || u.uid) === userId);
+                const userEmail = userInfo?.email || roleData.userEmail || 'Email not available';
+
+                // Update the user_roles collection with email if not present
+                if (!roleData.userEmail && userEmail !== 'Email not available') {
+                    const roleRef = doc(db, 'user_roles', userId);
+                    await setDoc(roleRef, {
+                        ...roleData,
+                        userEmail: userEmail,
+                        updatedAt: serverTimestamp()
+                    });
+                }
+
                 // Update the users collection with the role from user_roles
                 const userRef = doc(db, 'users', userId);
                 await setDoc(userRef, {
                     role: roleData.role,
+                    email: userEmail,
                     updatedAt: serverTimestamp()
                 }, { merge: true });
 
                 syncCount++;
-                return { userId, role: roleData.role };
+                return { userId, role: roleData.role, email: userEmail };
             });
 
             await Promise.all(syncPromises);
 
-            setMessage(`Successfully synced ${syncCount} user roles between collections`);
+            setMessage(`Successfully synced ${syncCount} user roles with email information`);
 
             // Reload users to show updated data
             await loadUsers();
@@ -317,7 +343,7 @@ const AdminRoleManager = () => {
                     onClick={syncAllUserRoles}
                     disabled={loading}
                     className={`admin-role-button sync-button ${loading ? 'loading' : ''}`}
-                    title="Sync roles from user_roles collection to users collection"
+                    title="Sync roles from user_roles collection to users collection and update email information"
                 >
                     {loading ? 'Syncing...' : '🔄 Sync All Roles'}
                 </button>

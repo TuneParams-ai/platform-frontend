@@ -50,6 +50,16 @@
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
+.course-access-btn {
+    background: var(--metallic-gradient);
+    color: white;
+}
+
+.course-access-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(29, 126, 153, 0.4);
+}
+
 .admin-access-denied {
     padding: 40px;
     text-align: center;
