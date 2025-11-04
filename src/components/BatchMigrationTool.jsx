@@ -6,7 +6,8 @@ import {
     writeBatch,
     query,
     where,
-    limit
+    limit,
+    getDoc
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
@@ -24,7 +25,72 @@ const BatchMigrationTool = () => {
         setLogs([]);
     };
 
-    // Step 1: Inspect current batch data
+    // Helper function to migrate course-specific batch documents
+    const migrateCourseSpecificBatches = async () => {
+        addLog('🗂️ Migrating course-specific batch configuration documents...', 'info');
+
+        const courses = ['FAAI', 'RLAI'];
+        let totalMigrated = 0;
+
+        for (const courseId of courses) {
+            addLog(`🔍 Checking ${courseId} batch subcollection...`, 'info');
+
+            // Check batch1 -> batch3
+            const batch1Ref = doc(db, 'courses', courseId, 'batches', 'batch1');
+            const batch1Snap = await getDoc(batch1Ref);
+
+            if (batch1Snap.exists()) {
+                addLog(`  ✅ Found ${courseId}/batch1 - migrating to batch3...`, 'info');
+                const batch3Ref = doc(db, 'courses', courseId, 'batches', 'batch3');
+                const newBatchData = {
+                    ...batch1Snap.data(),
+                    batchNumber: 3,
+                    migratedFrom: batch1Snap.data().batchNumber,
+                    migratedAt: new Date(),
+                    originalBatchId: 'batch1'
+                };
+
+                const migrationBatch = writeBatch(db);
+                migrationBatch.set(batch3Ref, newBatchData);
+                migrationBatch.delete(batch1Ref);
+
+                await migrationBatch.commit();
+                addLog(`  ✅ Migrated ${courseId}: batch1 -> batch3`, 'success');
+                totalMigrated++;
+            } else {
+                addLog(`  ⚠️ ${courseId}/batch1 not found - skipping`, 'warning');
+            }
+
+            // Check batch2 -> batch4
+            const batch2Ref = doc(db, 'courses', courseId, 'batches', 'batch2');
+            const batch2Snap = await getDoc(batch2Ref);
+
+            if (batch2Snap.exists()) {
+                addLog(`  ✅ Found ${courseId}/batch2 - migrating to batch4...`, 'info');
+                const batch4Ref = doc(db, 'courses', courseId, 'batches', 'batch4');
+                const newBatchData = {
+                    ...batch2Snap.data(),
+                    batchNumber: 4,
+                    migratedFrom: batch2Snap.data().batchNumber,
+                    migratedAt: new Date(),
+                    originalBatchId: 'batch2'
+                };
+
+                const migrationBatch = writeBatch(db);
+                migrationBatch.set(batch4Ref, newBatchData);
+                migrationBatch.delete(batch2Ref);
+
+                await migrationBatch.commit();
+                addLog(`  ✅ Migrated ${courseId}: batch2 -> batch4`, 'success');
+                totalMigrated++;
+            } else {
+                addLog(`  ⚠️ ${courseId}/batch2 not found - skipping`, 'warning');
+            }
+        }
+
+        addLog(`🎉 Migrated ${totalMigrated} course-specific batch documents`, 'success');
+        return totalMigrated;
+    };    // Step 1: Inspect current batch data
     const inspectCurrentData = async () => {
         setIsRunning(true);
         addLog('🔍 Starting data inspection...', 'info');
@@ -43,13 +109,64 @@ const BatchMigrationTool = () => {
                 limit(10)
             );
 
-            const [batch1Snap, batch2Snap] = await Promise.all([
+            // Check batch documents
+            const batchesCollection = collection(db, 'batches');
+
+            // Also check course-specific batch subcollections
+            const faaiB1 = doc(db, 'courses', 'FAAI', 'batches', 'batch1');
+            const faaiB2 = doc(db, 'courses', 'FAAI', 'batches', 'batch2');
+            const rlaiB1 = doc(db, 'courses', 'RLAI', 'batches', 'batch1');
+            const rlaiB2 = doc(db, 'courses', 'RLAI', 'batches', 'batch2');
+
+            const [batch1Snap, batch2Snap, batchesSnap, faaiB1Snap, faaiB2Snap, rlaiB1Snap, rlaiB2Snap] = await Promise.all([
                 getDocs(batch1Query),
-                getDocs(batch2Query)
+                getDocs(batch2Query),
+                getDocs(batchesCollection),
+                getDoc(faaiB1),
+                getDoc(faaiB2),
+                getDoc(rlaiB1),
+                getDoc(rlaiB2)
             ]);
 
             addLog(`📊 Found ${batch1Snap.size} enrollments with batch number 1`, 'success');
             addLog(`📊 Found ${batch2Snap.size} enrollments with batch number 2`, 'success');
+            addLog(`📊 Found ${batchesSnap.size} batch configuration documents in top-level collection`, 'success');
+
+            // Show course-specific batch configuration data
+            addLog('🗂️ Course-specific batch configurations:', 'info');
+            if (faaiB1Snap.exists()) {
+                const data = faaiB1Snap.data();
+                addLog(`  - FAAI/batch1: batchNumber=${data.batchNumber}, status=${data.status}`, 'info');
+            } else {
+                addLog(`  - FAAI/batch1: NOT FOUND`, 'warning');
+            }
+            if (faaiB2Snap.exists()) {
+                const data = faaiB2Snap.data();
+                addLog(`  - FAAI/batch2: batchNumber=${data.batchNumber}, status=${data.status}`, 'info');
+            } else {
+                addLog(`  - FAAI/batch2: NOT FOUND`, 'warning');
+            }
+            if (rlaiB1Snap.exists()) {
+                const data = rlaiB1Snap.data();
+                addLog(`  - RLAI/batch1: batchNumber=${data.batchNumber}, status=${data.status}`, 'info');
+            } else {
+                addLog(`  - RLAI/batch1: NOT FOUND`, 'warning');
+            }
+            if (rlaiB2Snap.exists()) {
+                const data = rlaiB2Snap.data();
+                addLog(`  - RLAI/batch2: batchNumber=${data.batchNumber}, status=${data.status}`, 'info');
+            } else {
+                addLog(`  - RLAI/batch2: NOT FOUND`, 'warning');
+            }
+
+            // Show batch configuration data
+            if (!batchesSnap.empty) {
+                addLog('🗂️ Top-level batch configurations found:', 'info');
+                batchesSnap.docs.forEach(docSnap => {
+                    const data = docSnap.data();
+                    addLog(`  - ${docSnap.id}: batchNumber=${data.batchNumber}, status=${data.status}`, 'info');
+                });
+            }
 
             // Show sample data
             if (!batch1Snap.empty) {
@@ -201,10 +318,13 @@ const BatchMigrationTool = () => {
 
                 await migrationBatch.commit();
                 totalUpdated += enrollmentsSnapshot.size;
-                addLog(`  ✅ Migrated ${enrollmentsSnapshot.size} records for batch ${oldBatch}`, 'success');
+                addLog(`  ✅ Migrated ${enrollmentsSnapshot.size} enrollment records for batch ${oldBatch}`, 'success');
             }
 
-            addLog(`🎉 Test migration completed! Total: ${totalUpdated} records`, 'success');
+            // Migrate course-specific batch configuration documents
+            await migrateCourseSpecificBatches();
+
+            addLog(`🎉 Test migration completed! Total: ${totalUpdated} enrollment records + course-specific batch configs`, 'success');
 
             // Verify migration
             addLog('🔍 Verifying migration results...', 'info');
@@ -330,7 +450,10 @@ const BatchMigrationTool = () => {
                 addLog(`  ✅ Completed migration for batch ${oldBatch} -> ${newBatch}`, 'success');
             }
 
-            addLog(`🎉 PRODUCTION MIGRATION COMPLETED! Total: ${totalUpdated} records`, 'success');
+            // Migrate course-specific batch configuration documents
+            await migrateCourseSpecificBatches();
+
+            addLog(`🎉 PRODUCTION MIGRATION COMPLETED! Total: ${totalUpdated} enrollment records + course-specific batch configs`, 'success');
 
         } catch (error) {
             addLog(`❌ CRITICAL ERROR in production migration: ${error.message}`, 'error');
@@ -352,6 +475,9 @@ const BatchMigrationTool = () => {
             <div className="header" style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <h2>🔄 Batch Migration Tool</h2>
                 <p>Migrate batch numbers: Batch 1 → Batch 3, Batch 2 → Batch 4</p>
+                <p style={{ fontSize: '14px', color: '#666' }}>
+                    Migrates both enrollment records and batch configuration documents
+                </p>
                 <div style={{ background: '#fff3cd', padding: '10px', borderRadius: '5px', margin: '10px 0' }}>
                     <strong>⚠️ Important:</strong> Always test with sample records before running on production data!
                 </div>
