@@ -415,6 +415,12 @@ const CourseDashboard = () => {
                             </div>
                         </div>
 
+                        {/* Video Library Section */}
+                        <VideoLibrary
+                            videos={selectedBatch.videos || []}
+                            batchNumber={selectedBatch.batchNumber}
+                        />
+
                         {/* Class Schedule */}
                         <div className="schedule-section">
                             <h2>Class Schedule</h2>
@@ -466,12 +472,6 @@ const CourseDashboard = () => {
                                 </div>
                             )}
                         </div>
-
-                        {/* Video Library Section */}
-                        <VideoLibrary
-                            videos={selectedBatch.videos || []}
-                            batchNumber={selectedBatch.batchNumber}
-                        />
 
                         {/* Batch Information - Admin Only */}
                         {isAdminUser && (
