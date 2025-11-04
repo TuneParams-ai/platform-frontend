@@ -1,0 +1,365 @@
+{
+    "timestamp": "2025-10-28T03:30:00.000Z",
+    "version": "2.0",
+    "description": "Comprehensive test backup for merge testing - contains one test record per collection",
+    "totalCollections": 12,
+    "collections": {
+        "enrollments": [
+            {
+                "id": "TEST_COMPREHENSIVE_user_FAAI_batch1",
+                "data": {
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userEmail": "testcomprehensive@example.com",
+                    "courseId": "FAAI",
+                    "courseTitle": "Financial AI Course (COMPREHENSIVE TEST)",
+                    "batchNumber": 1,
+                    "batchStartDate": "2024-01-15",
+                    "batchEndDate": "2024-03-15",
+                    "batchStatus": "active",
+                    "status": "enrolled",
+                    "progress": 85,
+                    "paymentId": "TEST_COMP_PAYMENT_001",
+                    "orderId": "TEST_COMP_ORDER_001",
+                    "amountPaid": 75.00,
+                    "termsAccepted": true,
+                    "termsAcceptedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "enrolledAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "lastAccessed": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1730073000,
+                        "nanoseconds": 0
+                    },
+                    "completedAt": null,
+                    "paymentMethod": "test_comprehensive",
+                    "enrollmentSource": "test_comprehensive",
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "courses": [
+            {
+                "id": "TEST_COMPREHENSIVE_COURSE",
+                "data": {
+                    "title": "Comprehensive Test Course",
+                    "description": "This is a comprehensive test course for full backup testing",
+                    "category": "Test",
+                    "price": 50.00,
+                    "duration": "2 weeks",
+                    "level": "Intermediate",
+                    "status": "active",
+                    "createdAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "updatedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1730073000,
+                        "nanoseconds": 0
+                    },
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "payments": [
+            {
+                "id": "TEST_COMP_PAYMENT_001",
+                "data": {
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userEmail": "testcomprehensive@example.com",
+                    "courseId": "TEST_COMPREHENSIVE_COURSE",
+                    "courseTitle": "Comprehensive Test Course",
+                    "amount": 50.00,
+                    "currency": "USD",
+                    "paymentMethod": "test_comprehensive",
+                    "status": "completed",
+                    "paymentId": "TEST_COMP_PAYMENT_001",
+                    "orderId": "TEST_COMP_ORDER_001",
+                    "transactionId": "TEST_COMP_TXN_001",
+                    "createdAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "completedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520060,
+                        "nanoseconds": 0
+                    },
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "users": [
+            {
+                "id": "TEST_COMPREHENSIVE_user",
+                "data": {
+                    "email": "testcomprehensive@example.com",
+                    "displayName": "Comprehensive Test User",
+                    "firstName": "Comprehensive",
+                    "lastName": "User",
+                    "photoURL": null,
+                    "emailVerified": true,
+                    "createdAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "lastLoginAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1730073000,
+                        "nanoseconds": 0
+                    },
+                    "profile": {
+                        "bio": "Comprehensive test user for full backup testing",
+                        "location": "Test City Global",
+                        "website": "https://comprehensive-test.example.com"
+                    },
+                    "preferences": {
+                        "emailNotifications": true,
+                        "marketingEmails": true,
+                        "theme": "dark"
+                    },
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "user_roles": [
+            {
+                "id": "TEST_COMPREHENSIVE_user",
+                "data": {
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "email": "testcomprehensive@example.com",
+                    "role": "premium_student",
+                    "permissions": [
+                        "read_courses",
+                        "enroll_courses",
+                        "post_reviews",
+                        "access_forums"
+                    ],
+                    "assignedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "assignedBy": "system",
+                    "isActive": true,
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "course_reviews": [
+            {
+                "id": "TEST_COMP_review_001",
+                "data": {
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userName": "Comprehensive Test User",
+                    "userEmail": "testcomprehensive@example.com",
+                    "courseId": "TEST_COMPREHENSIVE_COURSE",
+                    "courseTitle": "Comprehensive Test Course",
+                    "rating": 5,
+                    "comment": "This comprehensive test course demonstrates excellent backup and restore functionality!",
+                    "createdAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "updatedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "verified": true,
+                    "helpful": 3,
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "coupons": [
+            {
+                "id": "TEST_COMPREHENSIVE_COUPON",
+                "data": {
+                    "code": "COMPTEST75",
+                    "description": "Comprehensive test coupon - 75% off",
+                    "discountType": "percentage",
+                    "discountValue": 75,
+                    "maxUses": 5,
+                    "usedCount": 1,
+                    "validFrom": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "validUntil": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1735142400,
+                        "nanoseconds": 0
+                    },
+                    "isActive": true,
+                    "applicableCourses": [
+                        "TEST_COMPREHENSIVE_COURSE"
+                    ],
+                    "createdAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "createdBy": "TEST_COMPREHENSIVE_user",
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "manual_payments": [
+            {
+                "id": "TEST_COMP_manual_001",
+                "data": {
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userEmail": "testcomprehensive@example.com",
+                    "courseId": "TEST_COMPREHENSIVE_COURSE",
+                    "courseTitle": "Comprehensive Test Course",
+                    "amount": 50.00,
+                    "currency": "USD",
+                    "payerName": "Comprehensive Test User",
+                    "payerEmail": "testcomprehensive@example.com",
+                    "transactionId": "TEST_COMP_MANUAL_001",
+                    "paymentMethod": "test_wire_transfer",
+                    "status": "verified",
+                    "notes": "Comprehensive test manual payment for full backup testing",
+                    "submittedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "verifiedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520300,
+                        "nanoseconds": 0
+                    },
+                    "verifiedBy": "TEST_ADMIN_COMP",
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "emails_sent": [
+            {
+                "id": "TEST_COMP_email_001",
+                "data": {
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userEmail": "testcomprehensive@example.com",
+                    "emailType": "enrollment_confirmation",
+                    "subject": "Welcome to Comprehensive Test Course!",
+                    "templateId": "enrollment_template",
+                    "courseId": "TEST_COMPREHENSIVE_COURSE",
+                    "sentAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520120,
+                        "nanoseconds": 0
+                    },
+                    "status": "delivered",
+                    "provider": "test_email_service",
+                    "messageId": "TEST_COMP_MSG_001",
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "forum_threads": [
+            {
+                "id": "TEST_COMP_thread_001",
+                "data": {
+                    "title": "Comprehensive Test Discussion Thread",
+                    "description": "A test thread for comprehensive backup testing",
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userName": "Comprehensive Test User",
+                    "courseId": "TEST_COMPREHENSIVE_COURSE",
+                    "categoryId": "general_discussion",
+                    "isSticky": false,
+                    "isLocked": false,
+                    "replyCount": 2,
+                    "lastReplyAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703521200,
+                        "nanoseconds": 0
+                    },
+                    "createdAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520600,
+                        "nanoseconds": 0
+                    },
+                    "updatedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703521200,
+                        "nanoseconds": 0
+                    },
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "forum_replies": [
+            {
+                "id": "TEST_COMP_reply_001",
+                "data": {
+                    "threadId": "TEST_COMP_thread_001",
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userName": "Comprehensive Test User",
+                    "content": "This is a comprehensive test reply for backup testing purposes.",
+                    "isOriginalPost": false,
+                    "parentReplyId": null,
+                    "likeCount": 1,
+                    "createdAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703521200,
+                        "nanoseconds": 0
+                    },
+                    "updatedAt": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703521200,
+                        "nanoseconds": 0
+                    },
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ],
+        "role_audit_log": [
+            {
+                "id": "TEST_COMP_audit_001",
+                "data": {
+                    "userId": "TEST_COMPREHENSIVE_user",
+                    "userEmail": "testcomprehensive@example.com",
+                    "action": "role_assigned",
+                    "oldRole": null,
+                    "newRole": "premium_student",
+                    "performedBy": "system",
+                    "reason": "Comprehensive test user creation",
+                    "timestamp": {
+                        "type": "firestore/timestamp/1.0",
+                        "seconds": 1703520000,
+                        "nanoseconds": 0
+                    },
+                    "ipAddress": "127.0.0.1",
+                    "userAgent": "ComprehensiveTestAgent/1.0",
+                    "isTestRecord": true,
+                    "testType": "comprehensive_test"
+                }
+            }
+        ]
+    }
+}
