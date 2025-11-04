@@ -14,7 +14,6 @@ import AdminCouponManager from '../components/AdminCouponManager';
 import AdminProgressManager from '../components/AdminProgressManager';
 import AdminSearch from '../components/AdminSearch';
 import AdminAuditLogs from '../components/AdminAuditLogs';
-import BatchMigrationTool from '../components/BatchMigrationTool';
 import FirestoreBackupTool from '../components/FirestoreBackupTool';
 import FirestoreRestoreTool from '../components/FirestoreRestoreTool';
 import '../styles/admin-dashboard.css';
@@ -165,14 +164,6 @@ const AdminDashboard = () => {
                     📋 Audit Logs
                 </button>
                 <button
-                    onClick={() => setActiveTab('batchMigration')}
-                    className={`admin-tab-button ${activeTab === 'batchMigration' ? 'active' : ''}`}
-                    style={{ backgroundColor: '#ffc107', color: '#000' }}
-                    title="Migrate batch numbers: 1→3, 2→4"
-                >
-                    🔄 Batch Migration
-                </button>
-                <button
                     onClick={() => setActiveTab('backup')}
                     className={`admin-tab-button ${activeTab === 'backup' ? 'active' : ''}`}
                     style={{ backgroundColor: '#28a745', color: '#fff' }}
@@ -201,7 +192,6 @@ const AdminDashboard = () => {
                 {activeTab === 'search' && <AdminSearch />}
                 {activeTab === 'roles' && <AdminRoleManager />}
                 {activeTab === 'audit' && <AdminAuditLogs />}
-                {activeTab === 'batchMigration' && <BatchMigrationTool />}
                 {activeTab === 'backup' && <FirestoreBackupTool />}
                 {activeTab === 'restore' && <FirestoreRestoreTool />}
             </div>

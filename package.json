@@ -25,7 +25,6 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "eject": "react-scripts eject",
-    "batch-migration": "node src/scripts/batchMigrationCLI.js",
     "backup-firestore": "node src/scripts/firestoreBackup.js",
     "restore-firestore": "node src/scripts/firestoreRestore.js"
   },
