@@ -677,7 +677,10 @@ export const manualEnrollUser = async (userId, courseId, adminUserId, batchNumbe
         // Determine target batch
         let targetBatch;
         if (batchNumber) {
-            targetBatch = course.batches?.find(b => b.batchNumber === batchNumber);
+            // Get batches from Firestore subcollection
+            const { getCourseBatches } = await import('./courseManagementService');
+            const batches = await getCourseBatches(courseId);
+            targetBatch = batches.find(b => b.batchNumber === parseInt(batchNumber));
             if (!targetBatch) {
                 throw new Error(`Batch ${batchNumber} not found for course ${courseId}`);
             }

@@ -6,7 +6,6 @@ import { getCompleteCourse, updateCourse } from '../services/courseManagementSer
 import CourseEditor from '../components/CourseEditor';
 import BatchManager from '../components/BatchManager';
 import CurriculumManager from '../components/CurriculumManager';
-import VideoManager from '../components/VideoManager';
 import ScheduleManager from '../components/ScheduleManager';
 import '../styles/course-management.css';
 
@@ -19,7 +18,6 @@ const CourseManagement = () => {
     const [showCourseEditor, setShowCourseEditor] = useState(false);
     const [showBatchManager, setShowBatchManager] = useState(false);
     const [showCurriculumManager, setShowCurriculumManager] = useState(false);
-    const [showVideoManager, setShowVideoManager] = useState(false);
     const [showScheduleManager, setShowScheduleManager] = useState(false);
     const [editingBatch, setEditingBatch] = useState(null);
     const [editingSection, setEditingSection] = useState({ section: null, index: null });
@@ -120,11 +118,6 @@ const CourseManagement = () => {
     const handleEditSection = (section, index) => {
         setEditingSection({ section, index });
         setShowCurriculumManager(true);
-    };
-
-    const handleManageVideos = (batch) => {
-        setEditingBatch(batch);
-        setShowVideoManager(true);
     };
 
     const handleManageSchedule = (batch) => {
@@ -344,7 +337,12 @@ const CourseManagement = () => {
                                                 <div className="batch-details">
                                                     <p><strong>Dates:</strong> {batch.startDate} to {batch.endDate}</p>
                                                     <p><strong>Capacity:</strong> {batch.enrollmentCount}/{batch.maxCapacity}</p>
-                                                    <p><strong>Videos:</strong> {batch.videos?.length || 0} uploaded</p>
+                                                    <p><strong>Drive Folders:</strong>
+                                                        {batch.driveLinks?.videosFolder ? '🎥 Videos' : ''}
+                                                        {batch.driveLinks?.videosFolder && batch.driveLinks?.materialsFolder ? ' • ' : ''}
+                                                        {batch.driveLinks?.materialsFolder ? '📚 Materials' : ''}
+                                                        {!batch.driveLinks?.videosFolder && !batch.driveLinks?.materialsFolder ? 'Not configured' : ''}
+                                                    </p>
                                                     <p><strong>Schedule:</strong> {batch.schedule?.length || 0} sessions</p>
                                                 </div>
                                                 <div className="batch-actions">
@@ -353,12 +351,6 @@ const CourseManagement = () => {
                                                         onClick={() => handleEditBatch(batch)}
                                                     >
                                                         ✏️ Edit
-                                                    </button>
-                                                    <button
-                                                        className="btn-sm btn-info"
-                                                        onClick={() => handleManageVideos(batch)}
-                                                    >
-                                                        🎥 Manage Videos
                                                     </button>
                                                     <button
                                                         className="btn-sm btn-info"
@@ -526,19 +518,6 @@ const CourseManagement = () => {
                     onClose={() => {
                         setShowCurriculumManager(false);
                         setEditingSection({ section: null, index: null });
-                    }}
-                    onSave={handleSave}
-                    showNotification={showNotification}
-                />
-            )}
-
-            {showVideoManager && selectedCourse && editingBatch && (
-                <VideoManager
-                    course={selectedCourse}
-                    batchNumber={editingBatch.batchNumber}
-                    onClose={() => {
-                        setShowVideoManager(false);
-                        setEditingBatch(null);
                     }}
                     onSave={handleSave}
                     showNotification={showNotification}

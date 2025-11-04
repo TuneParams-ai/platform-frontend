@@ -1,0 +1,264 @@
+/* Drive Access Component Styles */
+
+.drive-access {
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    margin-bottom: 2rem;
+}
+
+.drive-access-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.drive-access-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.drive-access-header p {
+    color: var(--secondary-text-color);
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Drive Cards Grid */
+.drive-access-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.drive-card {
+    background: rgba(29, 126, 153, 0.05);
+    border: 1px solid rgba(29, 126, 153, 0.2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.drive-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.3);
+}
+
+.drive-card.unavailable {
+    background: rgba(29, 126, 153, 0.05);
+    border-color: rgba(29, 126, 153, 0.2);
+    opacity: 0.7;
+}
+
+.drive-card.unavailable:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(29, 126, 153, 0.2);
+}
+
+/* Drive Card Icons */
+.drive-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+/* Drive Card Content */
+.drive-card h3 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.drive-card p {
+    color: var(--secondary-text-color);
+    margin: 0 0 1.5rem 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Drive Access Buttons */
+.drive-access-button {
+    display: inline-block;
+    background: var(--metallic-gradient);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.drive-access-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(29, 126, 153, 0.4);
+}
+
+.drive-access-button span {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.drive-access-button small {
+    font-size: 0.8rem;
+    font-weight: 400;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Unavailable Text */
+.unavailable-text {
+    color: var(--secondary-text-color);
+    font-style: italic;
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(160, 160, 160, 0.1);
+    border-radius: 6px;
+    border: 1px dashed rgba(160, 160, 160, 0.3);
+}
+
+/* Instructions Section */
+.drive-instructions {
+    background: rgba(29, 126, 153, 0.1);
+    border: 1px solid rgba(29, 126, 153, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.drive-instructions h4 {
+    margin: 0 0 1rem 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.instruction-number {
+    background: var(--metallic-gradient);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.instruction-item div {
+    flex: 1;
+}
+
+.instruction-item strong {
+    display: block;
+    color: var(--text-color);
+    margin-bottom: 2px;
+    font-size: 0.9rem;
+}
+
+.instruction-item p {
+    margin: 0;
+    color: var(--secondary-text-color);
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .drive-access {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .drive-access-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .drive-access-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .drive-card {
+        padding: 1.25rem;
+    }
+
+    .drive-card-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .drive-access-button {
+        padding: 0.6rem 1.25rem;
+    }
+
+    .instructions-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .drive-instructions {
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .drive-access-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .drive-card h3 {
+        font-size: 1rem;
+    }
+
+    .drive-access-button {
+        padding: 0.5rem 1rem;
+    }
+
+    .drive-access-button span {
+        font-size: 0.9rem;
+    }
+
+    .instruction-number {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+    }
+}

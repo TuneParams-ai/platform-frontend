@@ -16,6 +16,10 @@ const BatchManager = ({ course, batch, onClose, onSave, showNotification }) => {
         classLinks: {
             zoom: '',
             discord: ''
+        },
+        driveLinks: {
+            videosFolder: '',
+            materialsFolder: ''
         }
     });
     const [saving, setSaving] = useState(false);
@@ -35,6 +39,10 @@ const BatchManager = ({ course, batch, onClose, onSave, showNotification }) => {
                 classLinks: {
                     zoom: batch.classLinks?.zoom || '',
                     discord: batch.classLinks?.discord || ''
+                },
+                driveLinks: {
+                    videosFolder: batch.driveLinks?.videosFolder || '',
+                    materialsFolder: batch.driveLinks?.materialsFolder || ''
                 }
             });
         } else {
@@ -53,6 +61,15 @@ const BatchManager = ({ course, batch, onClose, onSave, showNotification }) => {
                 ...prev,
                 classLinks: {
                     ...prev.classLinks,
+                    [linkType]: value
+                }
+            }));
+        } else if (name.startsWith('driveLinks.')) {
+            const linkType = name.split('.')[1];
+            setFormData(prev => ({
+                ...prev,
+                driveLinks: {
+                    ...prev.driveLinks,
                     [linkType]: value
                 }
             }));
@@ -231,6 +248,45 @@ const BatchManager = ({ course, batch, onClose, onSave, showNotification }) => {
                                 value={formData.classLinks.discord}
                                 onChange={handleChange}
                                 placeholder="https://discord.gg/..."
+                            />
+                        </div>
+
+                        {/* Google Drive Folders Section */}
+                        <div className="form-section-divider">
+                            <h4>📁 Google Drive Folders</h4>
+                            <p className="form-section-description">
+                                Share your Google Drive folders containing videos and course materials.
+                                Students will access content directly through these folder links.
+                            </p>
+                        </div>
+
+                        <div className="form-group full-width">
+                            <label htmlFor="videosFolder">
+                                📹 Videos Folder Link
+                                <span className="field-hint">Google Drive folder containing all class recordings</span>
+                            </label>
+                            <input
+                                type="url"
+                                id="videosFolder"
+                                name="driveLinks.videosFolder"
+                                value={formData.driveLinks.videosFolder}
+                                onChange={handleChange}
+                                placeholder="https://drive.google.com/drive/folders/..."
+                            />
+                        </div>
+
+                        <div className="form-group full-width">
+                            <label htmlFor="materialsFolder">
+                                📚 Materials Folder Link
+                                <span className="field-hint">Google Drive folder containing PDFs, slides, and resources</span>
+                            </label>
+                            <input
+                                type="url"
+                                id="materialsFolder"
+                                name="driveLinks.materialsFolder"
+                                value={formData.driveLinks.materialsFolder}
+                                onChange={handleChange}
+                                placeholder="https://drive.google.com/drive/folders/..."
                             />
                         </div>
                     </div>

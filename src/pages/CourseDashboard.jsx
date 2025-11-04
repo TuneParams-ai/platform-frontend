@@ -16,7 +16,7 @@ import { getCourseBatches } from '../services/courseManagementService';
 import { useAuth } from '../hooks/useAuth';
 import { useCourseAccess } from '../hooks/useCourseAccess';
 import { useUserRole } from '../hooks/useUserRole';
-import VideoLibrary from '../components/VideoLibrary';
+import DriveAccess from '../components/DriveAccess';
 import '../styles/course-dashboard.css';
 
 const CourseDashboard = () => {
@@ -406,20 +406,11 @@ const CourseDashboard = () => {
                                         <span className="link-unavailable">Link will be shared soon</span>
                                     )}
                                 </div>
-
-                                <div className="access-card materials-card">
-                                    <div className="card-icon">📚</div>
-                                    <h3>Course Materials</h3>
-                                    <span className="link-unavailable">Materials will be available soon</span>
-                                </div>
                             </div>
                         </div>
 
-                        {/* Video Library Section */}
-                        <VideoLibrary
-                            videos={selectedBatch.videos || []}
-                            batchNumber={selectedBatch.batchNumber}
-                        />
+                        {/* Drive Access Section - Videos and Materials */}
+                        <DriveAccess batch={selectedBatch} />
 
                         {/* Class Schedule */}
                         <div className="schedule-section">
